@@ -44,8 +44,22 @@ const pillars = [
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-light" />
+      {/* Video Background - Hidden under all text */}
+      <div className="absolute inset-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/logo-video.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay to make text readable */}
+        <div className="absolute inset-0 bg-primary/85" />
+      </div>
+      
+      {/* Gradient overlays */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(43_55%_52%_/_0.15),_transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(275_60%_30%_/_0.3),_transparent_50%)]" />
       
@@ -80,76 +94,15 @@ export function HeroSection() {
             </Badge>
           </motion.div>
 
-          {/* Headline with Video Background Text */}
-          <motion.div
+          {/* Headline */}
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative mb-6"
+            className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-primary-foreground"
           >
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="relative inline-block">
-                {/* Video Background for FUN text */}
-                <span 
-                  className="relative"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
-                    style={{
-                      WebkitBackgroundClip: 'text',
-                      mixBlendMode: 'screen',
-                      opacity: 0.9,
-                    }}
-                  >
-                    <source src="/videos/logo-video.mp4" type="video/mp4" />
-                  </video>
-                  FUN
-                </span>
-              </span>
-              <span className="text-primary-foreground"> Charity</span>
-            </h1>
-            
-            {/* Hidden video that clips to text using SVG mask */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
-              <svg className="absolute w-full h-full" style={{ overflow: 'visible' }}>
-                <defs>
-                  <clipPath id="textClip">
-                    <text 
-                      x="50%" 
-                      y="50%" 
-                      textAnchor="middle" 
-                      dominantBaseline="middle"
-                      className="font-display font-bold"
-                      style={{ fontSize: 'clamp(2.25rem, 8vw, 4.5rem)' }}
-                    >
-                      FUN
-                    </text>
-                  </clipPath>
-                </defs>
-                <foreignObject x="0" y="0" width="100%" height="100%" clipPath="url(#textClip)">
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                  >
-                    <source src="/videos/logo-video.mp4" type="video/mp4" />
-                  </video>
-                </foreignObject>
-              </svg>
-            </div>
-          </motion.div>
+            <span className="gradient-text-luxury">FUN</span> Charity
+          </motion.h1>
 
           {/* Tagline */}
           <motion.p

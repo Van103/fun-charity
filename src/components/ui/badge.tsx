@@ -8,10 +8,33 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+        default:
+          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        outline:
+          "text-foreground border-border",
+        success:
+          "border-transparent bg-success text-success-foreground",
+        warning:
+          "border-transparent bg-warning text-warning-foreground",
+        accent:
+          "border-transparent bg-accent text-accent-foreground",
+        muted:
+          "border-transparent bg-muted text-muted-foreground",
+        // Reputation badges
+        donor:
+          "border-transparent bg-gradient-to-r from-primary to-accent text-primary-foreground",
+        volunteer:
+          "border-transparent bg-gradient-to-r from-secondary to-secondary text-secondary-foreground",
+        ngo:
+          "border-transparent bg-gradient-to-r from-success to-secondary text-success-foreground",
+        verified:
+          "border-transparent bg-success/20 text-success border border-success/30",
+        trending:
+          "border-transparent bg-primary/10 text-primary border border-primary/20",
       },
     },
     defaultVariants: {

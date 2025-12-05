@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useMotion } from '@/contexts/MotionContext';
+import { useCursor, CursorType } from '@/contexts/CursorContext';
 
 interface Particle {
   x: number;
@@ -11,6 +12,8 @@ interface Particle {
   size: number;
   rotation: number;
   rotationSpeed: number;
+  type: 'diamond' | 'heart' | 'star' | 'circle';
+  color: string;
 }
 
 const CustomCursor = () => {
@@ -20,52 +23,92 @@ const CustomCursor = () => {
   const lastMouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const { reduceMotion } = useMotion();
+  const { cursorType, particlesEnabled, currentCursor } = useCursor();
   const [isVisible, setIsVisible] = useState(false);
 
+  const getParticleType = (cursor: CursorType): Particle['type'] => {
+    switch (cursor) {
+      case 'diamond': return 'diamond';
+      case 'heart': return 'heart';
+      case 'star': return 'star';
+      default: return 'diamond';
+    }
+  };
+
   const createParticle = useCallback((x: number, y: number): Particle => {
+    const useAlt = Math.random() > 0.5;
     return {
       x,
       y,
       vx: (Math.random() - 0.5) * 2,
       vy: Math.random() * 2 + 1,
       life: 1,
-      maxLife: 60 + Math.random() * 30,
-      size: 4 + Math.random() * 4,
+      maxLife: 50 + Math.random() * 30,
+      size: 3 + Math.random() * 4,
       rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.1,
+      rotationSpeed: (Math.random() - 0.5) * 0.15,
+      type: getParticleType(cursorType),
+      color: useAlt ? currentCursor.particleColorAlt : currentCursor.particleColor,
     };
-  }, []);
+  }, [cursorType, currentCursor]);
 
-  const drawDiamond = useCallback((
+  const drawParticle = useCallback((
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    size: number,
-    rotation: number,
-    alpha: number
+    particle: Particle
   ) => {
+    const { x, y, size, rotation, life, type, color } = particle;
+    const alpha = life * 0.8;
+    const colorWithAlpha = color.replace(/[\d.]+\)$/, `${alpha})`);
+
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(rotation);
-    ctx.beginPath();
-    ctx.moveTo(0, -size);
-    ctx.lineTo(size * 0.6, 0);
-    ctx.lineTo(0, size);
-    ctx.lineTo(-size * 0.6, 0);
-    ctx.closePath();
-    
-    const gradient = ctx.createLinearGradient(-size, -size, size, size);
-    gradient.addColorStop(0, `rgba(201, 162, 61, ${alpha})`);
-    gradient.addColorStop(0.5, `rgba(255, 215, 100, ${alpha})`);
-    gradient.addColorStop(1, `rgba(201, 162, 61, ${alpha * 0.7})`);
-    
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    
-    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-    
+
+    switch (type) {
+      case 'diamond':
+        ctx.beginPath();
+        ctx.moveTo(0, -size);
+        ctx.lineTo(size * 0.6, 0);
+        ctx.lineTo(0, size);
+        ctx.lineTo(-size * 0.6, 0);
+        ctx.closePath();
+        ctx.fillStyle = colorWithAlpha;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        break;
+
+      case 'heart':
+        ctx.beginPath();
+        const s = size * 0.5;
+        ctx.moveTo(0, s);
+        ctx.bezierCurveTo(-s * 2, -s, -s, -s * 2, 0, -s * 0.5);
+        ctx.bezierCurveTo(s, -s * 2, s * 2, -s, 0, s);
+        ctx.fillStyle = colorWithAlpha;
+        ctx.fill();
+        break;
+
+      case 'star':
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const r = i % 2 === 0 ? size : size * 0.4;
+          if (i === 0) ctx.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          else ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+        }
+        ctx.closePath();
+        ctx.fillStyle = colorWithAlpha;
+        ctx.fill();
+        break;
+
+      default:
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = colorWithAlpha;
+        ctx.fill();
+    }
+
     ctx.restore();
   }, []);
 
@@ -78,19 +121,18 @@ const CustomCursor = () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate mouse movement distance
     const dx = mouseRef.current.x - lastMouseRef.current.x;
     const dy = mouseRef.current.y - lastMouseRef.current.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // Spawn particles based on movement
-    if (distance > 5 && !reduceMotion) {
-      const particleCount = Math.min(Math.floor(distance / 10), 3);
+    if (distance > 5 && !reduceMotion && particlesEnabled && cursorType !== 'default') {
+      const particleCount = Math.min(Math.floor(distance / 12), 2);
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push(
           createParticle(
-            mouseRef.current.x + (Math.random() - 0.5) * 10,
-            mouseRef.current.y + (Math.random() - 0.5) * 10
+            mouseRef.current.x + (Math.random() - 0.5) * 12,
+            mouseRef.current.y + (Math.random() - 0.5) * 12
           )
         );
       }
@@ -102,25 +144,25 @@ const CustomCursor = () => {
     particlesRef.current = particlesRef.current.filter(particle => {
       particle.x += particle.vx;
       particle.y += particle.vy;
-      particle.vy += 0.05; // gravity
+      particle.vy += 0.06;
+      particle.vx *= 0.99;
       particle.rotation += particle.rotationSpeed;
       particle.life -= 1 / particle.maxLife;
 
       if (particle.life > 0) {
-        const alpha = particle.life * 0.8;
-        drawDiamond(ctx, particle.x, particle.y, particle.size, particle.rotation, alpha);
+        drawParticle(ctx, particle);
         return true;
       }
       return false;
     });
 
     // Limit particles for performance
-    if (particlesRef.current.length > 50) {
-      particlesRef.current = particlesRef.current.slice(-50);
+    if (particlesRef.current.length > 40) {
+      particlesRef.current = particlesRef.current.slice(-40);
     }
 
     animationRef.current = requestAnimationFrame(animate);
-  }, [createParticle, drawDiamond, reduceMotion]);
+  }, [createParticle, drawParticle, reduceMotion, particlesEnabled, cursorType]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -134,6 +176,13 @@ const CustomCursor = () => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
       setIsVisible(true);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        mouseRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        setIsVisible(true);
+      }
     };
 
     const handleMouseLeave = () => {
@@ -153,6 +202,7 @@ const CustomCursor = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
     document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -161,6 +211,7 @@ const CustomCursor = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (animationRef.current) {
@@ -169,7 +220,7 @@ const CustomCursor = () => {
     };
   }, [animate]);
 
-  if (reduceMotion) return null;
+  if (reduceMotion || !particlesEnabled || cursorType === 'default') return null;
 
   return (
     <canvas

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="diamondGradGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5D742"/>
+      <stop offset="50%" style="stop-color:#C9A23D"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+  </defs>
+  <path d="M16 2 L28 14 L16 30 L4 14 Z" fill="url(#diamondGradGold)" stroke="#FFD700" stroke-width="1"/>
+  <path d="M16 2 L10 14 L16 30" fill="#DAA520" opacity="0.5"/>
+  <path d="M4 14 L16 14 L28 14" stroke="#FFF8DC" stroke-width="0.5" opacity="0.6"/>
+  <circle cx="14" cy="10" r="2" fill="white" opacity="0.9"/>
+</svg>

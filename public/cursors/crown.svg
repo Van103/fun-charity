@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="crownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#C9A23D"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+  </defs>
+  <!-- Crown base -->
+  <path d="M4 24 L4 12 L10 18 L16 8 L22 18 L28 12 L28 24 Z" fill="url(#crownGrad)" stroke="#FFE4B5" stroke-width="0.5"/>
+  <!-- Jewels -->
+  <circle cx="16" cy="12" r="2" fill="#9333EA"/>
+  <circle cx="10" cy="18" r="1.5" fill="#EC4899"/>
+  <circle cx="22" cy="18" r="1.5" fill="#EC4899"/>
+  <!-- Base band -->
+  <rect x="4" y="24" width="24" height="4" fill="#B8860B"/>
+  <rect x="4" y="24" width="24" height="1" fill="#FFE4B5" opacity="0.5"/>
+</svg>

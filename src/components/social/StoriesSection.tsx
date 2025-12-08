@@ -63,24 +63,24 @@ export function StoriesSection() {
                   whileHover={{ scale: 1.02 }}
                   className="shrink-0 w-24 cursor-pointer group"
                 >
-                  <div className={`relative h-36 rounded-xl overflow-hidden ${
-                    story.hasNew 
-                      ? "ring-2 ring-secondary ring-offset-2 ring-offset-background" 
-                      : ""
-                  }`}>
+                  <div className="relative h-36 rounded-xl overflow-hidden">
                     {/* Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-secondary/40" />
                     
-                    {/* Avatar */}
-                    <div className="absolute top-2 left-2">
-                      <Avatar className={`w-9 h-9 border-2 ${
-                        story.hasNew ? "border-secondary" : "border-border"
+                    {/* Avatar - centered with gradient ring */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className={`p-0.5 rounded-full ${
+                        story.hasNew 
+                          ? "bg-gradient-to-br from-secondary via-secondary-light to-secondary" 
+                          : "bg-border"
                       }`}>
-                        <AvatarImage src={story.avatar} />
-                        <AvatarFallback className="bg-secondary/20 text-xs">
-                          {story.userName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
+                        <Avatar className="w-16 h-16 border-2 border-background">
+                          <AvatarImage src={story.avatar} />
+                          <AvatarFallback className="bg-secondary/20 text-lg">
+                            {story.userName.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                     </div>
 
                     {/* Live indicator */}
@@ -94,7 +94,7 @@ export function StoriesSection() {
 
                     {/* Name */}
                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-                      <span className="text-xs text-white font-medium line-clamp-2">
+                      <span className="text-xs text-white font-medium line-clamp-2 text-center">
                         {story.userName}
                       </span>
                     </div>

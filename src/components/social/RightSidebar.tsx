@@ -51,10 +51,10 @@ interface HonorStat {
 const honorStats: HonorStat[] = [
   { label: "TOP PROFILE", value: "1|1|1|1|1|1|1|1|1", barWidth: 100 },
   { label: "THU NHẬP", value: "9|9|9|9|9|9|9|9|9", barWidth: 95 },
-  { label: "BÀI VIẾT", value: "9|9|9", barWidth: 80 },
-  { label: "VIDEO", value: "9|9|9", barWidth: 75 },
-  { label: "BẠN BÈ", value: "1|1|1|1|1|1|1|1|1", barWidth: 90 },
-  { label: "SỐ NFT", value: "1|1|1|1|1|1|1|1|1", barWidth: 85 },
+  { label: "BÀI VIẾT", value: "9|9|9", barWidth: 45 },
+  { label: "VIDEO", value: "9|9|9", barWidth: 45 },
+  { label: "BẠN BÈ", value: "1|1|1|1|1|1|1|1|1", barWidth: 100 },
+  { label: "SỐ NFT", value: "1|1|1|1|1|1|1|1|1", barWidth: 100 },
 ];
 
 export function RightSidebar() {
@@ -67,17 +67,19 @@ export function RightSidebar() {
             HONOR BOARD
           </h3>
         </div>
-        <div className="p-4 space-y-3">
+        <div className="p-3 space-y-2">
           {honorStats.map((stat) => (
-            <div key={stat.label} className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">{stat.label}</span>
-              </div>
-              <div className="h-4 bg-muted rounded-sm overflow-hidden flex items-center px-1">
+            <div key={stat.label} className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-20 shrink-0">{stat.label}</span>
+              <div className="flex-1 h-5 bg-muted/50 rounded overflow-hidden flex items-center">
                 <div 
-                  className="h-2.5 bg-gradient-to-r from-secondary to-secondary-light rounded-sm transition-all"
+                  className="h-full bg-gradient-to-r from-secondary/80 to-secondary flex items-center justify-end px-1"
                   style={{ width: `${stat.barWidth}%` }}
-                />
+                >
+                  <span className="text-[9px] font-mono text-secondary-foreground tracking-wider">
+                    {stat.value}
+                  </span>
+                </div>
               </div>
             </div>
           ))}

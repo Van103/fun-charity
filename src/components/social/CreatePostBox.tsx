@@ -187,67 +187,37 @@ export function CreatePostBox({ profile, onPostCreated }: CreatePostBoxProps) {
         />
 
         <div className="flex items-center justify-between pt-3 border-t border-border">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-1.5"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-2 px-3"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSubmitting}
             >
               <Image className="w-4 h-4 text-success" />
-              <span className="hidden sm:inline text-xs">Ảnh</span>
+              <span className="text-xs">Ảnh/Bài viết</span>
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-1.5"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-2 px-3"
               onClick={() => videoInputRef.current?.click()}
               disabled={isSubmitting}
             >
               <Video className="w-4 h-4 text-destructive" />
-              <span className="hidden sm:inline text-xs">Video</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-muted-foreground hover:text-secondary hover:bg-muted/50 gap-1.5"
-              onClick={() => setShowAdvancedModal(true)}
-              disabled={isSubmitting}
-            >
-              <PenSquare className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs">Nâng cao</span>
+              <span className="text-xs">Video</span>
             </Button>
           </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              size="sm" 
-              variant="ghost"
-              className="gap-1.5"
-              disabled={isSubmitting}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span className="hidden sm:inline">AI</span>
-            </Button>
-            <Button 
-              size="sm" 
-              className="bg-gradient-to-r from-secondary to-secondary-light text-secondary-foreground gap-1.5"
-              onClick={handleSubmit}
-              disabled={isSubmitting || (!content.trim() && mediaFiles.length === 0)}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">Đang đăng...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  <span className="hidden sm:inline">Đăng</span>
-                </>
-              )}
-            </Button>
-          </div>
+          <Button 
+            size="sm" 
+            className="bg-gradient-to-r from-secondary to-secondary-light text-secondary-foreground gap-2 px-4"
+            onClick={() => setShowAdvancedModal(true)}
+            disabled={isSubmitting}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Enjoy AI</span>
+          </Button>
         </div>
       </div>
 

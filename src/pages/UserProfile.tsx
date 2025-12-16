@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { LeftSidebar } from "@/components/social/LeftSidebar";
+import { ProfileIntroCard } from "@/components/profile/ProfileIntroCard";
 import { RightSidebar } from "@/components/social/RightSidebar";
 import { CreatePostBox } from "@/components/social/CreatePostBox";
 import { SocialPostCard } from "@/components/social/SocialPostCard";
@@ -18,7 +18,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Camera, Edit, User as UserIcon } from "lucide-react";
+import { Camera, Edit, User as UserIcon, Plus, ChevronDown, Users, Images, Video, CalendarCheck } from "lucide-react";
 import { EditProfileModal } from "@/components/profile/EditProfileModal";
 
 interface Profile {
@@ -38,6 +38,7 @@ export default function UserProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("posts");
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -105,6 +106,15 @@ export default function UserProfile() {
     setProfile(updatedProfile);
   };
 
+  const tabs = [
+    { id: "posts", label: "Bài viết" },
+    { id: "about", label: "Giới thiệu" },
+    { id: "friends", label: "Bạn bè" },
+    { id: "photos", label: "Ảnh" },
+    { id: "videos", label: "Video" },
+    { id: "checkins", label: "Check in" },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -128,97 +138,175 @@ export default function UserProfile() {
 
         <main className="pt-16">
           {/* Facebook-style Profile Header */}
-          <div className="bg-card border-b border-border">
-            {/* Cover Image */}
-            <div className="relative h-48 md:h-64 lg:h-80 bg-gradient-to-r from-secondary/30 to-primary/30 overflow-hidden">
-              {profile?.cover_url ? (
-                <img 
-                  src={profile.cover_url} 
-                  alt="Cover" 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-r from-secondary/20 via-primary/10 to-secondary/20" />
-              )}
-              <Button
-                variant="secondary"
-                size="sm"
-                className="absolute bottom-4 right-4 gap-2"
-                onClick={() => setEditModalOpen(true)}
-              >
-                <Camera className="w-4 h-4" />
-                <span className="hidden sm:inline">Chỉnh sửa ảnh bìa</span>
-              </Button>
-            </div>
+          <div className="bg-card shadow-sm">
+            {/* Cover Image - Full width */}
+            <div className="relative max-w-5xl mx-auto">
+              <div className="relative h-[200px] sm:h-[280px] md:h-[350px] bg-gradient-to-r from-secondary/30 to-primary/30 overflow-hidden rounded-b-lg">
+                {profile?.cover_url ? (
+                  <img 
+                    src={profile.cover_url} 
+                    alt="Cover" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-r from-secondary/20 via-primary/10 to-secondary/20" />
+                )}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="absolute bottom-4 right-4 gap-2 bg-white/90 hover:bg-white text-foreground shadow-md"
+                  onClick={() => setEditModalOpen(true)}
+                >
+                  <Camera className="w-4 h-4" />
+                  <span className="hidden sm:inline">Chỉnh sửa ảnh bìa</span>
+                </Button>
+              </div>
 
-            {/* Profile Info Section */}
-            <div className="container mx-auto px-4">
-              <div className="relative flex flex-col md:flex-row md:items-end gap-4 pb-4">
-                {/* Avatar */}
-                <div className="relative -mt-16 md:-mt-20">
-                  <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 border-background shadow-xl">
-                    <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Avatar"} />
-                    <AvatarFallback className="bg-secondary/20 text-4xl">
-                      <UserIcon className="w-16 h-16 text-secondary" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <button 
-                    onClick={() => setEditModalOpen(true)}
-                    className="absolute bottom-2 right-2 p-2 bg-muted hover:bg-muted/80 rounded-full transition-colors"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </button>
-                </div>
+              {/* Profile Info Section - Facebook style */}
+              <div className="relative px-4 pb-4">
+                <div className="flex flex-col md:flex-row md:items-end gap-4">
+                  {/* Avatar - Overlapping cover */}
+                  <div className="relative -mt-[70px] md:-mt-[85px] z-10">
+                    <Avatar className="w-[140px] h-[140px] md:w-[170px] md:h-[170px] border-4 border-card shadow-xl ring-4 ring-card">
+                      <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Avatar"} />
+                      <AvatarFallback className="bg-secondary/20 text-5xl">
+                        <UserIcon className="w-20 h-20 text-secondary" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <button 
+                      onClick={() => setEditModalOpen(true)}
+                      className="absolute bottom-3 right-3 p-2.5 bg-muted hover:bg-muted/80 rounded-full transition-colors shadow-md border border-border"
+                    >
+                      <Camera className="w-5 h-5" />
+                    </button>
+                  </div>
 
-                {/* Name and Info */}
-                <div className="flex-1 md:pb-2">
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                    {profile?.full_name || "Chưa đặt tên"}
-                  </h1>
-                  {profile?.bio && (
-                    <p className="text-muted-foreground mt-1 max-w-lg">{profile.bio}</p>
-                  )}
-                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                    {profile?.reputation_score && profile.reputation_score > 0 && (
-                      <span>⭐ {profile.reputation_score} điểm uy tín</span>
-                    )}
-                    {profile?.is_verified && (
-                      <span className="text-secondary">✓ Đã xác minh</span>
-                    )}
+                  {/* Name and Stats */}
+                  <div className="flex-1 md:pb-4 md:pl-4">
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                      {profile?.full_name || "Chưa đặt tên"}
+                      {profile?.is_verified && (
+                        <span className="ml-2 text-primary">✓</span>
+                      )}
+                    </h1>
+                    <p className="text-muted-foreground font-medium">4,7K người bạn</p>
+                    
+                    {/* Friends Avatars Preview */}
+                    <div className="flex -space-x-2 mt-2">
+                      {[1,2,3,4,5,6,7,8].map((i) => (
+                        <div 
+                          key={i} 
+                          className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary/40 to-primary/40 border-2 border-card"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pb-4">
+                    <Button className="gap-2 bg-primary hover:bg-primary/90">
+                      <Plus className="w-4 h-4" />
+                      Thêm vào tin
+                    </Button>
+                    <Button 
+                      variant="secondary" 
+                      className="gap-2"
+                      onClick={() => setEditModalOpen(true)}
+                    >
+                      <Edit className="w-4 h-4" />
+                      Chỉnh sửa trang cá nhân
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
 
-                {/* Edit Button */}
-                <div className="flex gap-2">
-                  <Button 
-                    variant="secondary" 
-                    className="gap-2"
-                    onClick={() => setEditModalOpen(true)}
-                  >
-                    <Edit className="w-4 h-4" />
-                    Chỉnh sửa hồ sơ
-                  </Button>
+                {/* Divider */}
+                <div className="border-t border-border mt-4 pt-1">
+                  {/* Navigation Tabs */}
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-4 py-4 text-sm font-semibold whitespace-nowrap transition-colors relative ${
+                          activeTab === tab.id
+                            ? "text-primary"
+                            : "text-muted-foreground hover:bg-muted/50 rounded-lg"
+                        }`}
+                      >
+                        {tab.label}
+                        {activeTab === tab.id && (
+                          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-full" />
+                        )}
+                      </button>
+                    ))}
+                    <button className="px-4 py-4 text-sm font-semibold text-muted-foreground hover:bg-muted/50 rounded-lg flex items-center gap-1">
+                      Xem thêm
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex gap-6">
-              {/* Left Sidebar - Hidden on mobile */}
-              <div className="hidden lg:block">
-                <LeftSidebar profile={profile} />
+          {/* Main Content - Two Column Layout like Facebook */}
+          <div className="max-w-5xl mx-auto px-4 py-4">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Left Column - Intro/About */}
+              <div className="lg:w-[360px] shrink-0 space-y-4">
+                <ProfileIntroCard profile={profile} onEdit={() => setEditModalOpen(true)} />
+                
+                {/* Photos Preview Card */}
+                <div className="glass-card overflow-hidden">
+                  <div className="p-4 flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-foreground">Ảnh</h3>
+                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                      Xem tất cả ảnh
+                    </Button>
+                  </div>
+                  <div className="px-4 pb-4 grid grid-cols-3 gap-1">
+                    {[1,2,3,4,5,6,7,8,9].map((i) => (
+                      <div 
+                        key={i} 
+                        className="aspect-square bg-gradient-to-br from-secondary/20 to-primary/20 rounded-md"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Friends Preview Card */}
+                <div className="glass-card overflow-hidden">
+                  <div className="p-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground">Bạn bè</h3>
+                      <p className="text-sm text-muted-foreground">4.700 người bạn</p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                      Xem tất cả
+                    </Button>
+                  </div>
+                  <div className="px-4 pb-4 grid grid-cols-3 gap-2">
+                    {[1,2,3,4,5,6,7,8,9].map((i) => (
+                      <div key={i} className="text-center">
+                        <div className="aspect-square bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg mb-1" />
+                        <p className="text-xs font-medium text-foreground truncate">Bạn bè {i}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              {/* Main Feed */}
-              <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
+              {/* Right Column - Posts Feed */}
+              <div className="flex-1 min-w-0">
                 <PullToRefresh onRefresh={handleRefresh}>
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     <CreatePostBox profile={profile} />
                     
                     {/* Posts Feed */}
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                       {postsLoading ? (
                         <PostCardSkeletonList count={3} />
                       ) : posts && posts.length > 0 ? (
@@ -249,11 +337,6 @@ export default function UserProfile() {
                     </div>
                   </div>
                 </PullToRefresh>
-              </div>
-
-              {/* Right Sidebar - Hidden on mobile/tablet */}
-              <div className="hidden xl:block">
-                <RightSidebar />
               </div>
             </div>
           </div>

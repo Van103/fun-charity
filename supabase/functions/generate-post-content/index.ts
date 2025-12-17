@@ -158,6 +158,15 @@ Nội dung phải ngắn gọn (tối đa 200 từ), có emoji phù hợp và k�
       }
       const errorText = await textResponse.text();
       console.error("AI gateway error (text):", textResponse.status, errorText);
+      
+      // Handle transient gateway errors (Cloudflare 5xx errors)
+      if (textResponse.status >= 500) {
+        return new Response(JSON.stringify({ error: "Hệ thống AI đang bận, vui lòng thử lại sau vài giây." }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
       throw new Error("AI gateway error");
     }
 

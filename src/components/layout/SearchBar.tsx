@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, X, User, Newspaper, FileText, UserPlus, UserCheck, UserMinus, MessageCircle, Loader2 } from "lucide-react";
+import { Search, X, User, Newspaper, FileText, UserPlus, UserCheck, UserMinus, MessageCircle, Loader2, Users } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ export function SearchBar() {
   const [isFocused, setIsFocused] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [friendshipStatuses, setFriendshipStatuses] = useState<Record<string, FriendshipStatus>>({});
+  const [mutualFriendsCounts, setMutualFriendsCounts] = useState<Record<string, number>>({});
   const [loadingActions, setLoadingActions] = useState<Record<string, boolean>>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,21 +62,68 @@ export function SearchBar() {
       } else {
         setResults([]);
         setFriendshipStatuses({});
+        setMutualFriendsCounts({});
       }
     }, 300);
 
     return () => clearTimeout(searchTimeout);
   }, [query]);
 
+  // Get mutual friends count
+  const getMutualFriendsCount = async (userId: string): Promise<number> => {
+    if (!currentUserId || userId === currentUserId) return 0;
+
+    try {
+      // Get current user's friends
+      const { data: myFriends } = await supabase
+        .from("friendships")
+        .select("user_id, friend_id")
+        .eq("status", "accepted")
+        .or(`user_id.eq.${currentUserId},friend_id.eq.${currentUserId}`);
+
+      if (!myFriends || myFriends.length === 0) return 0;
+
+      const myFriendIds = new Set(
+        myFriends.map(f => f.user_id === currentUserId ? f.friend_id : f.user_id)
+      );
+
+      // Get target user's friends
+      const { data: theirFriends } = await supabase
+        .from("friendships")
+        .select("user_id, friend_id")
+        .eq("status", "accepted")
+        .or(`user_id.eq.${userId},friend_id.eq.${userId}`);
+
+      if (!theirFriends || theirFriends.length === 0) return 0;
+
+      const theirFriendIds = new Set(
+        theirFriends.map(f => f.user_id === userId ? f.friend_id : f.user_id)
+      );
+
+      // Count intersection
+      let mutualCount = 0;
+      myFriendIds.forEach(id => {
+        if (theirFriendIds.has(id)) mutualCount++;
+      });
+
+      return mutualCount;
+    } catch (error) {
+      console.error("Error getting mutual friends:", error);
+      return 0;
+    }
+  };
+
   // Check friendship status for user results
   const checkFriendshipStatuses = async (userIds: string[]) => {
     if (!currentUserId || userIds.length === 0) return;
 
     const statuses: Record<string, FriendshipStatus> = {};
+    const mutualCounts: Record<string, number> = {};
 
     for (const userId of userIds) {
       if (userId === currentUserId) {
-        statuses[userId] = { status: "none" }; // Self
+        statuses[userId] = { status: "none" };
+        mutualCounts[userId] = 0;
         continue;
       }
 
@@ -99,9 +147,13 @@ export function SearchBar() {
       } else {
         statuses[userId] = { status: "none" };
       }
+
+      // Get mutual friends count
+      mutualCounts[userId] = await getMutualFriendsCount(userId);
     }
 
     setFriendshipStatuses(statuses);
+    setMutualFriendsCounts(mutualCounts);
   };
 
   const performSearch = async (searchQuery: string) => {
@@ -495,11 +547,21 @@ export function SearchBar() {
                             {result.subtitle}
                           </p>
                         )}
-                        {result.type === "user" && friendshipStatuses[result.id]?.status === "friends" && (
-                          <p className="text-xs text-primary flex items-center gap-1">
-                            <UserCheck className="w-3 h-3" />
-                            Bạn bè
-                          </p>
+                        {result.type === "user" && result.id !== currentUserId && (
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            {friendshipStatuses[result.id]?.status === "friends" && (
+                              <span className="text-primary flex items-center gap-1">
+                                <UserCheck className="w-3 h-3" />
+                                Bạn bè
+                              </span>
+                            )}
+                            {mutualFriendsCounts[result.id] > 0 && (
+                              <span className="flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                {mutualFriendsCounts[result.id]} bạn chung
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
                       {renderFriendshipActions(result)}

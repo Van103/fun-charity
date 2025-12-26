@@ -14,6 +14,7 @@ import {
 import { MotionToggle } from "@/components/background/MotionToggle";
 import { WalletConnectModal } from "@/components/wallet/WalletConnectModal";
 import { NotificationDropdown } from "./NotificationDropdown";
+import { MessageDropdown } from "./MessageDropdown";
 import { SearchBar } from "./SearchBar";
 import { LanguageToggle } from "./LanguageToggle";
 import CursorSettings from "@/components/cursor/CursorSettings";
@@ -252,23 +253,9 @@ export function Navbar() {
               <CursorSettings />
             </div>
             
-            {/* Messages - always visible */}
+            {/* Messages Dropdown - always visible */}
             {user && (
-              <Link to="/messages">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="relative text-foreground hover:text-primary hover:bg-primary/10"
-                  title={t("nav.messages") || "Messages"}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  {unreadMessageCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold text-white bg-destructive rounded-full px-1">
-                      {unreadMessageCount > 99 ? "99+" : unreadMessageCount}
-                    </span>
-                  )}
-                </Button>
-              </Link>
+              <MessageDropdown userId={user.id} unreadCount={unreadMessageCount} />
             )}
 
             {/* Notifications - always visible but smaller on mobile */}

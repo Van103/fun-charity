@@ -71,14 +71,14 @@ export function MobileBottomNav() {
               to={item.href}
               className="flex flex-col items-center justify-center flex-1 h-full py-1.5 relative"
             >
-              {/* Active indicator dot */}
+              {/* Active indicator line - like Facebook */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div 
-                    className="absolute -top-0.5 w-1 h-1 rounded-full bg-primary"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    exit={{ scaleX: 0 }}
                     layoutId="activeIndicator"
                   />
                 )}
@@ -86,9 +86,7 @@ export function MobileBottomNav() {
               
               <motion.div
                 whileTap={{ scale: 0.9 }}
-                className={`p-1.5 rounded-xl transition-colors ${
-                  isActive ? "bg-primary/10" : ""
-                }`}
+                className="p-1.5 rounded-xl transition-colors"
               >
                 <Icon className={`w-6 h-6 transition-colors ${
                   isActive ? "text-primary" : "text-muted-foreground"

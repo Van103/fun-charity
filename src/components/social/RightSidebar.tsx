@@ -95,17 +95,16 @@ export function RightSidebar() {
   return (
     <aside className="w-80 shrink-0 space-y-4">
       {/* Honor Board */}
-      <div className="rounded-2xl overflow-hidden relative" style={{ backgroundImage: 'url(/images/purple-light-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0 bg-purple-900/20 backdrop-blur-[1px]" />
-        <div className="relative border-b border-yellow-400/30">
-          <h3 className="py-3 px-2 font-extrabold text-center tracking-widest drop-shadow-lg w-full bg-gradient-to-r from-purple-900/70 via-purple-800/80 to-purple-900/70" style={{ color: '#FFD700', fontSize: '22px' }}>
+      <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-purple-200 via-purple-100 to-pink-100 border-2 border-yellow-400/60 shadow-lg">
+        <div className="border-b border-yellow-400/40 bg-gradient-to-r from-purple-300/80 via-purple-200/90 to-purple-300/80">
+          <h3 className="py-3 px-2 font-extrabold text-center tracking-widest drop-shadow-lg w-full" style={{ color: '#7C3AED', fontSize: '20px' }}>
             <span className="animate-sparkle inline-block">✨</span> {t("honor.title")} <span className="animate-sparkle-delay inline-block">✨</span>
           </h3>
         </div>
-        <div className="relative p-3 space-y-3">
+        <div className="p-3 space-y-2">
           {statsLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-yellow-400" />
+              <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
             </div>
           ) : (
             honorStats.map((stat) => (
@@ -121,51 +120,50 @@ export function RightSidebar() {
       </div>
 
       {/* Top Ranking */}
-      <div className="rounded-2xl overflow-hidden relative" style={{ backgroundImage: 'url(/images/purple-light-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0 bg-purple-900/20 backdrop-blur-[1px]" />
-        <div className="relative border-b border-yellow-400/30">
-          <h3 className="py-3 px-2 font-extrabold text-center tracking-widest drop-shadow-lg w-full bg-gradient-to-r from-purple-900/70 via-purple-800/80 to-purple-900/70" style={{ color: '#FFD700', fontSize: '22px' }}>
+      <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-purple-200 via-purple-100 to-pink-100 border-2 border-yellow-400/60 shadow-lg">
+        <div className="border-b border-yellow-400/40 bg-gradient-to-r from-purple-300/80 via-purple-200/90 to-purple-300/80">
+          <h3 className="py-3 px-2 font-extrabold text-center tracking-widest drop-shadow-lg w-full" style={{ color: '#7C3AED', fontSize: '20px' }}>
             <span className="animate-sparkle inline-block">👑</span> {t("ranking.title")} <span className="animate-sparkle-delay inline-block">👑</span>
           </h3>
         </div>
-        <div className="ranking-scroll-container h-[500px] overflow-y-auto relative p-3 space-y-2.5">
+        <div className="ranking-scroll-container h-[500px] overflow-y-auto p-3 space-y-2.5">
           {rankersLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-yellow-400" />
+              <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
             </div>
           ) : (
             displayRankers.map((ranker) => (
               <div
                 key={ranker.rank}
-                className="flex items-center gap-2 px-3 py-3 rounded-xl bg-white/95 cursor-pointer mb-1.5 transition-colors"
+                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/90 cursor-pointer transition-all hover:bg-white/95 hover:shadow-md"
                 style={{ 
-                  boxShadow: '0 0 12px 2px rgba(255, 215, 0, 0.5), 0 0 4px 1px rgba(255, 215, 0, 0.3)',
-                  border: '2px solid rgba(255, 215, 0, 0.6)'
+                  boxShadow: '0 2px 8px rgba(124, 58, 237, 0.15)',
+                  border: '1px solid rgba(124, 58, 237, 0.2)'
                 }}
               >
                 {/* Rank badge with avatar */}
                 <div className="relative">
-                  <div className="p-0.5 rounded-full bg-gradient-to-br from-yellow-400/60 to-yellow-500/30">
-                    <Avatar className="w-10 h-10 border-2 border-yellow-400/40">
+                  <div className="p-0.5 rounded-full bg-gradient-to-br from-purple-300/60 to-pink-200/30">
+                    <Avatar className="w-9 h-9 border border-purple-300/50">
                       <AvatarImage src={ranker.avatar} />
-                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarGradient(ranker.name)} text-white font-medium`} style={{ fontSize: '16px' }}>
+                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarGradient(ranker.name)} text-white font-medium`} style={{ fontSize: '14px' }}>
                         {ranker.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </div>
-                  <div className={`absolute -bottom-1 -left-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-md ${getRankBadgeStyle(ranker.rank)}`} style={{ fontSize: '11px' }}>
-                    #{ranker.rank}
+                  <div className={`absolute -bottom-1 -left-1 w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm ${getRankBadgeStyle(ranker.rank)}`} style={{ fontSize: '10px' }}>
+                    {ranker.rank}
                   </div>
                 </div>
                 <div className="flex-1 min-w-0 ml-1">
                   <div className="flex items-center gap-1">
-                    <span className="font-bold truncate" style={{ color: '#4C1D95', fontSize: '16px' }}>{ranker.name}</span>
+                    <span className="font-semibold truncate" style={{ color: '#4C1D95', fontSize: '14px' }}>{ranker.name}</span>
                     {ranker.verified && (
-                      <span style={{ color: '#4C1D95', fontSize: '12px' }}>✓</span>
+                      <span style={{ color: '#7C3AED', fontSize: '11px' }}>✓</span>
                     )}
                   </div>
                 </div>
-                <span className="font-bold shrink-0 whitespace-nowrap" style={{ color: '#4C1D95', fontSize: '16px' }}>
+                <span className="font-bold shrink-0 whitespace-nowrap" style={{ color: '#7C3AED', fontSize: '14px' }}>
                   {formatCurrency(ranker.amount)}
                 </span>
               </div>

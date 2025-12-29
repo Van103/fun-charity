@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, UserPlus, UserCheck, MessageCircle, Users, Camera, MapPin, Briefcase, GraduationCap, Clock, UserMinus, ChevronDown } from "lucide-react";
+import { Loader2, UserPlus, UserCheck, MessageCircle, Users, Camera, MapPin, Briefcase, GraduationCap, Clock, UserMinus, ChevronDown, Phone, Video } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -261,6 +261,11 @@ export default function PublicProfile() {
     navigate(`/messages?user=${userId}`);
   };
 
+  const startCall = (type: "video" | "audio") => {
+    if (!currentUserId || !userId) return;
+    navigate(`/messages?user=${userId}&startCall=${type}`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -374,6 +379,26 @@ export default function PublicProfile() {
                   <MessageCircle className="w-4 h-4" />
                   Nhắn tin
                 </Button>
+                {friendshipStatus === 'friends' && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => startCall("audio")}
+                      title="Gọi điện"
+                    >
+                      <Phone className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => startCall("video")}
+                      title="Gọi video"
+                    >
+                      <Video className="w-4 h-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             )}
           </div>

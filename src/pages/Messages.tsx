@@ -87,6 +87,7 @@ export default function Messages() {
   const answerCallId = searchParams.get("answer");
   const answerConversationId = searchParams.get("conversation");
   const answerCallType = searchParams.get("type") as "video" | "audio" | null;
+  const startCallType = searchParams.get("startCall") as "video" | "audio" | null;
   const { toast } = useToast();
   
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -194,13 +195,28 @@ export default function Messages() {
       
       if (targetUserId) {
         await openConversationWithUser(user.id, targetUserId);
+        
+        // Auto start call if startCall param is present
+        if (startCallType) {
+          // Small delay to ensure conversation is loaded
+          setTimeout(() => {
+            setCallType(startCallType);
+            setIsIncomingCall(false);
+            setAutoAnswerCall(false);
+            setShowVideoCall(true);
+            // Clear the startCall param
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete("startCall");
+            setSearchParams(newParams, { replace: true });
+          }, 500);
+        }
       }
       
       setIsLoading(false);
     };
     
     init();
-  }, [targetUserId]);
+  }, [targetUserId, startCallType]);
 
   // Handle incoming call from URL params (when user clicks answer from notification)
   useEffect(() => {

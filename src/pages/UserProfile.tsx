@@ -10,6 +10,7 @@ import { PostCardSkeletonList, PostCardSkeleton } from "@/components/social/Post
 import { PullToRefresh } from "@/components/social/PullToRefresh";
 import { PhotosPreviewCard, PhotosTab } from "@/components/profile/PhotosTab";
 import { DonationHistoryCard } from "@/components/donations/DonationHistoryCard";
+import { CallHistoryCard } from "@/components/chat/CallHistoryCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet-async";
@@ -304,6 +305,9 @@ export default function UserProfile() {
 
                 {/* Donation History Card */}
                 <DonationHistoryCard userId={profile?.user_id || null} limit={5} />
+
+                {/* Call History Card */}
+                <CallHistoryCard userId={profile?.user_id || null} limit={5} />
               </div>
 
               {/* Right Column - Content based on active tab */}

@@ -82,6 +82,18 @@ interface SearchUser {
   avatar_url: string | null;
 }
 
+// Helper function to check if URL is a video
+const isVideoUrl = (url: string): boolean => {
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.m4v'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some(ext => lowerUrl.includes(ext));
+};
+
+// Helper function to get media type label
+const getMediaLabel = (url: string): string => {
+  return isVideoUrl(url) ? "🎬 Video" : "📷 Hình ảnh";
+};
+
 export default function Messages() {
   const [searchParams, setSearchParams] = useSearchParams();
   const targetUserId = searchParams.get("user");
@@ -365,7 +377,7 @@ export default function Messages() {
           return {
             ...convo,
             participants: profiles || [],
-            lastMessage: lastMsg?.image_url ? "📷 Hình ảnh" : lastMsg?.content || "",
+            lastMessage: lastMsg?.image_url ? getMediaLabel(lastMsg.image_url) : lastMsg?.content || "",
             isOnline: false,
             unreadCount: unreadCount || 0
           };
@@ -391,7 +403,7 @@ export default function Messages() {
         return {
           ...convo,
           otherUser: profile || undefined,
-          lastMessage: lastMsg?.image_url ? "📷 Hình ảnh" : lastMsg?.content || "",
+          lastMessage: lastMsg?.image_url ? getMediaLabel(lastMsg.image_url) : lastMsg?.content || "",
           isOnline: onlineStatusMap.get(otherUserId) || false,
           unreadCount: unreadCount || 0
         };
@@ -1212,12 +1224,21 @@ export default function Messages() {
                               }`}
                             >
                               {msg.image_url && (
-                                <img 
-                                  src={msg.image_url} 
-                                  alt="Shared image" 
-                                  className="max-w-full max-h-72 object-cover cursor-pointer"
-                                  onClick={() => window.open(msg.image_url!, '_blank')}
-                                />
+                                isVideoUrl(msg.image_url) ? (
+                                  <video 
+                                    src={msg.image_url} 
+                                    controls
+                                    className="max-w-full max-h-72 rounded-lg"
+                                    preload="metadata"
+                                  />
+                                ) : (
+                                  <img 
+                                    src={msg.image_url} 
+                                    alt="Shared image" 
+                                    className="max-w-full max-h-72 object-cover cursor-pointer"
+                                    onClick={() => window.open(msg.image_url!, '_blank')}
+                                  />
+                                )
                               )}
                               {msg.content && (
                                 <div className={`px-4 py-2 ${msg.content === '👍' ? 'text-4xl py-1' : ''}`}>
@@ -1483,13 +1504,30 @@ export default function Messages() {
                       ) : (
                         <div className="grid grid-cols-3 gap-2">
                           {messageMedia.slice(0, 6).map((msg) => (
-                            <img
-                              key={msg.id}
-                              src={msg.image_url!}
-                              alt="Media"
-                              className="aspect-square object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={() => window.open(msg.image_url!, '_blank')}
-                            />
+                            isVideoUrl(msg.image_url!) ? (
+                              <div 
+                                key={msg.id}
+                                className="aspect-square rounded-lg cursor-pointer hover:opacity-80 transition-opacity relative bg-muted overflow-hidden"
+                                onClick={() => window.open(msg.image_url!, '_blank')}
+                              >
+                                <video 
+                                  src={msg.image_url!}
+                                  className="w-full h-full object-cover"
+                                  preload="metadata"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                  <Video className="w-6 h-6 text-white" />
+                                </div>
+                              </div>
+                            ) : (
+                              <img
+                                key={msg.id}
+                                src={msg.image_url!}
+                                alt="Media"
+                                className="aspect-square object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => window.open(msg.image_url!, '_blank')}
+                              />
+                            )
                           ))}
                         </div>
                       )}

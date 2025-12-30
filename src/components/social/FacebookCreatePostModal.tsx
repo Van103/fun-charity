@@ -106,6 +106,12 @@ export function FacebookCreatePostModal({
   const [mentionedUsers, setMentionedUsers] = useState<MentionUser[]>([]);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   
+  // Inline mention states (when typing @)
+  const [showInlineMention, setShowInlineMention] = useState(false);
+  const [inlineMentionQuery, setInlineMentionQuery] = useState("");
+  const [inlineMentionIndex, setInlineMentionIndex] = useState(0);
+  const [mentionStartPosition, setMentionStartPosition] = useState<number | null>(null);
+  
   // AI Panel states
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [aiTopic, setAiTopic] = useState("");
@@ -117,6 +123,7 @@ export function FacebookCreatePostModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const uploadControllersRef = useRef<Map<string, UploadController>>(new Map());
+  const mentionDropdownRef = useRef<HTMLDivElement>(null);
 
   const { toast } = useToast();
   const createPost = useCreateFeedPost();
@@ -127,9 +134,9 @@ export function FacebookCreatePostModal({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Fetch friends for tagging
+  // Fetch friends for tagging (used by both tag picker and inline mention)
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
-    queryKey: ["tag-friends", tagSearchQuery],
+    queryKey: ["tag-friends", tagSearchQuery || inlineMentionQuery],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
@@ -146,19 +153,20 @@ export function FacebookCreatePostModal({
         f.user_id === user.id ? f.friend_id : f.user_id
       );
 
+      const searchQuery = tagSearchQuery || inlineMentionQuery;
       let query = supabase
         .from("profiles")
         .select("user_id, full_name, avatar_url")
         .in("user_id", friendIds);
 
-      if (tagSearchQuery) {
-        query = query.ilike("full_name", `%${tagSearchQuery}%`);
+      if (searchQuery) {
+        query = query.ilike("full_name", `%${searchQuery}%`);
       }
 
       const { data: profiles } = await query.limit(10);
       return profiles || [];
     },
-    enabled: showTagPicker,
+    enabled: showTagPicker || showInlineMention,
   });
 
   // Auto-resize textarea
@@ -168,6 +176,101 @@ export function FacebookCreatePostModal({
       textareaRef.current.style.height = `${Math.max(textareaRef.current.scrollHeight, 120)}px`;
     }
   }, [content]);
+
+  // Reset inline mention index when friends change
+  useEffect(() => {
+    setInlineMentionIndex(0);
+  }, [friends]);
+
+  // Handle content change and detect @ mentions
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    const cursorPos = e.target.selectionStart;
+    
+    setContent(newValue);
+    
+    // Check if we should show mention dropdown
+    const textBeforeCursor = newValue.slice(0, cursorPos);
+    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
+    
+    if (lastAtIndex !== -1) {
+      const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
+      // Check if there's no space after @ (still typing mention)
+      if (!textAfterAt.includes(" ") && !textAfterAt.includes("\n")) {
+        setShowInlineMention(true);
+        setInlineMentionQuery(textAfterAt);
+        setMentionStartPosition(lastAtIndex);
+        return;
+      }
+    }
+    
+    // Hide mention dropdown if no active mention
+    setShowInlineMention(false);
+    setInlineMentionQuery("");
+    setMentionStartPosition(null);
+  };
+
+  // Handle keyboard navigation for inline mention
+  const handleContentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!showInlineMention || friends.length === 0) return;
+    
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setInlineMentionIndex((prev) => (prev + 1) % friends.length);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setInlineMentionIndex((prev) => (prev - 1 + friends.length) % friends.length);
+        break;
+      case "Enter":
+      case "Tab":
+        e.preventDefault();
+        if (friends[inlineMentionIndex]) {
+          insertInlineMention(friends[inlineMentionIndex]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setShowInlineMention(false);
+        setInlineMentionQuery("");
+        setMentionStartPosition(null);
+        break;
+    }
+  };
+
+  // Insert mention into content
+  const insertInlineMention = (user: MentionUser) => {
+    if (mentionStartPosition === null) return;
+    
+    const beforeMention = content.slice(0, mentionStartPosition);
+    const afterMention = content.slice(mentionStartPosition + 1 + inlineMentionQuery.length);
+    const displayName = user.full_name || "Người dùng";
+    
+    // Insert the display name (will show as highlighted)
+    const newContent = `${beforeMention}@${displayName} ${afterMention}`;
+    setContent(newContent);
+    
+    // Add to mentioned users if not already tagged
+    if (!mentionedUsers.some((u) => u.user_id === user.user_id)) {
+      setMentionedUsers((prev) => [...prev, user]);
+    }
+    
+    // Reset mention state
+    setShowInlineMention(false);
+    setInlineMentionQuery("");
+    setMentionStartPosition(null);
+    setInlineMentionIndex(0);
+    
+    // Refocus and set cursor position
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const newCursorPos = mentionStartPosition + displayName.length + 2; // +2 for @ and space
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
 
   // Handle drag end for reordering
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -530,15 +633,65 @@ export function FacebookCreatePostModal({
           </div>
 
           {/* Content Area */}
-          <div className="px-4 pb-2">
+          <div className="px-4 pb-2 relative">
             <textarea
               ref={textareaRef}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={handleContentChange}
+              onKeyDown={handleContentKeyDown}
               placeholder={`${profile?.full_name || "Bạn"} ơi, bạn đang nghĩ gì thế?`}
               className="w-full min-h-[120px] resize-none bg-transparent text-foreground text-lg placeholder:text-muted-foreground focus:outline-none"
               disabled={isSubmitting}
             />
+            
+            {/* Inline Mention Dropdown */}
+            <AnimatePresence>
+              {showInlineMention && friends.length > 0 && (
+                <motion.div
+                  ref={mentionDropdownRef}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute left-4 right-4 z-50 mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden max-h-60 overflow-y-auto"
+                >
+                  <div className="py-1">
+                    {isLoadingFriends ? (
+                      <div className="px-3 py-2 text-sm text-muted-foreground flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Đang tìm kiếm...
+                      </div>
+                    ) : friends.length === 0 ? (
+                      <div className="px-3 py-2 text-sm text-muted-foreground">
+                        Không tìm thấy bạn bè
+                      </div>
+                    ) : (
+                      friends.map((friend, index) => (
+                        <button
+                          key={friend.user_id}
+                          onClick={() => insertInlineMention(friend)}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-3 py-2 text-left transition-colors",
+                            index === inlineMentionIndex
+                              ? "bg-primary/10"
+                              : "hover:bg-muted"
+                          )}
+                        >
+                          <Avatar className="w-8 h-8">
+                            <AvatarImage src={friend.avatar_url || ""} />
+                            <AvatarFallback className="bg-gradient-to-br from-purple-soft to-purple-light text-white text-xs">
+                              {friend.full_name?.charAt(0) || "?"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-sm text-foreground">
+                            {friend.full_name || "Người dùng"}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Tagged Users Display - Facebook Style */}
             {mentionedUsers.length > 0 && (

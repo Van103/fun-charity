@@ -11,6 +11,7 @@ import { TeamSection } from "@/components/home/TeamSection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { NewsletterSection } from "@/components/home/NewsletterSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
+import { VolunteerSignupSection } from "@/components/home/VolunteerSignupSection";
 
 const Index = () => {
   return (
@@ -22,6 +23,7 @@ const Index = () => {
       <HowItWorks />
       <TestimonialsSection />
       <PartnersSection />
+      <VolunteerSignupSection />
       <TeamSection />
       <FAQSection />
       <ImpactStats />

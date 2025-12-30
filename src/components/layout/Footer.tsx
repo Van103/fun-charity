@@ -6,14 +6,14 @@ import { DivineMantrasCarousel } from "./DivineMantrasCarousel";
 
 const footerLinks = {
   "Nền Tảng 🏠": [
+    { name: "Giới Thiệu Về Mình", href: "/about" },
     { name: "Chiến Dịch Từ Thiện", href: "/campaigns" },
     { name: "Bản Đồ Nhu Cầu", href: "/needs-map" },
     { name: "Tổng Quan Hoạt Động", href: "/dashboard" },
-    { name: "Cách Mình Hoạt Động", href: "/how-it-works" },
   ],
   "Cộng Đồng 💞": [
     { name: "Dành Cho Nhà Hảo Tâm", href: "/donors" },
-    { name: "Dành Cho Tình Nguyện Viên", href: "/volunteers" },
+    { name: "Dành Cho Tình Nguyện Viên", href: "/volunteer" },
     { name: "Dành Cho Tổ Chức", href: "/ngos" },
     { name: "Bảng Vinh Danh", href: "/leaderboard" },
   ],

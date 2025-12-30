@@ -15,6 +15,7 @@ import { usePushNotification } from "@/hooks/usePushNotification";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState, useCallback } from "react";
 import Index from "./pages/Index";
+import About from "./pages/About";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetail from "./pages/CampaignDetail";
 import Dashboard from "./pages/Dashboard";
@@ -132,7 +133,8 @@ const App = () => (
               <EnergyBokeh />
               <IncomingCallListener />
               <Routes>
-                <Route path="/" element={<Index />} />
+              <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/campaigns/:id" element={<CampaignDetail />} />
                 <Route path="/dashboard" element={<Dashboard />} />

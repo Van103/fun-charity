@@ -355,18 +355,20 @@ export const AgoraVideoCallModal = ({
     }
   }, [remoteUsers, playRemoteVideo]);
 
-  // Auto-start call for outgoing / Reset state when modal opens
+  // Auto-start call for outgoing
   useEffect(() => {
-    if (open) {
-      if (!isIncoming && internalCallStatus === 'idle') {
-        startCall();
-      }
-    } else {
-      // Reset when modal closes
-      setHasAutoAnswered(false);
-      setInternalCallStatus('idle');
+    if (open && !isIncoming && internalCallStatus === 'idle') {
+      startCall();
     }
   }, [open, isIncoming, internalCallStatus, startCall]);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!open) {
+      setHasAutoAnswered(false);
+      // Don't reset internalCallStatus here to avoid loop - it gets reset on next open
+    }
+  }, [open]);
 
   // Set session id for incoming calls
   useEffect(() => {

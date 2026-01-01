@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="wandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A855F7"/>
+      <stop offset="100%" style="stop-color:#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="wandStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FCD34D"/>
+      <stop offset="100%" style="stop-color:#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <!-- Wand stick -->
+  <rect x="14" y="12" width="4" height="20" rx="2" fill="url(#wandGrad)" transform="rotate(-45 16 22)"/>
+  <!-- Wand handle detail -->
+  <rect x="14" y="22" width="4" height="6" rx="1" fill="#6D28D9" transform="rotate(-45 16 25)"/>
+  <!-- Star on top -->
+  <polygon points="8,4 9.5,7.5 13,8 10.5,10.5 11,14 8,12 5,14 5.5,10.5 3,8 6.5,7.5" 
+           fill="url(#wandStarGrad)" stroke="#D97706" stroke-width="0.3"/>
+  <!-- Sparkles around star -->
+  <circle cx="4" cy="4" r="1" fill="#FCD34D"/>
+  <circle cx="12" cy="3" r="0.8" fill="#FCD34D"/>
+  <circle cx="14" cy="7" r="0.6" fill="#FCD34D"/>
+</svg>

@@ -68,8 +68,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'diamond',
     name: 'Diamond',
     nameVi: 'Kim cương',
-    cursor: '/cursors/diamond-cursor.png',
-    cursorHover: '/cursors/diamond-cursor.png',
+    cursor: '/cursors/diamond-gold.svg',
+    cursorHover: '/cursors/diamond-gold.svg',
     particleColor: 'rgba(147, 51, 234, 1)',
     particleColorAlt: 'rgba(168, 85, 247, 1)',
   },
@@ -77,8 +77,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'heart',
     name: 'Heart',
     nameVi: 'Trái tim',
-    cursor: '/cursors/heart-cursor.png',
-    cursorHover: '/cursors/heart-cursor.png',
+    cursor: '/cursors/heart-pink.svg',
+    cursorHover: '/cursors/heart-pink.svg',
     particleColor: 'rgba(236, 72, 153, 1)',
     particleColorAlt: 'rgba(244, 114, 182, 1)',
   },
@@ -86,8 +86,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'star',
     name: 'Star',
     nameVi: 'Ngôi sao',
-    cursor: '/cursors/star-cursor.png',
-    cursorHover: '/cursors/star-cursor.png',
+    cursor: '/cursors/star.svg',
+    cursorHover: '/cursors/star.svg',
     particleColor: 'rgba(255, 215, 0, 1)',
     particleColorAlt: 'rgba(255, 165, 0, 1)',
   },
@@ -95,8 +95,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'wand',
     name: 'Magic Wand',
     nameVi: 'Đũa phép',
-    cursor: '/cursors/wand-cursor.png',
-    cursorHover: '/cursors/wand-cursor.png',
+    cursor: '/cursors/wand.svg',
+    cursorHover: '/cursors/wand.svg',
     particleColor: 'rgba(168, 85, 247, 1)',
     particleColorAlt: 'rgba(236, 72, 153, 1)',
   },
@@ -104,8 +104,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'butterfly',
     name: 'Butterfly',
     nameVi: 'Bướm',
-    cursor: '/cursors/butterfly-cursor.png',
-    cursorHover: '/cursors/butterfly-cursor.png',
+    cursor: '/cursors/butterfly.svg',
+    cursorHover: '/cursors/butterfly.svg',
     particleColor: 'rgba(236, 72, 153, 1)',
     particleColorAlt: 'rgba(168, 85, 247, 1)',
   },
@@ -113,8 +113,8 @@ export const CURSOR_OPTIONS: CursorOption[] = [
     id: 'moon',
     name: 'Moon',
     nameVi: 'Mặt trăng',
-    cursor: '/cursors/moon-cursor.png',
-    cursorHover: '/cursors/moon-cursor.png',
+    cursor: '/cursors/moon.svg',
+    cursorHover: '/cursors/moon.svg',
     particleColor: 'rgba(96, 165, 250, 1)',
     particleColorAlt: 'rgba(191, 219, 254, 1)',
   },
@@ -233,15 +233,16 @@ export const CursorProvider = ({ children }: { children: ReactNode }) => {
         }
       `;
     } else {
-      const timestamp = Date.now();
+      // For static cursors (diamond, heart, star, etc.)
+      const cursorUrl = currentCursor.cursor;
       styleEl.textContent = `
         *, *::before, *::after {
-          cursor: url('${currentCursor.cursor}?v=${timestamp}') 16 16, auto !important;
+          cursor: url('${cursorUrl}') 16 16, auto !important;
         }
         a, button, [role="button"], input, textarea, select, 
         [tabindex]:not([tabindex="-1"]), .cursor-pointer,
         a *, button *, [role="button"] * {
-          cursor: url('${currentCursor.cursorHover}?v=${timestamp}') 16 16, pointer !important;
+          cursor: url('${currentCursor.cursorHover}') 16 16, pointer !important;
         }
       `;
     }

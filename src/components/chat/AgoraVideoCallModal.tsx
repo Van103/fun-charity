@@ -132,6 +132,7 @@ export const AgoraVideoCallModal = ({
   const [showControls, setShowControls] = useState(true);
   const [internalCallStatus, setInternalCallStatus] = useState<CallStatus>('idle');
   const [hasAutoAnswered, setHasAutoAnswered] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const localVideoRef = useRef<HTMLDivElement>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
@@ -139,7 +140,7 @@ export const AgoraVideoCallModal = ({
   const callEndSoundRef = useRef<CallEndSound | null>(null);
   const controlsTimerRef = useRef<NodeJS.Timeout | null>(null);
   const sessionIdRef = useRef<string>(callSessionId || '');
-
+  const hasStartedCallRef = useRef<boolean>(false);
   const {
     callStatus,
     setCallStatus,
@@ -207,21 +208,43 @@ export const AgoraVideoCallModal = ({
     return data;
   }, [conversationId, currentUserId, callType]);
 
-  // Update call session status
-  const updateCallStatus = useCallback(async (status: string) => {
-    if (!sessionIdRef.current) return;
+  // Update call session status - only use valid database statuses
+  const updateCallStatus = useCallback(async (status: 'pending' | 'active' | 'ended' | 'declined') => {
+    if (!sessionIdRef.current) {
+      console.log('[AgoraVideoCallModal] No session ID, skipping status update');
+      return;
+    }
 
-    await supabase
-      .from('call_sessions')
-      .update({ 
-        status,
-        ...(status === 'ended' ? { ended_at: new Date().toISOString() } : {})
-      })
-      .eq('id', sessionIdRef.current);
+    try {
+      const { error } = await supabase
+        .from('call_sessions')
+        .update({ 
+          status,
+          ...(status === 'ended' || status === 'declined' ? { ended_at: new Date().toISOString() } : {})
+        })
+        .eq('id', sessionIdRef.current);
+      
+      if (error) {
+        console.error('[AgoraVideoCallModal] Error updating call status:', error);
+      } else {
+        console.log('[AgoraVideoCallModal] Updated call status to:', status);
+      }
+    } catch (err) {
+      console.error('[AgoraVideoCallModal] Failed to update call status:', err);
+    }
   }, []);
 
   // Start outgoing call
   const startCall = useCallback(async () => {
+    // Prevent double start
+    if (hasStartedCallRef.current || isProcessing) {
+      console.log('[AgoraVideoCallModal] Call already started or processing, skipping...');
+      return;
+    }
+    
+    hasStartedCallRef.current = true;
+    setIsProcessing(true);
+    
     try {
       setInternalCallStatus('ringing');
       setCallStatus('ringing');
@@ -254,15 +277,26 @@ export const AgoraVideoCallModal = ({
         }
       });
 
+      setIsProcessing(false);
     } catch (err) {
       console.error('Error starting call:', err);
       setInternalCallStatus('error');
       ringtoneRef.current?.stop();
+      setIsProcessing(false);
+      hasStartedCallRef.current = false;
     }
-  }, [getChannelName, createCallSession, joinChannel, callType, currentUserId, recipientId, recipientName, setCallStatus]);
+  }, [getChannelName, createCallSession, joinChannel, callType, currentUserId, recipientId, recipientName, setCallStatus, isProcessing]);
 
   // Answer incoming call
   const answerCall = useCallback(async () => {
+    // Prevent double answer
+    if (isProcessing) {
+      console.log('[AgoraVideoCallModal] Already processing, skipping answer...');
+      return;
+    }
+    
+    setIsProcessing(true);
+    
     try {
       setInternalCallStatus('connecting');
       ringtoneRef.current?.stop();
@@ -280,7 +314,7 @@ export const AgoraVideoCallModal = ({
         .from('call_sessions')
         .select('signaling_data, status')
         .eq('id', sessionId)
-        .single();
+        .maybeSingle();
 
       if (sessionError) {
         console.error('Error fetching call session:', sessionError);
@@ -314,15 +348,20 @@ export const AgoraVideoCallModal = ({
       await joinChannel(channelName, uid, callType === 'video');
       
       setInternalCallStatus('active');
+      setIsProcessing(false);
     } catch (err: any) {
       console.error('Error answering call:', err);
       setInternalCallStatus('error');
       toast.error(err.message || 'Không thể tham gia cuộc gọi');
+      setIsProcessing(false);
     }
-  }, [joinChannel, callType, currentUserId, updateCallStatus, callSessionId]);
+  }, [joinChannel, callType, currentUserId, updateCallStatus, callSessionId, isProcessing]);
 
   // End call
   const endCall = useCallback(async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    
     ringtoneRef.current?.stop();
     callEndSoundRef.current = new CallEndSound();
     callEndSoundRef.current.play();
@@ -331,16 +370,23 @@ export const AgoraVideoCallModal = ({
     await leaveChannel();
     
     setInternalCallStatus('ended');
+    hasStartedCallRef.current = false;
+    setIsProcessing(false);
     onClose();
-  }, [leaveChannel, updateCallStatus, onClose]);
+  }, [leaveChannel, updateCallStatus, onClose, isProcessing]);
 
   // Decline incoming call
   const declineCall = useCallback(async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    
     ringtoneRef.current?.stop();
     await updateCallStatus('declined');
     setInternalCallStatus('ended');
+    hasStartedCallRef.current = false;
+    setIsProcessing(false);
     onClose();
-  }, [updateCallStatus, onClose]);
+  }, [updateCallStatus, onClose, isProcessing]);
 
   // Play video tracks when refs are available
   useEffect(() => {
@@ -357,7 +403,7 @@ export const AgoraVideoCallModal = ({
 
   // Auto-start call for outgoing
   useEffect(() => {
-    if (open && !isIncoming && internalCallStatus === 'idle') {
+    if (open && !isIncoming && internalCallStatus === 'idle' && !hasStartedCallRef.current) {
       startCall();
     }
   }, [open, isIncoming, internalCallStatus, startCall]);
@@ -366,7 +412,12 @@ export const AgoraVideoCallModal = ({
   useEffect(() => {
     if (!open) {
       setHasAutoAnswered(false);
-      // Don't reset internalCallStatus here to avoid loop - it gets reset on next open
+      hasStartedCallRef.current = false;
+      setIsProcessing(false);
+      // Reset internal status for next call
+      setTimeout(() => {
+        setInternalCallStatus('idle');
+      }, 100);
     }
   }, [open]);
 

@@ -136,16 +136,27 @@ const CustomCursor = () => {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // Spawn gold particles based on movement - more particles falling everywhere
-    if (distance > 3 && particlesEnabled && cursorType !== 'default') {
-      const particleCount = Math.min(Math.floor(distance / 8), 4);
+    // Works with all cursor types including angel cursors when particles are enabled
+    if (distance > 2 && particlesEnabled && cursorType !== 'default') {
+      const particleCount = Math.min(Math.floor(distance / 6), 5);
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push(
           createParticle(
-            mouseRef.current.x + (Math.random() - 0.5) * 30,
-            mouseRef.current.y + (Math.random() - 0.5) * 20
+            mouseRef.current.x + (Math.random() - 0.5) * 40,
+            mouseRef.current.y + (Math.random() - 0.5) * 30
           )
         );
       }
+    }
+
+    // Also spawn some particles even when moving slowly for continuous fairy dust effect
+    if (particlesEnabled && cursorType !== 'default' && Math.random() < 0.15) {
+      particlesRef.current.push(
+        createParticle(
+          mouseRef.current.x + (Math.random() - 0.5) * 50,
+          mouseRef.current.y - 10 + Math.random() * 20
+        )
+      );
     }
 
     lastMouseRef.current = { ...mouseRef.current };
@@ -230,9 +241,9 @@ const CustomCursor = () => {
     };
   }, [animate]);
 
-  // Only hide if particles are disabled, using default cursor, or using angel cursor
-  const isAngelCursor = cursorType.startsWith('angel');
-  if (!particlesEnabled || cursorType === 'default' || isAngelCursor) return null;
+  // Only hide if particles are disabled or using default cursor
+  // Angel cursors can also have particles/fairy dust
+  if (!particlesEnabled || cursorType === 'default') return null;
 
   return (
     <canvas

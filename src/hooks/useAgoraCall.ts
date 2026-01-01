@@ -37,6 +37,8 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
   const screenTrackRef = useRef<ILocalVideoTrack | null>(null);
   const callTimerRef = useRef<NodeJS.Timeout | null>(null);
   const appIdRef = useRef<string>('');
+  const isLeavingRef = useRef<boolean>(false);
+  const isJoiningRef = useRef<boolean>(false);
 
   // Initialize Agora client
   const initClient = useCallback(() => {
@@ -62,7 +64,10 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
       // Add exception listener
       clientRef.current.on('exception', (event) => {
         console.error('[Agora] Exception:', event.code, event.msg);
-        toast.error(`Lỗi cuộc gọi: ${event.msg}`);
+        // Only show toast for critical errors
+        if (String(event.code) !== 'OPERATION_ABORTED' && event.msg !== 'cancel token canceled') {
+          toast.error(`Lỗi cuộc gọi: ${event.msg}`);
+        }
       });
     }
     return clientRef.current;
@@ -97,6 +102,15 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
     uid: number,
     isVideoCall: boolean
   ) => {
+    // Prevent double join
+    if (isJoiningRef.current) {
+      console.log('[Agora] Already joining, skipping...');
+      return;
+    }
+    
+    isJoiningRef.current = true;
+    isLeavingRef.current = false;
+    
     try {
       console.log('[Agora] Joining channel:', channelName, 'uid:', uid, 'isVideoCall:', isVideoCall);
       setCallStatus('connecting');
@@ -105,8 +119,14 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
       const client = initClient();
       const token = await getToken(channelName, uid);
 
+      // Remove existing listeners before adding new ones
+      client.removeAllListeners('user-published');
+      client.removeAllListeners('user-unpublished');
+      client.removeAllListeners('user-left');
+
       // Set up event listeners
       client.on('user-published', async (user, mediaType) => {
+        if (isLeavingRef.current) return;
         console.log('[Agora] Remote user published:', user.uid, mediaType);
         try {
           await client.subscribe(user, mediaType);
@@ -126,11 +146,14 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
           
           onRemoteUserJoined?.(user);
         } catch (subError) {
-          console.error('[Agora] Failed to subscribe:', subError);
+          if (!isLeavingRef.current) {
+            console.error('[Agora] Failed to subscribe:', subError);
+          }
         }
       });
 
       client.on('user-unpublished', (user, mediaType) => {
+        if (isLeavingRef.current) return;
         console.log('[Agora] Remote user unpublished:', user.uid, mediaType);
         if (mediaType === 'video') {
           setRemoteUsers(prev => prev.filter(u => u.uid !== user.uid));
@@ -138,6 +161,7 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
       });
 
       client.on('user-left', (user) => {
+        if (isLeavingRef.current) return;
         console.log('[Agora] Remote user left:', user.uid);
         setRemoteUsers(prev => prev.filter(u => u.uid !== user.uid));
         onRemoteUserLeft?.(user);
@@ -147,6 +171,14 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
       console.log('[Agora] Calling client.join with appId:', appIdRef.current?.substring(0, 8) + '...');
       await client.join(appIdRef.current, channelName, token, uid);
       console.log('[Agora] Successfully joined channel:', channelName);
+
+      // Check if we're still supposed to be in the call
+      if (isLeavingRef.current) {
+        console.log('[Agora] Leave was requested during join, leaving now...');
+        await client.leave();
+        isJoiningRef.current = false;
+        return;
+      }
 
       // Create and publish local tracks
       try {
@@ -158,31 +190,42 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
           );
           localAudioTrackRef.current = audioTrack;
           localVideoTrackRef.current = videoTrack;
-          await client.publish([audioTrack, videoTrack]);
-          console.log('[Agora] Published audio and video tracks');
+          
+          if (!isLeavingRef.current) {
+            await client.publish([audioTrack, videoTrack]);
+            console.log('[Agora] Published audio and video tracks');
+          }
         } else {
           console.log('[Agora] Creating microphone track...');
           const audioTrack = await AgoraRTC.createMicrophoneAudioTrack({ encoderConfig: 'music_standard' });
           localAudioTrackRef.current = audioTrack;
-          await client.publish([audioTrack]);
-          console.log('[Agora] Published audio track');
+          
+          if (!isLeavingRef.current) {
+            await client.publish([audioTrack]);
+            console.log('[Agora] Published audio track');
+          }
         }
       } catch (mediaError) {
         console.error('[Agora] Failed to create/publish tracks:', mediaError);
         setError('Không thể truy cập camera/micro. Vui lòng kiểm tra quyền truy cập.');
         toast.error('Không thể truy cập camera hoặc micro');
+        isJoiningRef.current = false;
         throw mediaError;
       }
 
-      setCallStatus('active');
-      toast.success('Đã kết nối cuộc gọi');
-      
-      // Start call timer
-      callTimerRef.current = setInterval(() => {
-        setCallDuration(prev => prev + 1);
-      }, 1000);
+      if (!isLeavingRef.current) {
+        setCallStatus('active');
+        toast.success('Đã kết nối cuộc gọi');
+        
+        // Start call timer
+        callTimerRef.current = setInterval(() => {
+          setCallDuration(prev => prev + 1);
+        }, 1000);
+      }
 
+      isJoiningRef.current = false;
     } catch (err) {
+      isJoiningRef.current = false;
       console.error('[Agora] Error joining channel:', err);
       const errorMsg = err instanceof Error ? err.message : 'Không thể kết nối cuộc gọi';
       setError(errorMsg);
@@ -194,6 +237,13 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
 
   // Leave channel
   const leaveChannel = useCallback(async () => {
+    // Prevent multiple leave calls
+    if (isLeavingRef.current) {
+      console.log('[Agora] Already leaving, skipping...');
+      return;
+    }
+    
+    isLeavingRef.current = true;
     console.log('[Agora] Leaving channel...');
     
     // Stop call timer
@@ -204,28 +254,51 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
 
     // Stop and close local tracks
     if (localAudioTrackRef.current) {
-      localAudioTrackRef.current.stop();
-      localAudioTrackRef.current.close();
+      try {
+        localAudioTrackRef.current.stop();
+        localAudioTrackRef.current.close();
+      } catch (e) {
+        console.warn('[Agora] Error stopping audio track:', e);
+      }
       localAudioTrackRef.current = null;
     }
 
     if (localVideoTrackRef.current) {
-      localVideoTrackRef.current.stop();
-      localVideoTrackRef.current.close();
+      try {
+        localVideoTrackRef.current.stop();
+        localVideoTrackRef.current.close();
+      } catch (e) {
+        console.warn('[Agora] Error stopping video track:', e);
+      }
       localVideoTrackRef.current = null;
     }
 
     if (screenTrackRef.current) {
-      screenTrackRef.current.stop();
-      screenTrackRef.current.close();
+      try {
+        screenTrackRef.current.stop();
+        screenTrackRef.current.close();
+      } catch (e) {
+        console.warn('[Agora] Error stopping screen track:', e);
+      }
       screenTrackRef.current = null;
     }
 
     // Leave the channel
     if (clientRef.current) {
       try {
-        await clientRef.current.leave();
-        console.log('[Agora] Left channel successfully');
+        // Remove all listeners first
+        clientRef.current.removeAllListeners('user-published');
+        clientRef.current.removeAllListeners('user-unpublished');
+        clientRef.current.removeAllListeners('user-left');
+        
+        // Only leave if connected
+        const connectionState = clientRef.current.connectionState;
+        if (connectionState === 'CONNECTED' || connectionState === 'CONNECTING') {
+          await clientRef.current.leave();
+          console.log('[Agora] Left channel successfully');
+        } else {
+          console.log('[Agora] Client not connected, skipping leave');
+        }
       } catch (leaveErr) {
         console.warn('[Agora] Error leaving channel:', leaveErr);
       }
@@ -239,6 +312,9 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
     setIsVideoOff(false);
     setIsScreenSharing(false);
     setError(null);
+    
+    // Reset joining flag
+    isJoiningRef.current = false;
 
     onCallEnded?.();
   }, [onCallEnded]);

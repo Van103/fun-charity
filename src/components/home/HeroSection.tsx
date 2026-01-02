@@ -97,16 +97,18 @@ export function HeroSection() {
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </ParticleButton>
             </Link>
-            <ParticleButton 
-              variant="wallet" 
-              size="xl" 
-              className="group glossy-btn glossy-btn-purple"
-              particleColors={['#8B5CF6', '#A78BFA', '#C4B5FD', '#DDD6FE']}
-              glowColor="#8B5CF6"
-            >
-              <Wallet className="w-5 h-5" />
-              Tham Gia Cùng Mình
-            </ParticleButton>
+            <Link to="/auth">
+              <ParticleButton 
+                variant="wallet" 
+                size="xl" 
+                className="group glossy-btn glossy-btn-purple"
+                particleColors={['#8B5CF6', '#A78BFA', '#C4B5FD', '#DDD6FE']}
+                glowColor="#8B5CF6"
+              >
+                <Wallet className="w-5 h-5" />
+                Đăng Ký / Đăng Nhập
+              </ParticleButton>
+            </Link>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }} className="grid md:grid-cols-3 gap-4 mb-12">

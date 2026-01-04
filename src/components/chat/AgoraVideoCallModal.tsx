@@ -150,6 +150,7 @@ export const AgoraVideoCallModal = ({
     remoteUsers,
     callDuration,
     error,
+    networkQuality,
     joinChannel,
     leaveChannel,
     toggleMute,
@@ -172,6 +173,19 @@ export const AgoraVideoCallModal = ({
       onCallEnded?.();
     },
   });
+
+  // Network quality label (0: unknown, 1: excellent, 2: good, 3: poor, 4: bad, 5: very bad, 6: disconnected)
+  const getNetworkQualityInfo = (quality: number) => {
+    switch (quality) {
+      case 1: return { label: 'Tuyệt vời', color: 'bg-green-500' };
+      case 2: return { label: 'Tốt', color: 'bg-green-400' };
+      case 3: return { label: 'Trung bình', color: 'bg-yellow-500' };
+      case 4: return { label: 'Yếu', color: 'bg-orange-500' };
+      case 5: return { label: 'Rất yếu', color: 'bg-red-500' };
+      case 6: return { label: 'Mất kết nối', color: 'bg-red-600' };
+      default: return { label: 'Đang kiểm tra...', color: 'bg-gray-500' };
+    }
+  };
 
   // Format call duration
   const formatDuration = (seconds: number) => {
@@ -552,11 +566,20 @@ export const AgoraVideoCallModal = ({
             </motion.div>
           )}
 
-          {/* Call Status */}
+          {/* Call Status with Network Quality */}
           {internalCallStatus === 'active' && (
-            <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm text-white font-medium">{formatDuration(callDuration)}</span>
+            <div className="absolute top-4 left-4 flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm text-white font-medium">{formatDuration(callDuration)}</span>
+              </div>
+              {/* Network Quality Indicator */}
+              {networkQuality.downlink > 0 && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm">
+                  <div className={`w-2 h-2 rounded-full ${getNetworkQualityInfo(networkQuality.downlink).color}`} />
+                  <span className="text-xs text-white/80">{getNetworkQualityInfo(networkQuality.downlink).label}</span>
+                </div>
+              )}
             </div>
           )}
 

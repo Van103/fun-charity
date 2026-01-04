@@ -37,8 +37,7 @@ import { CreateGroupModal } from "@/components/chat/CreateGroupModal";
 import { MessageReactionPicker, MessageReactionsDisplay } from "@/components/chat/MessageReactionPicker";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { useIncomingCallListener } from "@/hooks/useIncomingCallListener";
-// IncomingCallNotification import removed - now handled globally in App.tsx
+// useIncomingCallListener import removed - now handled globally in App.tsx
 import { CallsTab } from "@/components/chat/CallsTab";
 import { CallMessageBubble, isCallMessage } from "@/components/chat/CallMessageBubble";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -200,12 +199,7 @@ export default function Messages() {
     return () => window.removeEventListener('call-ended-refresh', handleGlobalCallEnded);
   }, [handleCallEnded]);
 
-  // Setup incoming call listener - REMOVED local notification, using global in App.tsx
-  const { incomingCall, answerCall, declineCall, dismissCall } = useIncomingCallListener({
-    userId: currentUserId,
-    onAnswerCall: handleAnswerIncomingCall,
-    onCallEnded: handleCallEnded
-  });
+  // Incoming call is now handled globally in App.tsx - no local listener needed
 
   // Get message IDs for reactions
   const messageIds = useMemo(() => messages.map(m => m.id), [messages]);

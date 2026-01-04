@@ -1,16 +1,17 @@
+import { forwardRef } from 'react';
 import { Settings2, Sparkles, Sun } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useCursor, CURSOR_OPTIONS, FAIRY_COLOR_OPTIONS, AURA_COLOR_OPTIONS } from '@/contexts/CursorContext';
 import { cn } from '@/lib/utils';
 
-export function CursorPopoverContent() {
+export const CursorPopoverContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { cursorType, setCursorType, particlesEnabled, setParticlesEnabled, fairyColor, setFairyColor, auraColor, setAuraColor } = useCursor();
 
   const isAngelCursor = cursorType === 'angel';
 
   return (
-    <div className="space-y-4">
+    <div ref={ref} {...props} className="space-y-4">
       <div className="flex items-center gap-2 pb-2 border-b border-border/50">
         <Settings2 className="h-4 w-4 text-secondary" />
         <h3 className="font-semibold text-sm">Tùy chỉnh con trỏ</h3>
@@ -183,4 +184,6 @@ export function CursorPopoverContent() {
       </p>
     </div>
   );
-}
+});
+
+CursorPopoverContent.displayName = 'CursorPopoverContent';

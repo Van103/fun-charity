@@ -30,6 +30,7 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
   const [remoteUsers, setRemoteUsers] = useState<IAgoraRTCRemoteUser[]>([]);
   const [callDuration, setCallDuration] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [networkQuality, setNetworkQuality] = useState<{ uplink: number; downlink: number }>({ uplink: 0, downlink: 0 });
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localAudioTrackRef = useRef<IMicrophoneAudioTrack | null>(null);
@@ -89,31 +90,32 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
           toast.error(`Lỗi cuộc gọi: ${event.msg}`);
         }
       });
+
+      // Add network quality listener
+      clientRef.current.on('network-quality', (stats) => {
+        setNetworkQuality({
+          uplink: stats.uplinkNetworkQuality,
+          downlink: stats.downlinkNetworkQuality
+        });
+      });
     }
     return clientRef.current;
   }, []);
 
-  // Vercel Token Server (đã hoạt động ổn định từ dự án FunProfile)
-  const VERCEL_TOKEN_SERVER = "https://mkdir-agora-token-server.vercel.app/api/agora-token";
-
-  // Get token from Vercel Token Server
+  // Get token from Supabase Edge Function (agora-token)
   const getToken = useCallback(async (channelName: string) => {
-    console.log('[Agora] Fetching token from Vercel server for channel:', channelName);
+    console.log('[Agora] Fetching token from Supabase edge function for channel:', channelName);
     
-    const response = await fetch(VERCEL_TOKEN_SERVER, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ channelName, uid: 0 }), // uid: 0 để Agora tự gán
+    const { data, error } = await supabase.functions.invoke('agora-token', {
+      body: { channelName, uid: 0, role: 1 }
     });
 
-    if (!response.ok) {
-      console.error('[Agora] Token server error:', response.status);
-      throw new Error(`Token server error: ${response.status}`);
+    if (error) {
+      console.error('[Agora] Token edge function error:', error);
+      throw new Error(`Token error: ${error.message}`);
     }
 
-    const data = await response.json();
-    
-    if (!data.token || !data.appId) {
+    if (!data?.token || !data?.appId) {
       console.error('[Agora] Invalid token response:', data);
       throw new Error('Invalid token response');
     }
@@ -475,6 +477,7 @@ export const useAgoraCall = (props?: UseAgoraCallProps) => {
     remoteUsers,
     callDuration,
     error,
+    networkQuality,
     joinChannel,
     leaveChannel,
     toggleMute,

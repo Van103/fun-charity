@@ -1,3 +1,8 @@
+/**
+ * @deprecated This WebRTC-based VideoCallModal is deprecated.
+ * Please use AgoraVideoCallModal instead which uses Agora SDK for better reliability.
+ * This file is kept for reference only and may be removed in a future version.
+ */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

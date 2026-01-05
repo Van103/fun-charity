@@ -639,7 +639,7 @@ export function FacebookCreatePostModal({
               value={content}
               onChange={handleContentChange}
               onKeyDown={handleContentKeyDown}
-              placeholder={`${profile?.full_name || "Bạn"} ơi, bạn đang nghĩ gì thế?`}
+              placeholder={`${profile?.full_name || "Bạn"} ơi, bạn muốn chia sẻ điều gì cùng Fun Charity?`}
               className="w-full min-h-[120px] resize-none bg-transparent text-foreground text-lg placeholder:text-muted-foreground focus:outline-none"
               disabled={isSubmitting}
             />

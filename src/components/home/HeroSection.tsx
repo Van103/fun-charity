@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import HomeHonorBoard from "./HomeHonorBoard";
 
 export function HeroSection() {
   const { t } = useLanguage();
@@ -82,9 +83,12 @@ export function HeroSection() {
             "{t("hero.quote")}"
           </motion.p>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }} className="text-lg md:text-xl slogan-glow mb-8">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }} className="text-lg md:text-xl slogan-glow mb-6">
             {t("hero.slogan")}
           </motion.p>
+
+          {/* Home Honor Board */}
+          <HomeHonorBoard />
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link to="/campaigns">

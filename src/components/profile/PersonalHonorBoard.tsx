@@ -91,6 +91,7 @@ export function PersonalHonorBoard({ userId }: PersonalHonorBoardProps) {
             icon={<Coins className="w-4 h-4" />}
             label="Thu Nhập"
             value={stats.income}
+            suffix="đ"
             showTrend={false}
           />
           <StatRow
@@ -110,8 +111,8 @@ export function PersonalHonorBoard({ userId }: PersonalHonorBoardProps) {
           />
           <StatRow
             icon={<Award className="w-4 h-4" />}
-            label="Tổng Phần Thưởng"
-            value={stats.totalRewards}
+            label="Số Lượng NFT"
+            value={stats.nftCount}
             showTrend={false}
           />
         </div>

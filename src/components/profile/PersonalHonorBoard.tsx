@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Users, Trophy, Heart, UserPlus, FileText, Video, Award, Coins, Gift } from "lucide-react";
 import { usePersonalStats } from "@/hooks/usePersonalStats";
 import { useCountAnimation } from "@/hooks/useCountAnimation";
+import { useUserCount } from "@/hooks/useUserCount";
 
 interface PersonalHonorBoardProps {
   userId: string | null;
@@ -50,7 +51,8 @@ const StatCell = ({ icon, label, value, delay }: StatCellProps) => {
 
 export function PersonalHonorBoard({ userId }: PersonalHonorBoardProps) {
   const { data: stats, isLoading } = usePersonalStats(userId);
-
+  const { userCount, isLoading: isUserCountLoading } = useUserCount();
+  const animatedUserCount = useCountAnimation(userCount, 2000);
   if (isLoading) {
     return (
       <>
@@ -97,7 +99,7 @@ export function PersonalHonorBoard({ userId }: PersonalHonorBoardProps) {
         <div className="metal-gold-border-button flex items-center gap-3 px-6 py-2.5 cursor-pointer">
           <Users className="text-purple-800" size={20} />
           <span className="text-[16px] font-bold text-purple-800">
-            {formatNumber(stats.featuredScore || 100000)} Users
+            {formatNumber(animatedUserCount)} Users
           </span>
         </div>
       </motion.div>

@@ -48,6 +48,7 @@ import {
   Trophy,
   Gift,
   Shield,
+  Coins,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -55,6 +56,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
@@ -464,49 +468,52 @@ export function Navbar() {
                     
                     <DropdownMenuSeparator className="my-2" />
                     
-                    {/* Language Toggle - entire row is clickable */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="p-3 rounded-lg hover:bg-primary/20 focus:bg-primary/20 flex items-center gap-3 cursor-pointer transition-colors">
-                          <Globe className="w-5 h-5 text-primary" />
-                          <span className="font-medium flex-1">{t("settings.language") || "Ngôn ngữ"}</span>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent align="end" className="w-56 p-1 bg-card/95 backdrop-blur-xl border-border/50">
+                    {/* Claim Rewards Link */}
+                    <DropdownMenuItem asChild className="cursor-pointer p-3 rounded-lg hover:bg-primary/10">
+                      <Link to="/claim" className="flex items-center gap-3">
+                        <Coins className="w-5 h-5 text-amber-500" />
+                        <span className="font-medium">{t("nav.claimTokens") || "Claim Tokens"}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator className="my-2" />
+                    
+                    {/* Language Toggle - using DropdownMenuSub */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="p-3 rounded-lg hover:bg-primary/20 focus:bg-primary/20 flex items-center gap-3 cursor-pointer transition-colors">
+                        <Globe className="w-5 h-5 text-primary" />
+                        <span className="font-medium flex-1">{t("settings.language") || "Ngôn ngữ"}</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="w-56 p-1 bg-card/95 backdrop-blur-xl border-border/50">
                         <LanguagePopoverContent />
-                      </PopoverContent>
-                    </Popover>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                     
-                    {/* Cursor Settings - entire row is clickable */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="p-3 rounded-lg hover:bg-primary/20 focus:bg-primary/20 flex items-center gap-3 cursor-pointer transition-colors">
-                          <MousePointer2 className="w-5 h-5 text-primary" />
-                          <span className="font-medium flex-1">{t("settings.cursor") || "Con trỏ"}</span>
-                          <Sparkles className="h-4 w-4 text-secondary" />
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent align="end" className="w-80 max-h-[70vh] overflow-y-auto p-4 bg-card/95 backdrop-blur-xl border-border/50">
+                    {/* Cursor Settings - using DropdownMenuSub */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="p-3 rounded-lg hover:bg-primary/20 focus:bg-primary/20 flex items-center gap-3 cursor-pointer transition-colors">
+                        <MousePointer2 className="w-5 h-5 text-primary" />
+                        <span className="font-medium flex-1">{t("settings.cursor") || "Con trỏ"}</span>
+                        <Sparkles className="h-4 w-4 text-secondary" />
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="w-80 max-h-[70vh] overflow-y-auto p-4 bg-card/95 backdrop-blur-xl border-border/50">
                         <CursorPopoverContent />
-                      </PopoverContent>
-                    </Popover>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                     
-                    {/* Settings with Motion Toggle */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="p-3 rounded-lg hover:bg-primary/10 flex items-center gap-3 cursor-pointer">
-                          <Settings className="w-5 h-5 text-primary" />
-                          <span className="font-medium flex-1">{t("common.settings")}</span>
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent align="end" className="w-72 bg-background border border-border shadow-lg">
+                    {/* Settings with Motion Toggle - using DropdownMenuSub */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="p-3 rounded-lg hover:bg-primary/10 flex items-center gap-3 cursor-pointer">
+                        <Settings className="w-5 h-5 text-primary" />
+                        <span className="font-medium flex-1">{t("common.settings")}</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="w-72 bg-background border border-border shadow-lg p-4">
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm">{t("common.settings")}</h4>
                           <MotionToggle />
                         </div>
-                      </PopoverContent>
-                    </Popover>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                     
                     <DropdownMenuSeparator className="my-2" />
 

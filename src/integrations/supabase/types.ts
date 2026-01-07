@@ -746,6 +746,7 @@ export type Database = {
       }
       feed_posts: {
         Row: {
+          agora_channel_name: string | null
           beneficiaries_count: number | null
           campaign_id: string | null
           category: Database["public"]["Enums"]["campaign_category"] | null
@@ -781,6 +782,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          agora_channel_name?: string | null
           beneficiaries_count?: number | null
           campaign_id?: string | null
           category?: Database["public"]["Enums"]["campaign_category"] | null
@@ -816,6 +818,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          agora_channel_name?: string | null
           beneficiaries_count?: number | null
           campaign_id?: string | null
           category?: Database["public"]["Enums"]["campaign_category"] | null

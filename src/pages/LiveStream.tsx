@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useLiveComments } from "@/hooks/useLiveComments";
+import { useAgoraLiveStream } from "@/hooks/useAgoraLiveStream";
 import { Helmet } from "react-helmet-async";
 import { 
   ArrowLeft, 
@@ -19,7 +20,9 @@ import {
   Share2, 
   Users,
   Radio,
-  Send
+  Send,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -35,6 +38,7 @@ interface LiveStreamData {
   is_active: boolean;
   created_at: string;
   media_urls: any;
+  agora_channel_name: string | null;
   profiles: {
     full_name: string | null;
     avatar_url: string | null;
@@ -59,9 +63,29 @@ export default function LiveStream() {
   const [newComment, setNewComment] = useState("");
   const [floatingReactions, setFloatingReactions] = useState<FloatingReaction[]>([]);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isAgoraConnected, setIsAgoraConnected] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const agoraVideoContainerRef = useRef<HTMLDivElement>(null);
   const commentsEndRef = useRef<HTMLDivElement>(null);
   const reactionChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+
+  // Agora live stream hook for viewing
+  const agoraLive = useAgoraLiveStream({ 
+    role: 'audience',
+    onRemoteStreamReceived: (user) => {
+      console.log('[LiveStream] Remote stream received, playing video');
+      setIsAgoraConnected(true);
+      // Play video in container
+      if (agoraVideoContainerRef.current && user.videoTrack) {
+        user.videoTrack.play(agoraVideoContainerRef.current);
+      }
+    },
+    onRemoteStreamLeft: () => {
+      console.log('[LiveStream] Host left the stream');
+      setIsAgoraConnected(false);
+    }
+  });
 
   // Real-time comments hook
   const { comments, sendComment, isLoading: commentsLoading } = useLiveComments({
@@ -159,6 +183,7 @@ export default function LiveStream() {
           is_active,
           created_at,
           media_urls,
+          agora_channel_name,
           profiles!feed_posts_user_id_fkey (
             full_name,
             avatar_url
@@ -186,6 +211,17 @@ export default function LiveStream() {
 
       setStream(streamData);
 
+      // If stream has agora channel and is live, join as audience
+      if (streamData.agora_channel_name && streamData.is_live_video && streamData.is_active) {
+        console.log('[LiveStream] Joining Agora channel:', streamData.agora_channel_name);
+        try {
+          await agoraLive.joinAsAudience(streamData.agora_channel_name);
+        } catch (err) {
+          console.error('[LiveStream] Failed to join Agora channel:', err);
+          // Don't fail completely, user can still see recorded video if available
+        }
+      }
+
       // Increment viewer count
       if (streamData.is_live_video && streamData.is_active) {
         await supabase
@@ -200,6 +236,15 @@ export default function LiveStream() {
       setLoading(false);
     }
   };
+
+  // Cleanup Agora on unmount
+  useEffect(() => {
+    return () => {
+      if (agoraLive.status === 'watching') {
+        agoraLive.leave();
+      }
+    };
+  }, []);
 
   const subscribeToStream = () => {
     const channel = supabase
@@ -326,24 +371,65 @@ export default function LiveStream() {
             >
               {/* Video/Stream Area */}
               <div className="relative aspect-video bg-black overflow-hidden">
-                {stream.media_urls && Array.isArray(stream.media_urls) && stream.media_urls.length > 0 ? (
-                  <video
-                    ref={videoRef}
-                    src={stream.media_urls[0]}
-                    className="w-full h-full object-contain"
-                    controls
-                    autoPlay
-                    playsInline
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
-                    <div className="text-center space-y-4">
-                      <Radio className="w-16 h-16 text-primary mx-auto animate-pulse" />
-                      <p className="text-white text-lg font-medium">
-                        {isLive ? "Đang phát trực tiếp..." : "Live stream đã kết thúc"}
-                      </p>
-                    </div>
+                {/* Agora Video Container - for live streams */}
+                {isLive && stream.agora_channel_name && (
+                  <div 
+                    ref={agoraVideoContainerRef}
+                    className="w-full h-full"
+                  >
+                    {!isAgoraConnected && agoraLive.status === 'connecting' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                        <div className="text-center space-y-4">
+                          <Radio className="w-16 h-16 text-primary mx-auto animate-pulse" />
+                          <p className="text-white text-lg font-medium">
+                            Đang kết nối livestream...
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                )}
+
+                {/* Fallback: Recorded video or placeholder */}
+                {(!isLive || !stream.agora_channel_name) && (
+                  stream.media_urls && Array.isArray(stream.media_urls) && stream.media_urls.length > 0 ? (
+                    <video
+                      ref={videoRef}
+                      src={stream.media_urls[0]}
+                      className="w-full h-full object-contain"
+                      controls
+                      autoPlay
+                      playsInline
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                      <div className="text-center space-y-4">
+                        <Radio className="w-16 h-16 text-primary mx-auto animate-pulse" />
+                        <p className="text-white text-lg font-medium">
+                          {isLive ? "Đang phát trực tiếp..." : "Live stream đã kết thúc"}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {/* Mute/Unmute button for Agora stream */}
+                {isLive && isAgoraConnected && (
+                  <button
+                    onClick={() => {
+                      if (agoraLive.remoteUser?.audioTrack) {
+                        if (isMuted) {
+                          agoraLive.remoteUser.audioTrack.play();
+                        } else {
+                          agoraLive.remoteUser.audioTrack.stop();
+                        }
+                        setIsMuted(!isMuted);
+                      }
+                    }}
+                    className="absolute bottom-4 left-4 z-20 w-10 h-10 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition-colors"
+                  >
+                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  </button>
                 )}
 
                 {/* Floating Reactions Animation */}

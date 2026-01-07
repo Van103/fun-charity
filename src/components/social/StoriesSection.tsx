@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, ChevronRight, Video, Eye, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
@@ -18,6 +19,7 @@ const avatarGradients = [
 ];
 
 export function StoriesSection() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("stories");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedStoryGroup, setSelectedStoryGroup] = useState<GroupedStory | null>(null);
@@ -25,6 +27,10 @@ export function StoriesSection() {
   
   const { data: stories = [], refetch: refetchStories } = useStories();
   const { data: liveStreams = [] } = useLiveStreams();
+
+  const handleLiveStreamClick = (streamId: string) => {
+    navigate(`/live/${streamId}`);
+  };
 
   const handleStoryCreated = () => {
     refetchStories();
@@ -189,7 +195,9 @@ export function StoriesSection() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
                       whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       className="shrink-0 cursor-pointer"
+                      onClick={() => handleLiveStreamClick(stream.id)}
                     >
                       <div className="relative w-28 h-40 rounded-xl overflow-hidden group">
                         <div className={`absolute inset-0 bg-gradient-to-br ${avatarGradients[index % avatarGradients.length]}`}>

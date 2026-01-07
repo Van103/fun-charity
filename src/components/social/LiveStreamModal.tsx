@@ -51,6 +51,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCreateFeedPost } from "@/hooks/useFeedPosts";
 import { useLiveGifts } from "@/hooks/useLiveGifts";
 import { useLiveComments } from "@/hooks/useLiveComments";
+import { useAgoraLiveStream } from "@/hooks/useAgoraLiveStream";
 import { FriendExcludeSelector } from "./FriendExcludeSelector";
 import { LiveStreamMusicPanel } from "./LiveStreamMusicPanel";
 import { LiveStreamQAPanel, PinnedCommentDisplay, Question, PinnedComment } from "./LiveStreamQAPanel";
@@ -197,8 +198,12 @@ export function LiveStreamModal({ open, onOpenChange, profile }: LiveStreamModal
   const viewerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const chatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const agoraVideoContainerRef = useRef<HTMLDivElement | null>(null);
 
   const createFeedPost = useCreateFeedPost();
+  
+  // Agora live stream hook for broadcasting
+  const agoraLive = useAgoraLiveStream({ role: 'host' });
   
   // Gift tracking - use profile.user_id as streamer ID
   const { totalCoinsReceived } = useLiveGifts(profile?.user_id);
@@ -516,7 +521,23 @@ export function LiveStreamModal({ open, onOpenChange, profile }: LiveStreamModal
   const handleCountdownComplete = async () => {
     setShowCountdown(false);
     
-    // Create live post in database to get livePostId for comments
+    // Start Agora broadcast first to get channel name
+    let agoraChannelName: string | null = null;
+    try {
+      console.log('[LiveStream] Starting Agora broadcast...');
+      agoraChannelName = await agoraLive.startBroadcast();
+      
+      if (!agoraChannelName) {
+        throw new Error('Failed to start Agora broadcast');
+      }
+      console.log('[LiveStream] Agora channel created:', agoraChannelName);
+    } catch (err) {
+      console.error('[LiveStream] Failed to start Agora broadcast:', err);
+      toast.error('Không thể bắt đầu phát trực tiếp (Agora)');
+      return;
+    }
+    
+    // Create live post in database with agora_channel_name
     try {
       const title = streamTitle.trim() || `${profile?.full_name || 'Người dùng'} đang phát trực tiếp`;
       
@@ -530,6 +551,7 @@ export function LiveStreamModal({ open, onOpenChange, profile }: LiveStreamModal
           is_live_video: true,
           is_active: true,
           live_viewer_count: 1,
+          agora_channel_name: agoraChannelName,
         })
         .select('id')
         .single();
@@ -540,8 +562,9 @@ export function LiveStreamModal({ open, onOpenChange, profile }: LiveStreamModal
       console.log('[LiveStream] Created live post with ID:', data.id);
     } catch (err) {
       console.error('[LiveStream] Failed to create live post:', err);
+      // If database fails, leave Agora channel
+      await agoraLive.leave();
       toast.error('Không thể bắt đầu phát trực tiếp');
-      setShowCountdown(false);
       return;
     }
     
@@ -567,6 +590,21 @@ export function LiveStreamModal({ open, onOpenChange, profile }: LiveStreamModal
 
   const endLive = async () => {
     stopRecording();
+    
+    // Leave Agora channel
+    await agoraLive.leave();
+    
+    // Update database to mark stream as ended
+    if (livePostId) {
+      await supabase
+        .from('feed_posts')
+        .update({ 
+          is_live_video: false, 
+          is_active: false,
+          agora_channel_name: null 
+        })
+        .eq('id', livePostId);
+    }
     
     // Wait a moment for the recording to finalize
     await new Promise(resolve => setTimeout(resolve, 500));

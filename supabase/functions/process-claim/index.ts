@@ -154,11 +154,17 @@ serve(async (req) => {
       console.error("Error updating claim:", updateError);
     }
 
-    // Update profile total tokens claimed
+    // Update profile total tokens claimed (accumulate, not overwrite)
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("total_tokens_claimed")
+      .eq("user_id", user.id)
+      .single();
+
     await supabaseAdmin
       .from("profiles")
       .update({
-        total_tokens_claimed: tokens_minted,
+        total_tokens_claimed: (profile?.total_tokens_claimed || 0) + tokens_minted,
       })
       .eq("user_id", user.id);
 

@@ -1,43 +1,74 @@
 // Global error handlers - must be registered FIRST before any imports
-const isWalletRelatedError = (message: string, code?: number) => {
-  return message.includes('MetaMask') ||
-    message.includes('Failed to connect') ||
-    message.includes('User rejected') ||
-    message.includes('eth_requestAccounts') ||
-    message.includes('eth_accounts') ||
-    message.includes('wallet_') ||
-    message.includes('inpage.js') ||
-    code === 4001 ||
-    code === -32002 ||
-    code === -32603;
+const isWalletRelatedError = (message: string, code?: number, stack?: string) => {
+  const walletPatterns = [
+    'MetaMask',
+    'Failed to connect',
+    'User rejected',
+    'eth_requestAccounts',
+    'eth_accounts',
+    'wallet_',
+    'inpage.js',
+    'chrome-extension',
+    'moz-extension',
+    'Already processing',
+    'Request already pending',
+    'disconnected',
+    'Provider not available'
+  ];
+  
+  const isWalletCode = code === 4001 || code === -32002 || code === -32603;
+  const isWalletMessage = walletPatterns.some(pattern => message.toLowerCase().includes(pattern.toLowerCase()));
+  const isWalletStack = stack ? walletPatterns.some(pattern => stack.toLowerCase().includes(pattern.toLowerCase())) : false;
+  
+  return isWalletCode || isWalletMessage || isWalletStack;
 };
 
+// Handle unhandled promise rejections (async errors)
 window.addEventListener('unhandledrejection', (event) => {
   const reason = event.reason;
-  const message = reason?.message || String(reason);
+  const message = reason?.message || String(reason) || '';
   const stack = reason?.stack || '';
+  const code = reason?.code;
   
-  if (isWalletRelatedError(message, reason?.code) || stack.includes('inpage.js')) {
+  if (isWalletRelatedError(message, code, stack)) {
     console.warn('[Wallet] Connection error suppressed:', message);
     event.preventDefault();
     event.stopPropagation();
+    event.stopImmediatePropagation();
     return false;
   }
   
   console.error('Unhandled promise rejection:', reason);
-});
+}, true);
 
+// Handle synchronous errors
 window.addEventListener('error', (event) => {
   const message = event.message || '';
   const filename = event.filename || '';
+  const stack = (event.error?.stack) || '';
   
-  if (isWalletRelatedError(message) || filename.includes('inpage.js') || filename.includes('chrome-extension')) {
+  if (isWalletRelatedError(message, undefined, stack) || 
+      filename.includes('inpage.js') || 
+      filename.includes('chrome-extension') ||
+      filename.includes('moz-extension')) {
     console.warn('[Wallet] Error suppressed:', message);
     event.preventDefault();
     event.stopPropagation();
+    event.stopImmediatePropagation();
     return false;
   }
-});
+}, true);
+
+// Suppress MetaMask errors from console.error
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  const message = args.map(arg => String(arg)).join(' ');
+  if (isWalletRelatedError(message)) {
+    console.warn('[Wallet] Console error suppressed:', message.substring(0, 100));
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
 
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";

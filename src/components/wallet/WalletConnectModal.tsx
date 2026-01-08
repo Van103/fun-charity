@@ -78,11 +78,14 @@ export function WalletConnectModal({ open, onOpenChange, onWalletConnected }: Wa
     }
     setIsConnecting("metamask");
     try {
-      const accounts = await new Promise<string[]>((resolve, reject) => {
-        window.ethereum!.request({ method: "eth_requestAccounts" })
-          .then((result: string[]) => resolve(result))
-          .catch((err: unknown) => reject(err));
-      });
+      // Use a safer approach with timeout and proper error handling
+      const accounts = await Promise.race([
+        window.ethereum.request({ method: "eth_requestAccounts" }) as Promise<string[]>,
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Connection timeout")), 30000)
+        )
+      ]);
+      
       if (accounts && accounts.length > 0) {
         const address = accounts[0];
         await saveWalletAddress(address);
@@ -93,10 +96,16 @@ export function WalletConnectModal({ open, onOpenChange, onWalletConnected }: Wa
       }
     } catch (error: unknown) {
       const err = error as { code?: number; message?: string };
+      // Silently handle user rejection and connection failures
       if (err.code === 4001) {
         toast({ title: "Bị từ chối", description: "Bạn đã từ chối yêu cầu kết nối.", variant: "destructive" });
+      } else if (err.message?.includes("timeout")) {
+        toast({ title: "Hết thời gian", description: "Kết nối quá lâu. Vui lòng thử lại.", variant: "destructive" });
+      } else if (err.message?.includes("Failed to connect")) {
+        toast({ title: "Không thể kết nối", description: "MetaMask chưa sẵn sàng. Vui lòng mở MetaMask và thử lại.", variant: "destructive" });
       } else {
-        toast({ title: "Lỗi kết nối", description: err.message || "Không thể kết nối.", variant: "destructive" });
+        console.warn("[Wallet] MetaMask connection error:", err.message);
+        toast({ title: "Lỗi kết nối", description: "Không thể kết nối. Vui lòng thử lại.", variant: "destructive" });
       }
     } finally {
       setIsConnecting(null);

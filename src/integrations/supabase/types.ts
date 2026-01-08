@@ -74,36 +74,51 @@ export type Database = {
       angel_knowledge: {
         Row: {
           category: string
+          chunk_index: number | null
           content: string
           created_at: string | null
           id: string
           is_active: boolean | null
           keywords: string[] | null
           priority: number | null
+          source_file_name: string | null
+          source_file_url: string | null
           title: string
+          total_chunks: number | null
           updated_at: string | null
+          uploaded_by: string | null
         }
         Insert: {
           category: string
+          chunk_index?: number | null
           content: string
           created_at?: string | null
           id?: string
           is_active?: boolean | null
           keywords?: string[] | null
           priority?: number | null
+          source_file_name?: string | null
+          source_file_url?: string | null
           title: string
+          total_chunks?: number | null
           updated_at?: string | null
+          uploaded_by?: string | null
         }
         Update: {
           category?: string
+          chunk_index?: number | null
           content?: string
           created_at?: string | null
           id?: string
           is_active?: boolean | null
           keywords?: string[] | null
           priority?: number | null
+          source_file_name?: string | null
+          source_file_url?: string | null
           title?: string
+          total_chunks?: number | null
           updated_at?: string | null
+          uploaded_by?: string | null
         }
         Relationships: []
       }

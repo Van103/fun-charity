@@ -47,6 +47,15 @@ const Auth = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
+  // Check if user has agreed to Law of Light
+  useEffect(() => {
+    const hasAgreed = localStorage.getItem("law_of_light_agreed");
+    if (!hasAgreed) {
+      navigate("/law-of-light");
+      return;
+    }
+  }, [navigate]);
+
   // Check if user is already logged in
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {

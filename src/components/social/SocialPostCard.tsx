@@ -13,6 +13,7 @@ import {
   Video,
   Eye,
 } from "lucide-react";
+import { FeedVideoPlayer } from "./FeedVideoPlayer";
 import { motion } from "framer-motion";
 import { FeedPost } from "@/hooks/useFeedPosts";
 import { formatDistanceToNow, Locale } from "date-fns";
@@ -344,11 +345,9 @@ export function SocialPostCard({ post, highlightPostId }: SocialPostCardProps) {
         <div className="relative">
           {mediaUrls.length === 1 ? (
             mediaUrls[0].type === "video" ? (
-              <video
+              <FeedVideoPlayer
                 src={mediaUrls[0].url}
-                controls
-                playsInline
-                className="w-full max-h-[350px] sm:max-h-[450px] object-cover"
+                className="w-full max-h-[350px] sm:max-h-[450px]"
               />
             ) : (
               <img
@@ -376,10 +375,9 @@ export function SocialPostCard({ post, highlightPostId }: SocialPostCardProps) {
                   }`}
                 >
                   {item.type === "video" ? (
-                    <video
+                    <FeedVideoPlayer
                       src={item.url}
-                      controls
-                      className={`w-full object-cover bg-black ${
+                      className={`w-full ${
                         mediaUrls.length === 3 && i === 0 
                           ? "h-full" 
                           : "aspect-square"

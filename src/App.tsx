@@ -32,6 +32,7 @@ const NeedsMap = lazy(() => import("./pages/NeedsMap"));
 const Profiles = lazy(() => import("./pages/Profiles"));
 const Reviews = lazy(() => import("./pages/Reviews"));
 const Auth = lazy(() => import("./pages/Auth"));
+const LawOfLight = lazy(() => import("./pages/LawOfLight"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const SocialFeed = lazy(() => import("./pages/SocialFeed"));
@@ -178,6 +179,7 @@ const App = () => (
                     <Route path="/profiles" element={<Profiles />} />
                     <Route path="/reviews" element={<Reviews />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/law-of-light" element={<LawOfLight />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/verify-email" element={<VerifyEmail />} />
                     <Route path="/profile" element={<UserProfile />} />

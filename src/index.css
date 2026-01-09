@@ -1027,6 +1027,7 @@ label,
   border: none;
   box-shadow: none;
   text-shadow: none;
+  font-weight: 400;
 }
 
 .glass-pill-ghost::before {

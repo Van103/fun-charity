@@ -113,8 +113,90 @@ export function AngelAIChatModal({ isOpen, onClose }: AngelAIChatModalProps) {
                 backgroundPosition: 'top center',
               }}
             >
-            {/* Overlay for readability - Golden tint */}
-            <div className="absolute inset-0 bg-gradient-to-b from-amber-900/40 via-purple-900/50 to-purple-950/70" />
+            {/* Sparkling energy overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-pink-400/20 via-purple-500/30 to-violet-600/40" />
+            
+            {/* Animated sparkles layer */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* Sparkle particles */}
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 rounded-full"
+                  style={{
+                    background: i % 3 === 0 
+                      ? 'radial-gradient(circle, #fbbf24 0%, transparent 70%)' 
+                      : i % 3 === 1
+                        ? 'radial-gradient(circle, #f9a8d4 0%, transparent 70%)'
+                        : 'radial-gradient(circle, #c4b5fd 0%, transparent 70%)',
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    boxShadow: i % 3 === 0 
+                      ? '0 0 8px #fbbf24, 0 0 16px #fbbf24' 
+                      : i % 3 === 1
+                        ? '0 0 8px #f9a8d4, 0 0 16px #f9a8d4'
+                        : '0 0 8px #c4b5fd, 0 0 16px #c4b5fd',
+                  }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.5, 0],
+                    y: [-20, -60],
+                  }}
+                  transition={{
+                    duration: 2 + Math.random() * 2,
+                    repeat: Infinity,
+                    delay: Math.random() * 3,
+                    ease: 'easeOut',
+                  }}
+                />
+              ))}
+              
+              {/* Floating light orbs */}
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={`orb-${i}`}
+                  className="absolute rounded-full"
+                  style={{
+                    width: 20 + Math.random() * 30,
+                    height: 20 + Math.random() * 30,
+                    background: i % 2 === 0 
+                      ? 'radial-gradient(circle, rgba(251,191,36,0.4) 0%, transparent 70%)'
+                      : 'radial-gradient(circle, rgba(196,181,253,0.4) 0%, transparent 70%)',
+                    left: `${10 + Math.random() * 80}%`,
+                    top: `${10 + Math.random() * 80}%`,
+                    filter: 'blur(2px)',
+                  }}
+                  animate={{
+                    x: [0, 20, -10, 0],
+                    y: [0, -15, 10, 0],
+                    opacity: [0.3, 0.7, 0.3],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 4 + Math.random() * 3,
+                    repeat: Infinity,
+                    delay: Math.random() * 2,
+                    ease: 'easeInOut',
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Shimmering top light */}
+            <motion.div 
+              className="absolute top-0 left-0 right-0 h-40 pointer-events-none"
+              style={{
+                background: 'linear-gradient(180deg, rgba(251,191,36,0.3) 0%, rgba(249,168,212,0.2) 50%, transparent 100%)',
+              }}
+              animate={{
+                opacity: [0.5, 0.8, 0.5],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
             
             {/* Content container */}
             <div className="relative z-10 flex flex-col h-full">

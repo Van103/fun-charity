@@ -68,7 +68,7 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
 
   const getReferralLink = () => {
     const baseUrl = window.location.origin;
-    return `${baseUrl}/?ref=${referralCode}`;
+    return `${baseUrl}/r/${referralCode}`;
   };
 
   const handleCopy = async () => {

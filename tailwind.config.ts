@@ -75,27 +75,33 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Brand specific colors - Light Vibrant Purple + Champagne Gold
+        // ✨ Sparkling Brand Colors - Radiant Purple + Brilliant Gold ✨
         purple: {
-          soft: "#A855F7",
-          light: "#C084FC",
-          dark: "#9333EA",
-          vibrant: "#B77FFF",
+          soft: "#C084FC",
+          light: "#D8B4FE",
+          dark: "#A855F7",
+          vibrant: "#D946EF",
+          radiant: "#E879F9",
+          spark: "#F0ABFC",
         },
         gold: {
-          champagne: "#F5C77A",
-          light: "#F8D89E",
-          dark: "#E5B05A",
+          champagne: "#FCD34D",
+          light: "#FDE68A",
+          dark: "#F59E0B",
+          brilliant: "#FBBF24",
+          spark: "#FEF08A",
         },
-        // Additional luxury colors
+        // Radiant Luxury colors
         lavender: {
-          soft: "#F5F3FF",
-          DEFAULT: "#E9E3FF",
+          soft: "#FAF5FF",
+          DEFAULT: "#F3E8FF",
+          glow: "#E9D5FF",
         },
         violet: {
-          energy: "#A855F7",
-          bright: "#C084FC",
-          deep: "#9333EA",
+          energy: "#C084FC",
+          bright: "#D8B4FE",
+          deep: "#A855F7",
+          spark: "#E879F9",
         },
       },
       borderRadius: {
@@ -109,9 +115,13 @@ export default {
       boxShadow: {
         'glow': 'var(--shadow-glow)',
         'glow-purple': 'var(--shadow-glow-purple)',
-        'purple-sm': '0 2px 8px hsl(270 91% 56% / 0.25)',
-        'purple-md': '0 4px 14px hsl(270 91% 56% / 0.35)',
-        'purple-lg': '0 8px 24px hsl(270 91% 56% / 0.4)',
+        'purple-sm': '0 2px 10px hsl(275 100% 65% / 0.35)',
+        'purple-md': '0 4px 18px hsl(275 100% 65% / 0.45)',
+        'purple-lg': '0 8px 28px hsl(275 100% 65% / 0.55)',
+        'gold-sm': '0 2px 10px hsl(45 100% 60% / 0.35)',
+        'gold-md': '0 4px 18px hsl(45 100% 60% / 0.45)',
+        'gold-lg': '0 8px 28px hsl(45 100% 60% / 0.55)',
+        'sparkle': '0 0 20px hsl(275 100% 70% / 0.4), 0 0 40px hsl(45 100% 65% / 0.3)',
       },
       keyframes: {
         "accordion-down": {

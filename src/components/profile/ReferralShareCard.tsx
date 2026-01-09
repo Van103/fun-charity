@@ -183,12 +183,12 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
       <CardHeader className="pb-2 bg-gradient-to-r from-secondary/10 to-primary/10">
         <CardTitle className="flex items-center gap-2 text-base">
           <Gift className="w-5 h-5 text-secondary" />
-          <span>Mời bạn bè - Nhận thưởng ✨</span>
+          <span>Mời bạn bè - Nhận thưởng</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         <p className="text-sm text-muted-foreground">
-          Chia sẻ link giới thiệu để nhận <span className="text-secondary font-semibold">30.000 Camly 💎</span> cho mỗi người đăng ký!
+          Chia sẻ link giới thiệu để nhận <span className="text-secondary font-semibold">30.000 Camly</span> cho mỗi người đăng ký!
         </p>
 
         {/* Stats */}
@@ -196,7 +196,7 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
           <Users className="w-4 h-4 text-primary" />
           <span className="text-sm">
             <span className="font-semibold text-foreground">{usesCount}</span>
-            <span className="text-muted-foreground"> người đã đăng ký qua link của bạn 🎉</span>
+            <span className="text-muted-foreground"> người đã đăng ký qua link của bạn</span>
           </span>
         </div>
 
@@ -210,7 +210,7 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
         {/* Action Buttons */}
         <div className="flex gap-2">
           <Button 
-            variant="outline" 
+            variant="secondary" 
             className="flex-1 gap-2"
             onClick={handleCopy}
           >
@@ -231,7 +231,7 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
             onClick={handleShare}
           >
             <Share2 className="w-4 h-4" />
-            Chia sẻ ✨
+            Chia sẻ
           </Button>
         </div>
       </CardContent>

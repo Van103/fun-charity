@@ -64,6 +64,7 @@ const GiftsFromCosmicFather = lazy(() => import("./pages/GiftsFromCosmicFather")
 const AdminRewards = lazy(() => import("./pages/AdminRewards"));
 const AdminAngelKnowledge = lazy(() => import("./pages/AdminAngelKnowledge"));
 const RecipientProfile = lazy(() => import("./pages/RecipientProfile"));
+const ReferralRedirect = lazy(() => import("./pages/ReferralRedirect"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -212,6 +213,7 @@ const App = () => (
                     <Route path="/admin/rewards" element={<AdminRewards />} />
                     <Route path="/admin/angel-knowledge" element={<AdminAngelKnowledge />} />
                     <Route path="/recipient/:id" element={<RecipientProfile />} />
+                    <Route path="/r/:code" element={<ReferralRedirect />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

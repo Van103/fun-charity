@@ -242,10 +242,10 @@ export function useIncomingCallListener({ userId, onAnswerCall, onCallEnded }: U
           .update({ last_message_at: new Date().toISOString() })
           .eq('id', incomingCallData.conversationId);
 
-        // Update call session status to missed
+        // Update call session status to ended (missed call)
         await supabase
           .from('call_sessions')
-          .update({ status: 'no_answer', ended_at: new Date().toISOString() })
+          .update({ status: 'ended', ended_at: new Date().toISOString() })
           .eq('id', incomingCallData.id)
           .eq('status', 'pending');
           

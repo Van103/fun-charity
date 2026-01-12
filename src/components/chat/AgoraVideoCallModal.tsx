@@ -254,15 +254,15 @@ export const AgoraVideoCallModal = ({
     }
   }, []);
 
-  // Mark call as missed/no_answer
-  const markCallAsNoAnswer = useCallback(async () => {
+  // Mark call as missed (using 'ended' status per database constraint)
+  const markCallAsMissed = useCallback(async () => {
     if (!sessionIdRef.current) return;
     
     try {
-      // Update call session status to no_answer
+      // Update call session status to ended (no_answer is not a valid DB status)
       await supabase
         .from('call_sessions')
-        .update({ status: 'no_answer', ended_at: new Date().toISOString() })
+        .update({ status: 'ended', ended_at: new Date().toISOString() })
         .eq('id', sessionIdRef.current)
         .eq('status', 'pending');
       
@@ -281,9 +281,9 @@ export const AgoraVideoCallModal = ({
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
         
-      console.log('[AgoraVideoCallModal] Call marked as no_answer');
+      console.log('[AgoraVideoCallModal] Call marked as missed (ended)');
     } catch (error) {
-      console.error('[AgoraVideoCallModal] Error marking call as no_answer:', error);
+      console.error('[AgoraVideoCallModal] Error marking call as missed:', error);
     }
   }, [callType, conversationId, currentUserId]);
 
@@ -339,7 +339,7 @@ export const AgoraVideoCallModal = ({
           callEndSoundRef.current = new CallEndSound();
           callEndSoundRef.current.play();
           
-          await markCallAsNoAnswer();
+          await markCallAsMissed();
           await leaveChannel();
           
           setInternalCallStatus('ended');
@@ -357,7 +357,7 @@ export const AgoraVideoCallModal = ({
       setIsProcessing(false);
       hasStartedCallRef.current = false;
     }
-  }, [getChannelName, createCallSession, joinChannel, callType, currentUserId, recipientId, recipientName, setCallStatus, isProcessing, markCallAsNoAnswer, leaveChannel, internalCallStatus, remoteUsers.length, onCallEnded, onClose]);
+  }, [getChannelName, createCallSession, joinChannel, callType, currentUserId, recipientId, recipientName, setCallStatus, isProcessing, markCallAsMissed, leaveChannel, internalCallStatus, remoteUsers.length, onCallEnded, onClose]);
 
   // Answer incoming call
   const answerCall = useCallback(async () => {

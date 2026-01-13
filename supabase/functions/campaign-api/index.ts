@@ -82,9 +82,10 @@ serve(async (req) => {
       if (filters.min_goal) query = query.gte('goal_amount', filters.min_goal);
       if (filters.max_goal) query = query.lte('goal_amount', filters.max_goal);
       if (filters.search) {
-        // Sanitize: escape PostgREST operators and limit length to prevent filter injection
+        // Sanitize: escape PostgREST operators and LIKE wildcards, limit length to prevent injection
         const sanitized = filters.search
           .replace(/[,.()|%*\\]/g, '') // Remove PostgREST operators and wildcards
+          .replace(/_/g, '\\_')         // Escape underscore (LIKE single-char wildcard)
           .trim()
           .slice(0, 100); // Length limit
         

@@ -170,7 +170,7 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                     className={linkClasses}
                   >
                     {item.image ? (
-                      <img src={item.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                      <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
                     ) : item.icon ? (
                       <item.icon className={`w-4 h-4 ${isActive ? "text-white" : "text-primary"}`} />
                     ) : null}
@@ -186,7 +186,7 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                   className={linkClasses}
                 >
                   {item.image ? (
-                    <img src={item.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                    <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
                   ) : item.icon ? (
                     <item.icon className={`w-4 h-4 ${isActive ? "text-white" : "text-primary"}`} />
                   ) : null}

@@ -288,9 +288,9 @@ export function MobileBottomNav() {
                           onClick={() => setIsMenuOpen(false)}
                           className="flex flex-col items-center p-3 rounded-xl hover:bg-muted transition-all relative"
                         >
-                          <div className="p-2.5 rounded-full bg-muted mb-2 overflow-hidden">
+                          <div className="p-2 rounded-full bg-muted mb-2 overflow-hidden">
                             {item.image ? (
-                              <img src={item.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                              <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
                             ) : Icon ? (
                               <Icon className="w-5 h-5 text-primary" />
                             ) : null}
@@ -314,11 +314,11 @@ export function MobileBottomNav() {
                             : "hover:bg-muted"
                         }`}
                       >
-                        <div className={`p-2.5 rounded-full mb-2 overflow-hidden ${
+                        <div className={`p-2 rounded-full mb-2 overflow-hidden ${
                           isActive ? "bg-primary/20" : "bg-muted"
                         }`}>
                           {item.image ? (
-                            <img src={item.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                            <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
                           ) : Icon ? (
                             <Icon className="w-5 h-5" />
                           ) : null}

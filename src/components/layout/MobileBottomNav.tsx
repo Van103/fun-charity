@@ -25,7 +25,9 @@ import {
   LayoutDashboard,
   Star,
   ExternalLink,
+  Download,
 } from "lucide-react";
+import { useInstallPWA } from "@/hooks/useInstallPWA";
 import funProfileLogo from "@/assets/fun-profile-logo.webp";
 import funPlayLogo from "@/assets/fun-play-logo.png";
 import funPlanetLogo from "@/assets/fun-planet-logo.png";
@@ -71,6 +73,7 @@ export function MobileBottomNav() {
   const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { showInstallOption, isIOS, promptInstall } = useInstallPWA();
 
   // Fetch unread message count
   useEffect(() => {
@@ -218,6 +221,52 @@ export function MobileBottomNav() {
                   })}
                 </div>
               </div>
+
+              {/* Install App Section */}
+              {showInstallOption && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
+                    {t("install.title") || "Cài đặt App"}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {isIOS ? (
+                      <Link
+                        to="/install"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 transition-all"
+                      >
+                        <div className="p-3 rounded-full bg-primary/20">
+                          <Download className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{t("install.installApp") || "Cài đặt FUN Charity"}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {t("install.iosHint") || "Xem hướng dẫn cài đặt trên iOS"}
+                          </p>
+                        </div>
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          await promptInstall();
+                          setIsMenuOpen(false);
+                        }}
+                        className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 transition-all text-left"
+                      >
+                        <div className="p-3 rounded-full bg-primary/20">
+                          <Download className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{t("install.installApp") || "Cài đặt FUN Charity"}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {t("install.androidHint") || "Thêm vào màn hình chính"}
+                          </p>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* FUN Ecosystem Section */}
               <div className="mb-6">

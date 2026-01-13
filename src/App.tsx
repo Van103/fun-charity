@@ -15,6 +15,7 @@ import FlyingAngel from "@/components/cursor/FlyingAngel";
 import { useIncomingCallListener } from "@/hooks/useIncomingCallListener";
 import { IncomingCallNotification } from "@/components/chat/IncomingCallNotification";
 import { GlobalEmailVerificationBanner } from "@/components/layout/GlobalEmailVerificationBanner";
+import { InstallAppBanner } from "@/components/pwa/InstallAppBanner";
 import { usePushNotification } from "@/hooks/usePushNotification";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState, useCallback, lazy, Suspense } from "react";
@@ -172,6 +173,7 @@ const App = () => (
                   <EnergyBokeh />
                   <IncomingCallListener />
                   <GlobalEmailVerificationBanner />
+                  <InstallAppBanner />
                   <RewardNotification />
                   <MilestoneAnimation />
                   <AngelAIButton />

@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Allowed origins for CORS - restrict to trusted domains
 const ALLOWED_ORIGINS = [
+  'https://charity.fun.rich',
+  'https://fun-charity.lovable.app',
   'https://rsmppgcxrdywybxorvla.lovable.app',
   'https://lovable.dev',
   'http://localhost:5173',
@@ -10,14 +12,15 @@ const ALLOWED_ORIGINS = [
 ];
 
 function getCorsHeaders(origin: string | null) {
-  // Allow all subdomains of lovable.app (including preview URLs)
-  const isLovableOrigin = origin && (
+  // Allow custom domain and all subdomains of lovable.app (including preview URLs)
+  const isAllowedOrigin = origin && (
     ALLOWED_ORIGINS.includes(origin) ||
     origin.endsWith('.lovable.app') ||
-    origin.endsWith('.lovableproject.com')
+    origin.endsWith('.lovableproject.com') ||
+    origin.endsWith('.fun.rich')
   );
   
-  const allowedOrigin = isLovableOrigin ? origin : ALLOWED_ORIGINS[0];
+  const allowedOrigin = isAllowedOrigin ? origin : ALLOWED_ORIGINS[0];
   
   return {
     'Access-Control-Allow-Origin': allowedOrigin!,

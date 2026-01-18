@@ -81,7 +81,7 @@ const BrandGuidelines = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>funcharity.org</span> - Domain chính thức
+                        <span>charity.fun.rich</span> - Domain chính thức
                       </li>
                     </ul>
                   </div>

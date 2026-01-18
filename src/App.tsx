@@ -59,7 +59,7 @@ const AdminAngelKnowledge = lazy(() => import("./pages/AdminAngelKnowledge"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const RecipientProfile = lazy(() => import("./pages/RecipientProfile"));
 const ReferralRedirect = lazy(() => import("./pages/ReferralRedirect"));
-const PwaDebug = lazy(() => import("./pages/PwaDebug"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -73,11 +73,6 @@ const queryClient = new QueryClient({
 function BackgroundWithVariant() {
   const location = useLocation();
   
-  // Hide background effects on Law of Light page (it has its own white background)
-  if (location.pathname === "/law-of-light") {
-    return null;
-  }
-  
   const getVariant = () => {
     if (location.pathname === "/") return "home";
     if (location.pathname === "/profile") return "profile";
@@ -86,17 +81,6 @@ function BackgroundWithVariant() {
   };
 
   return <AnimatedBackground variant={getVariant()} intensity="medium" />;
-}
-
-// Conditionally render EnergyBokeh (hide on Law of Light page)
-function ConditionalEnergyBokeh() {
-  const location = useLocation();
-  
-  if (location.pathname === "/law-of-light") {
-    return null;
-  }
-  
-  return <EnergyBokeh />;
 }
 
 // Global incoming call listener component
@@ -175,7 +159,7 @@ const App = () => (
                 <FlyingAngel />
                 <BrowserRouter>
                   <BackgroundWithVariant />
-                  <ConditionalEnergyBokeh />
+                  <EnergyBokeh />
                   <IncomingCallListener />
                   <GlobalEmailVerificationBanner />
                   <InstallAppBanner />
@@ -209,7 +193,6 @@ const App = () => (
                       <Route path="/admin/moderation-logs" element={<ModerationLogs />} />
                       <Route path="/volunteer" element={<Volunteer />} />
                       <Route path="/install" element={<Install />} />
-                      <Route path="/pwa-debug" element={<PwaDebug />} />
                       <Route path="/live/:streamId" element={<LiveStream />} />
                       <Route path="/honor-board" element={<HonorBoard />} />
                       <Route path="/wallet" element={<Wallet />} />

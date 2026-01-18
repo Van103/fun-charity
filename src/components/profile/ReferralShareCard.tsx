@@ -142,10 +142,10 @@ export function ReferralShareCard({ userId }: ReferralShareCardProps) {
   };
 
   const getReferralLink = () => {
-    const productionDomain = "https://charity.fun.rich";
+    const productionDomain = "https://fun-charity.lovable.app";
     const currentOrigin = window.location.origin;
-    const isProduction = currentOrigin.includes("charity.fun.rich") ||
-                         currentOrigin.includes("fun-charity.lovable.app");
+    const isProduction = currentOrigin.includes("fun-charity.lovable.app") ||
+                         currentOrigin.includes("fungiveback.org");
     const baseUrl = isProduction ? currentOrigin : productionDomain;
 
     // Use /auth?ref=... directly (more reliable across devices/apps)

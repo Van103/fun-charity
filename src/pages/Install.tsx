@@ -85,11 +85,7 @@ export default function Install() {
             className="text-center mb-8"
           >
             <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/60 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-primary/30">
-              <img
-                src="/funcharity-icon-192-v4.png"
-                alt="Biểu tượng ứng dụng FUN Charity"
-                className="w-12 h-12 object-contain"
-              />
+              <Download className="w-10 h-10 text-primary-foreground" />
             </div>
             <h1 className="text-3xl font-bold mb-3">Cài đặt FUN Charity</h1>
             <p className="text-muted-foreground">

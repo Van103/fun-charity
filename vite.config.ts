@@ -15,10 +15,18 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
+      includeAssets: [
+        "favicon.ico",
+        "favicon-16x16.png",
+        "favicon-32x32.png",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+        "apple-touch-icon.png",
+        "browserconfig.xml"
+      ],
       manifest: {
         name: "FUN Charity",
-        short_name: "FUN",
+        short_name: "FUN Charity",
         description: "Web3 Social Charity Platform - Transparent Giving",
         theme_color: "#7c3aed",
         background_color: "#0a0a0f",

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import funCharityLogo from "@/assets/fun-charity-logo-cutout.png";
+import funCharityLogo from "@/assets/fun-charity-logo-new.jpg";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl";

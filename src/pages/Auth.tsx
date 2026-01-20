@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { signupSchema, loginSchema } from "@/lib/validation";
 import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Heart,
   Users,
@@ -27,6 +28,8 @@ import {
   Eye,
   EyeOff,
   Gift,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 const Auth = () => {
@@ -56,6 +59,15 @@ const Auth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  
+  // Referral code validation state
+  const [referralValidating, setReferralValidating] = useState(false);
+  const [referralValid, setReferralValid] = useState<boolean | null>(null);
+  const [referrerInfo, setReferrerInfo] = useState<{
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null>(null);
+  
   const { toast } = useToast();
   
   // Effective referral code: URL param > localStorage > manual input
@@ -90,6 +102,59 @@ const Auth = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Validate referral code with debounce
+  useEffect(() => {
+    const validateReferralCode = async (code: string) => {
+      if (!code.trim()) {
+        setReferralValid(null);
+        setReferrerInfo(null);
+        return;
+      }
+
+      setReferralValidating(true);
+      
+      try {
+        // First check if referral code exists
+        const { data: codeData, error: codeError } = await supabase
+          .from("referral_codes")
+          .select("code, user_id")
+          .ilike("code", code.trim())
+          .eq("is_active", true)
+          .maybeSingle();
+
+        if (codeError || !codeData) {
+          setReferralValid(false);
+          setReferrerInfo(null);
+          setReferralValidating(false);
+          return;
+        }
+
+        // Then fetch referrer's profile
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("user_id", codeData.user_id)
+          .maybeSingle();
+
+        setReferralValid(true);
+        setReferrerInfo(profileData || null);
+      } catch (err) {
+        console.error("Validation error:", err);
+        setReferralValid(false);
+        setReferrerInfo(null);
+      } finally {
+        setReferralValidating(false);
+      }
+    };
+
+    // Debounce validation by 500ms
+    const timeoutId = setTimeout(() => {
+      validateReferralCode(effectiveReferralCode);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [effectiveReferralCode]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -645,7 +710,13 @@ const Auth = () => {
                           type="text"
                           name="referral-code"
                           placeholder="Nhập mã giới thiệu hoặc dán link..."
-                          className="pl-10"
+                          className={`pl-10 pr-10 ${
+                            manualReferralCode && referralValid === false 
+                              ? 'border-red-500 focus-visible:ring-red-500' 
+                              : manualReferralCode && referralValid === true 
+                              ? 'border-green-500 focus-visible:ring-green-500' 
+                              : ''
+                          }`}
                           value={manualReferralCode}
                           onChange={(e) => {
                             let value = e.target.value;
@@ -665,27 +736,68 @@ const Auth = () => {
                           }}
                           disabled={loading}
                         />
+                        {/* Validation indicator */}
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {referralValidating && manualReferralCode && (
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                          )}
+                          {!referralValidating && manualReferralCode && referralValid === true && (
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          )}
+                          {!referralValidating && manualReferralCode && referralValid === false && (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Dán link hoặc nhập mã người giới thiệu để nhận thưởng
-                      </p>
+                      {/* Validation feedback */}
+                      {manualReferralCode && !referralValidating && referralValid === false && (
+                        <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                          <XCircle className="w-3 h-3" />
+                          Mã giới thiệu không tồn tại
+                        </p>
+                      )}
+                      {!manualReferralCode && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Dán link hoặc nhập mã người giới thiệu để nhận thưởng
+                        </p>
+                      )}
                     </div>
                   )}
 
-                  {/* Referrer Info Display */}
-                  {effectiveReferralCode && (
-                    <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+                  {/* Referrer Info Display - Show only when valid */}
+                  {effectiveReferralCode && referralValid === true && (
+                    <div className="p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-white font-bold flex-shrink-0">
-                          {effectiveReferralCode.charAt(0).toUpperCase()}
-                        </div>
+                        <Avatar className="w-10 h-10 border-2 border-green-500/30">
+                          <AvatarImage src={referrerInfo?.avatar_url || undefined} />
+                          <AvatarFallback className="bg-gradient-to-br from-secondary to-accent text-white font-bold">
+                            {(referrerInfo?.full_name || effectiveReferralCode).charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-muted-foreground">Bạn được giới thiệu bởi:</p>
-                          <p className="font-semibold text-sm text-secondary truncate">
-                            {effectiveReferralCode}
+                          <p className="font-semibold text-sm text-green-600 truncate">
+                            {referrerInfo?.full_name || effectiveReferralCode}
                           </p>
                         </div>
-                        <Gift className="w-5 h-5 text-pink-500 flex-shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Invalid referral code warning for URL referral */}
+                  {referralCode && !referralValidating && referralValid === false && (
+                    <div className="p-3 bg-gradient-to-r from-red-500/10 to-orange-500/10 rounded-xl border border-red-500/20">
+                      <div className="flex items-center gap-3">
+                        <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm text-red-600">
+                            Mã giới thiệu không hợp lệ
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Mã "{referralCode}" không tồn tại. Bạn vẫn có thể đăng ký nhưng sẽ không nhận được thưởng giới thiệu.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -702,7 +814,12 @@ const Auth = () => {
                     </div>
                   )}
 
-                  <Button variant="hero" className="w-full" type="submit" disabled={loading}>
+                  <Button 
+                    variant="hero" 
+                    className="w-full" 
+                    type="submit" 
+                    disabled={loading || (!!manualReferralCode && referralValid === false)}
+                  >
                     {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />

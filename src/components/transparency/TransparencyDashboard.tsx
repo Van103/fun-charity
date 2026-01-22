@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTransparencyStats } from "@/hooks/useTransparencyStats";
@@ -12,7 +13,7 @@ import {
   HandHeart,
   Wallet
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 const formatNumber = (num: number): string => {
   if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
@@ -38,39 +39,42 @@ interface StatCardProps {
   gradient: string;
 }
 
-function StatCard({ icon: Icon, label, value, isCurrency = false, suffix = "", delay, gradient }: StatCardProps) {
-  const animatedValue = useCountAnimation(value);
-  
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay, duration: 0.5, ease: "easeOut" }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      className="group"
-    >
-      <Card className="glass-card border-primary/10 hover:border-primary/30 transition-all duration-300 overflow-hidden relative">
-        <div className={`absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity ${gradient}`} />
-        <CardContent className="p-4 relative">
-          <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 rounded-xl ${gradient} flex items-center justify-center shadow-lg`}>
-              <Icon className="w-6 h-6 text-white" />
+const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
+  function StatCard({ icon: Icon, label, value, isCurrency = false, suffix = "", delay, gradient }, ref) {
+    const animatedValue = useCountAnimation(value);
+    
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay, duration: 0.5, ease: "easeOut" }}
+        whileHover={{ scale: 1.02, y: -2 }}
+        className="group"
+      >
+        <Card className="glass-card border-primary/10 hover:border-primary/30 transition-all duration-300 overflow-hidden relative">
+          <div className={`absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity ${gradient}`} />
+          <CardContent className="p-4 relative">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 rounded-xl ${gradient} flex items-center justify-center shadow-lg`}>
+                <Icon className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-2xl font-bold text-foreground truncate">
+                  {isCurrency ? formatCurrency(animatedValue) : formatNumber(animatedValue)}{suffix}
+                </p>
+                <p className="text-sm text-muted-foreground truncate">{label}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-2xl font-bold text-foreground truncate">
-                {isCurrency ? formatCurrency(animatedValue) : formatNumber(animatedValue)}{suffix}
-              </p>
-              <p className="text-sm text-muted-foreground truncate">{label}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-}
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
+);
 
 export function TransparencyDashboard() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { data: stats, isLoading } = useTransparencyStats();
 
   const statsData = [

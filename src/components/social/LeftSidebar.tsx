@@ -19,6 +19,7 @@ import {
   Trophy,
   HandHeart,
   BookOpen,
+  ScrollText,
 } from "lucide-react";
 import funProfileLogo from "@/assets/fun-profile-logo.webp";
 import funPlayLogo from "@/assets/fun-play-logo.png";
@@ -55,6 +56,13 @@ interface QuickActionItem {
 }
 
 const quickActions: QuickActionItem[] = [
+  { 
+    icon: ScrollText, 
+    labelKey: "sidebar.constitution", 
+    href: "/constitution",
+    gradient: "from-secondary/20 to-amber-500/20",
+    iconColor: "text-secondary"
+  },
   { 
     icon: Trophy, 
     labelKey: "sidebar.honorBoard", 

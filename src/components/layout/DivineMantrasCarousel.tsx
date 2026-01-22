@@ -3,17 +3,14 @@ import { Heart, Volume2, Sparkles, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { DIVINE_MANTRAS } from "@/data/light-constitution";
 
-const mantras = [
-  "Lòng tốt là ánh sáng, mỗi hành động thiện nguyện là một tia sáng chiếu rọi thế giới.",
-  "Cho đi không làm ta nghèo đi, mà làm trái tim ta giàu có hơn.",
-  "Minh bạch là nền tảng của niềm tin, blockchain là cầu nối của lòng nhân ái.",
-  "Mỗi đồng quyên góp là một hạt giống yêu thương được gieo vào cuộc đời.",
-  "Sự kết nối làm nên sức mạnh, cộng đồng FUN là gia đình của những trái tim nhân hậu.",
-  "Tình nguyện không chỉ là cho đi, mà còn là nhận lại niềm vui vô bờ bến.",
-  "Mỗi hành động từ thiện được ghi dấu mãi mãi trên blockchain của lòng nhân ái.",
-  "Ánh sáng của sự cho đi sẽ soi sáng con đường của cả người cho lẫn người nhận."
-];
+// 8 Divine Mantras from Light Constitution
+const mantras = DIVINE_MANTRAS.map(m => ({
+  vi: m.vi,
+  en: m.en,
+  icon: m.icon
+}));
 
 export function DivineMantrasCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -149,7 +146,7 @@ export function DivineMantrasCarousel() {
                   filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.3))",
                 }}
               >
-                "{mantras[currentIndex]}"
+                "{mantras[currentIndex].vi}"
               </p>
 
               {/* Blinking heart right */}

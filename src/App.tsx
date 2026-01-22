@@ -179,6 +179,8 @@ const App = () => (
                       <Route path="/profiles" element={<Profiles />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/law-of-light" element={<LawOfLight />} />
+                      <Route path="/constitution" element={<LawOfLight />} />
+                      <Route path="/hien-phap-anh-sang" element={<LawOfLight />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
                       <Route path="/verify-email" element={<VerifyEmail />} />
                       <Route path="/reset-password" element={<ResetPassword />} />

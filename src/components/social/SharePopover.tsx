@@ -41,7 +41,7 @@ export function SharePopover({ post, currentUserAvatar }: SharePopoverProps) {
   const { toast } = useToast();
   const createPost = useCreateFeedPost();
 
-  const postUrl = `${window.location.origin}/feed?post=${post.id}`;
+  const postUrl = `${window.location.origin}/social?post=${post.id}`;
 
   const handleCopyLink = async () => {
     try {

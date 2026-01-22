@@ -31,7 +31,7 @@ import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useMessageReactions } from "@/hooks/useMessageReactions";
 import { ChatStickerPicker } from "@/components/chat/ChatStickerPicker";
 import { ChatGifPicker } from "@/components/chat/ChatGifPicker";
-import { VideoCallModal } from "@/components/chat/VideoCallModal";
+
 import { AgoraVideoCallModal } from "@/components/chat/AgoraVideoCallModal";
 import { AgoraGroupCallModal } from "@/components/chat/AgoraGroupCallModal";
 import { CreateGroupModal } from "@/components/chat/CreateGroupModal";
@@ -121,7 +121,7 @@ export default function Messages() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showVideoCall, setShowVideoCall] = useState(false);
   const [callType, setCallType] = useState<"video" | "audio">("video");
-  const [useAgoraCall, setUseAgoraCall] = useState(true); // Use Agora by default
+  
   const [showGroupCall, setShowGroupCall] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
@@ -1639,67 +1639,37 @@ export default function Messages() {
 
       {/* Incoming Call Notification - REMOVED, now handled globally in App.tsx */}
 
-      {/* Video/Audio Call Modal - Agora or WebRTC */}
+      {/* Video/Audio Call Modal - Agora */}
       {showVideoCall && currentUserId && (
-        useAgoraCall ? (
-          <AgoraVideoCallModal
-            open={showVideoCall}
-            onClose={() => {
-              setShowVideoCall(false);
-              setIsIncomingCall(false);
-              setAutoAnswerCall(false);
-              setIncomingCallSessionId(null);
-              setIncomingCallConversationId(null);
-              setIncomingCallOtherUser(null);
-            }}
-            conversationId={isIncomingCall && incomingCallConversationId ? incomingCallConversationId : (activeConversation?.id || "")}
-            recipientId={isIncomingCall && incomingCallOtherUser ? incomingCallOtherUser.user_id : (activeConversation?.otherUser?.user_id || "")}
-            recipientName={isIncomingCall && incomingCallOtherUser ? (incomingCallOtherUser.full_name || t('messages.user')) : (activeConversation?.otherUser?.full_name || t('messages.user'))}
-            recipientAvatar={isIncomingCall && incomingCallOtherUser ? (incomingCallOtherUser.avatar_url || undefined) : (activeConversation?.otherUser?.avatar_url || undefined)}
-            callType={callType}
-            isIncoming={isIncomingCall}
-            callSessionId={incomingCallSessionId || undefined}
-            currentUserId={currentUserId}
-            autoAnswer={autoAnswerCall}
-            onCallEnded={() => {
-              // Refresh conversations and messages after call ends
-              if (currentUserId) {
-                loadConversations(currentUserId);
-                if (activeConversation?.id) {
-                  loadMessages(activeConversation.id);
-                }
+        <AgoraVideoCallModal
+          open={showVideoCall}
+          onClose={() => {
+            setShowVideoCall(false);
+            setIsIncomingCall(false);
+            setAutoAnswerCall(false);
+            setIncomingCallSessionId(null);
+            setIncomingCallConversationId(null);
+            setIncomingCallOtherUser(null);
+          }}
+          conversationId={isIncomingCall && incomingCallConversationId ? incomingCallConversationId : (activeConversation?.id || "")}
+          recipientId={isIncomingCall && incomingCallOtherUser ? incomingCallOtherUser.user_id : (activeConversation?.otherUser?.user_id || "")}
+          recipientName={isIncomingCall && incomingCallOtherUser ? (incomingCallOtherUser.full_name || t('messages.user')) : (activeConversation?.otherUser?.full_name || t('messages.user'))}
+          recipientAvatar={isIncomingCall && incomingCallOtherUser ? (incomingCallOtherUser.avatar_url || undefined) : (activeConversation?.otherUser?.avatar_url || undefined)}
+          callType={callType}
+          isIncoming={isIncomingCall}
+          callSessionId={incomingCallSessionId || undefined}
+          currentUserId={currentUserId}
+          autoAnswer={autoAnswerCall}
+          onCallEnded={() => {
+            // Refresh conversations and messages after call ends
+            if (currentUserId) {
+              loadConversations(currentUserId);
+              if (activeConversation?.id) {
+                loadMessages(activeConversation.id);
               }
-            }}
-          />
-        ) : (
-          <VideoCallModal
-            open={showVideoCall}
-            onClose={() => {
-              setShowVideoCall(false);
-              setIsIncomingCall(false);
-              setAutoAnswerCall(false);
-              setIncomingCallSessionId(null);
-              setIncomingCallConversationId(null);
-              setIncomingCallOtherUser(null);
-            }}
-            conversationId={isIncomingCall && incomingCallConversationId ? incomingCallConversationId : (activeConversation?.id || "")}
-            currentUserId={currentUserId}
-            otherUser={isIncomingCall && incomingCallOtherUser ? incomingCallOtherUser : (activeConversation?.otherUser || { user_id: "", full_name: null, avatar_url: null })}
-            callType={callType}
-            isIncoming={isIncomingCall}
-            callSessionId={incomingCallSessionId || undefined}
-            autoAnswer={autoAnswerCall}
-            onCallEnded={() => {
-              // Refresh conversations and messages after call ends
-              if (currentUserId) {
-                loadConversations(currentUserId);
-                if (activeConversation?.id) {
-                  loadMessages(activeConversation.id);
-                }
-              }
-            }}
-          />
-        )
+            }
+          }}
+        />
       )}
 
       {/* Group Call Modal */}

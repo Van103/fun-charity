@@ -4,7 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { LeftSidebar } from "@/components/social/LeftSidebar";
 import { RightSidebar } from "@/components/social/RightSidebar";
-import { StoriesSection } from "@/components/social/StoriesSection";
+
 import { FriendRequestsSection } from "@/components/social/FriendRequestsSection";
 import { CreatePostBox } from "@/components/social/CreatePostBox";
 import { SocialPostCard } from "@/components/social/SocialPostCard";
@@ -85,7 +85,7 @@ export default function Legal() {
               <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
                 <PullToRefresh onRefresh={handleRefresh}>
                   <div className="space-y-6">
-                    <StoriesSection />
+                    
                     <CreatePostBox profile={profile} />
                     <FriendRequestsSection />
                     <div className="space-y-6">

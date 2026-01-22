@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import funCharityLogo from "@/assets/fun-charity-logo-new.jpg";
 
@@ -87,61 +87,63 @@ async function chromaKeyToTransparentPng(src: string) {
   return out;
 }
 
-export function Logo({ size = "md", showText = false, className = "" }: LogoProps) {
-  const sizes = {
-    sm: { icon: 72, text: "text-lg" },
-    md: { icon: 96, text: "text-xl" },
-    lg: { icon: 120, text: "text-2xl" },
-    xl: { icon: 160, text: "text-3xl" },
-  };
-
-  const s = sizes[size];
-
-  const initialSrc = useMemo(
-    () => logoChromaCache.get(funCharityLogo) ?? funCharityLogo,
-    []
-  );
-  const [logoSrc, setLogoSrc] = useState<string>(initialSrc);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      const processed = await chromaKeyToTransparentPng(funCharityLogo);
-      if (!cancelled) setLogoSrc(processed);
-    })();
-
-    return () => {
-      cancelled = true;
+export const Logo = forwardRef<HTMLDivElement, LogoProps>(
+  function Logo({ size = "md", showText = false, className = "" }, ref) {
+    const sizes = {
+      sm: { icon: 72, text: "text-lg" },
+      md: { icon: 96, text: "text-xl" },
+      lg: { icon: 120, text: "text-2xl" },
+      xl: { icon: 160, text: "text-3xl" },
     };
-  }, []);
 
-  return (
-    <div className={`flex items-center gap-2 group ${className}`}>
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.2 }}
-        className="relative"
-        style={{ width: s.icon, height: s.icon }}
-      >
-        <img
-          src={logoSrc}
-          alt="FUN Charity Logo"
-          className="w-full h-full object-contain"
-          draggable={false}
-        />
-      </motion.div>
+    const s = sizes[size];
 
-      {showText && (
-        <motion.span
-          className={`font-display font-bold ${s.text} text-gold-shimmer tracking-tight whitespace-nowrap`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+    const initialSrc = useMemo(
+      () => logoChromaCache.get(funCharityLogo) ?? funCharityLogo,
+      []
+    );
+    const [logoSrc, setLogoSrc] = useState<string>(initialSrc);
+
+    useEffect(() => {
+      let cancelled = false;
+
+      (async () => {
+        const processed = await chromaKeyToTransparentPng(funCharityLogo);
+        if (!cancelled) setLogoSrc(processed);
+      })();
+
+      return () => {
+        cancelled = true;
+      };
+    }, []);
+
+    return (
+      <div ref={ref} className={`flex items-center gap-2 group ${className}`}>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.2 }}
+          className="relative"
+          style={{ width: s.icon, height: s.icon }}
         >
-          FUNCHARITY
-        </motion.span>
-      )}
-    </div>
-  );
-}
+          <img
+            src={logoSrc}
+            alt="FUN Charity Logo"
+            className="w-full h-full object-contain"
+            draggable={false}
+          />
+        </motion.div>
+
+        {showText && (
+          <motion.span
+            className={`font-display font-bold ${s.text} text-gold-shimmer tracking-tight whitespace-nowrap`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            FUNCHARITY
+          </motion.span>
+        )}
+      </div>
+    );
+  }
+);

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Star, Sparkles, Heart, Zap, Building2, Wallet, Users, MessageCircle } from "lucide-react";
 import type { ConstitutionSection as SectionType } from "@/data/light-constitution";
 
 interface ConstitutionSectionProps {
@@ -6,8 +7,57 @@ interface ConstitutionSectionProps {
   index: number;
 }
 
+// Map section IDs to icons
+const sectionIcons: Record<string, React.ReactNode> = {
+  "nguyen-ly-goc": <Star className="w-5 h-5" />,
+  "tieu-chuan-fun-human": <Sparkles className="w-5 h-5" />,
+  "nguyen-ly-thu-nhap": <Zap className="w-5 h-5" />,
+  "angel-ai": <Heart className="w-5 h-5" />,
+  "fun-platforms": <Building2 className="w-5 h-5" />,
+  "fun-wallet": <Wallet className="w-5 h-5" />,
+  "van-hoa-cong-dong": <Users className="w-5 h-5" />,
+  "tuyen-ngon": <MessageCircle className="w-5 h-5" />,
+};
+
+// Vietnamese number labels
+const vietnameseNumbers = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+
+// Function to highlight keywords in content
+function highlightKeywords(text: string): React.ReactNode {
+  const keywords = [
+    "Người Chân Thật", "Con Người Chân Thật", "Giá Trị Chân Thật", "Danh Tính Chân Thật",
+    "Light Identity", "FUN Human", "phẩm chất bên trong con người",
+    "Chân Thật", "Chân Thành", "Thức Tỉnh", "Thuần Khiết",
+    "Truth", "Sincerity", "Awareness", "Purity",
+    "Angel AI", "AI Ánh Sáng", "Trí Tuệ Ánh Sáng",
+    "FUN Platforms", "FUN Wallet", "Ví Của Ý Thức",
+    "Nền Kinh Tế Ánh Sáng 5D", "Ánh Sáng Yêu Thương Thuần Khiết",
+    "Cha Vũ Trụ", "Father Universe",
+  ];
+  
+  let result = text;
+  keywords.forEach(keyword => {
+    const regex = new RegExp(`(${keyword})`, 'gi');
+    result = result.replace(regex, '%%HIGHLIGHT%%$1%%END%%');
+  });
+  
+  const parts = result.split(/(%%HIGHLIGHT%%.*?%%END%%)/);
+  
+  return parts.map((part, i) => {
+    if (part.startsWith('%%HIGHLIGHT%%')) {
+      const content = part.replace('%%HIGHLIGHT%%', '').replace('%%END%%', '');
+      return (
+        <span key={i} style={{ color: "#D87093", fontWeight: 600 }}>
+          {content}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
 export function ConstitutionSection({ section, index }: ConstitutionSectionProps) {
-  const isAngelAI = section.id === "angel-ai";
+  const Icon = sectionIcons[section.id] || <Star className="w-5 h-5" />;
   
   return (
     <motion.section
@@ -15,131 +65,103 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="relative"
+      className="relative mb-8"
     >
-      <div 
-        className={`relative overflow-hidden rounded-2xl backdrop-blur-sm p-6 md:p-8 ${
-          isAngelAI 
-            ? "border-2 border-violet-400/40 shadow-xl shadow-violet-500/20" 
-            : "border border-violet-500/30"
-        }`}
-        style={{
-          background: isAngelAI 
-            ? "linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.25))"
-            : "linear-gradient(135deg, rgba(26, 10, 46, 0.6), rgba(22, 8, 42, 0.4), rgba(13, 5, 26, 0.6))",
-        }}
-      >
-        {/* Glow effect */}
+      {/* Section Label - PHẦN I, II, etc. */}
+      <div className="flex items-center gap-3 mb-4">
+        {/* Icon with yellow background */}
         <div 
-          className="absolute inset-0 pointer-events-none"
+          className="w-10 h-10 rounded-full flex items-center justify-center"
           style={{
-            background: isAngelAI
-              ? "linear-gradient(135deg, rgba(139, 92, 246, 0.15), transparent, rgba(99, 102, 241, 0.1))"
-              : "linear-gradient(135deg, rgba(139, 92, 246, 0.08), transparent, rgba(251, 113, 133, 0.05))"
-          }}
-        />
-        
-        {/* Section number badge - Deep Amethyst */}
-        <div 
-          className="absolute -top-3 -left-3 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-          style={{
-            background: "linear-gradient(135deg, #7c3aed, #6b21a8)",
-            border: "2px solid rgba(196, 181, 253, 0.5)",
-            boxShadow: "0 4px 20px rgba(124, 58, 237, 0.4)",
+            background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%)",
+            boxShadow: "0 2px 8px rgba(245, 158, 11, 0.3)",
           }}
         >
-          <span className="text-white font-bold text-lg">{section.number}</span>
+          <span className="text-white">{Icon}</span>
         </div>
         
-        {/* Header */}
-        <div className="ml-6 mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl">{section.icon}</span>
-            <div>
-              {/* Section title - Warm Gold Gradient */}
-              <h3 
-                className="text-xl md:text-2xl font-bold"
-                style={{
-                  background: "linear-gradient(135deg, #fcd34d 0%, #fef08a 50%, #f59e0b 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  textShadow: "0 0 30px rgba(251, 191, 36, 0.3)",
-                }}
-              >
-                {section.title}
-              </h3>
-              {section.titleEn && (
-                <p className="text-sm text-violet-200/60 italic">
-                  {section.titleEn}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-        
+        {/* PHẦN label */}
+        <span 
+          className="text-sm font-bold tracking-wide"
+          style={{
+            color: "#E8A44D",
+            letterSpacing: "0.1em",
+          }}
+        >
+          PHẦN {vietnameseNumbers[index]}
+        </span>
+      </div>
+
+      {/* Section Title - Golden Italic */}
+      <h3 
+        className="text-xl md:text-2xl font-serif italic font-bold mb-1"
+        style={{
+          background: "linear-gradient(135deg, #C49B3D 0%, #D4AA4F 50%, #E8C066 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        {section.title}
+      </h3>
+      
+      {/* English subtitle */}
+      {section.titleEn && (
+        <p 
+          className="text-sm italic mb-4"
+          style={{ color: "#8B7EC8" }}
+        >
+          {section.titleEn}
+        </p>
+      )}
+
+      {/* Content Box with Violet Left Border */}
+      <div 
+        className="relative pl-4 py-4 rounded-r-lg"
+        style={{
+          background: "linear-gradient(135deg, #FAF7F2 0%, #F5F0EA 100%)",
+          borderLeft: "3px solid #A78BFA",
+        }}
+      >
         {/* Content */}
-        <div className="space-y-3 text-violet-100/80">
+        <div className="space-y-3" style={{ color: "#4A4A4A" }}>
           {section.content.map((line, i) => (
-            <p key={i} className={line.startsWith("•") ? "ml-4" : ""}>
-              {line}
+            <p 
+              key={i} 
+              className={`leading-relaxed ${line.startsWith("•") || line.startsWith("✨") ? "ml-2" : ""}`}
+            >
+              {highlightKeywords(line)}
             </p>
           ))}
         </div>
         
-        {/* Highlights - Rose Gold */}
+        {/* Highlights as Quote Box */}
         {section.highlights && section.highlights.length > 0 && (
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-4">
             {section.highlights.map((highlight, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 + i * 0.1 }}
-                className="relative pl-4"
+                className="relative pl-4 py-3 rounded-r-md"
                 style={{
-                  borderLeft: "2px solid rgba(251, 113, 133, 0.6)",
+                  background: "rgba(139, 126, 200, 0.08)",
+                  borderLeft: "3px solid #8B7EC8",
                 }}
               >
                 <p 
-                  className="font-medium italic"
+                  className="font-serif italic leading-relaxed"
                   style={{
-                    background: "linear-gradient(135deg, #fda4af, #fecdd3, #fb7185)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
+                    color: "#C9A064",
                   }}
                 >
-                  {highlight}
+                  "{highlightKeywords(highlight)}"
                 </p>
               </motion.div>
             ))}
           </div>
-        )}
-        
-        {/* Decorative corner - Violet gradient */}
-        <div className="absolute bottom-0 right-0 w-20 h-20 opacity-30">
-          <div 
-            className="absolute inset-0 rounded-tl-full"
-            style={{
-              background: "linear-gradient(to top left, rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0.2), transparent)"
-            }}
-          />
-        </div>
-
-        {/* Angel AI special glow effect */}
-        {isAngelAI && (
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="absolute inset-0 pointer-events-none rounded-2xl"
-            style={{
-              boxShadow: "inset 0 0 60px rgba(139, 92, 246, 0.2)",
-            }}
-          />
         )}
       </div>
     </motion.section>

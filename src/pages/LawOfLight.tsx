@@ -47,35 +47,51 @@ const LawOfLight = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-950 via-purple-900 to-indigo-950 relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #1a0a2e 0%, #16082a 50%, #0d051a 100%)",
+      }}
+    >
+      {/* Ambient glow orbs */}
+      <div className="absolute top-20 left-1/4 w-96 h-96 bg-violet-500/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-40 right-1/4 w-72 h-72 bg-rose-400/6 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 right-10 w-48 h-48 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+
       {/* Animated particles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-secondary/40 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-30, 30, -30],
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-            }}
-          />
-        ))}
+        {[...Array(40)].map((_, i) => {
+          const colors = ["#c4b5fd", "#fda4af", "#fcd34d", "#a78bfa"];
+          const color = colors[i % colors.length];
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                backgroundColor: color,
+                opacity: 0.4,
+              }}
+              animate={{
+                y: [-30, 30, -30],
+                opacity: [0.2, 0.6, 0.2],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 3,
+              }}
+            />
+          );
+        })}
         
-        {/* Golden light rays */}
+        {/* Violet light rays */}
         <div 
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] opacity-20"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] opacity-15"
           style={{
-            background: "radial-gradient(ellipse at center top, hsl(var(--secondary)) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse at center top, #c4b5fd 0%, transparent 70%)",
           }}
         />
       </div>
@@ -91,7 +107,7 @@ const LawOfLight = () => {
             <Button
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="text-primary-foreground/70 hover:text-secondary gap-2"
+              className="text-violet-200/70 hover:text-violet-300 gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               Quay lại
@@ -117,21 +133,35 @@ const LawOfLight = () => {
           {/* Closing Message */}
           <ClosingMessage />
 
-          {/* Agreement Section */}
+          {/* Agreement Section - Luxury styling */}
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/50 via-primary/30 to-transparent backdrop-blur-sm border border-secondary/30"
+            className="mt-12 p-6 md:p-8 rounded-2xl backdrop-blur-sm"
+            style={{
+              background: "linear-gradient(135deg, rgba(26, 10, 46, 0.7), rgba(22, 8, 42, 0.5), rgba(13, 5, 26, 0.7))",
+              border: "1px solid rgba(251, 113, 133, 0.3)",
+              boxShadow: "0 0 60px rgba(139, 92, 246, 0.1)",
+            }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="w-6 h-6 text-secondary" />
-              <h2 className="text-xl md:text-2xl font-bold text-secondary">
+              <Sparkles className="w-6 h-6 text-violet-400" />
+              {/* Section title - Warm Gold */}
+              <h2 
+                className="text-xl md:text-2xl font-bold"
+                style={{
+                  background: "linear-gradient(135deg, #fcd34d 0%, #fef08a 50%, #f59e0b 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
                 Cam Kết Với Ánh Sáng
               </h2>
             </div>
 
-            <p className="text-primary-foreground/80 mb-6">
+            <p className="text-violet-100/80 mb-6">
               Để gia nhập FUN Ecosystem, con xin xác nhận:
             </p>
 
@@ -146,7 +176,7 @@ const LawOfLight = () => {
                 <motion.div
                   key={item.key}
                   whileHover={{ x: 5 }}
-                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-violet-500/5 transition-colors cursor-pointer"
                   onClick={() => setChecklist((prev) => ({ ...prev, [item.key]: !prev[item.key as keyof typeof prev] }))}
                 >
                   <Checkbox
@@ -155,9 +185,9 @@ const LawOfLight = () => {
                     onCheckedChange={(checked) =>
                       setChecklist((prev) => ({ ...prev, [item.key]: !!checked }))
                     }
-                    className="mt-0.5 border-secondary data-[state=checked]:bg-secondary data-[state=checked]:border-secondary"
+                    className="mt-0.5 border-violet-400 data-[state=checked]:bg-violet-500 data-[state=checked]:border-violet-500"
                   />
-                  <label htmlFor={item.key} className="flex items-center gap-2 text-primary-foreground cursor-pointer">
+                  <label htmlFor={item.key} className="flex items-center gap-2 text-violet-100 cursor-pointer">
                     <span className="text-lg">{item.icon}</span>
                     <span>{item.label}</span>
                   </label>
@@ -170,7 +200,11 @@ const LawOfLight = () => {
               <Button
                 onClick={handleAgree}
                 disabled={!allChecked}
-                className="bg-gradient-to-r from-secondary to-amber-500 text-primary hover:opacity-90 gap-2 px-8 py-6 text-lg shadow-lg shadow-secondary/30 disabled:opacity-50"
+                className="text-white hover:opacity-90 gap-2 px-8 py-6 text-lg shadow-lg disabled:opacity-50"
+                style={{
+                  background: "linear-gradient(135deg, #7c3aed, #a855f7, #c084fc)",
+                  boxShadow: "0 4px 30px rgba(139, 92, 246, 0.4)",
+                }}
               >
                 <Heart className="w-5 h-5" />
                 Đồng Ý & Gia Nhập Ánh Sáng
@@ -179,13 +213,22 @@ const LawOfLight = () => {
               <Button
                 variant="outline"
                 onClick={handleGuest}
-                className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 px-8 py-6"
+                className="border-violet-400/30 text-violet-200 hover:bg-violet-500/10 px-8 py-6"
               >
                 Tham Quan Với Tư Cách Khách
               </Button>
             </div>
 
-            <p className="text-center text-primary-foreground/50 text-sm mt-6 italic">
+            {/* Quote - Rose Gold */}
+            <p 
+              className="text-center text-sm mt-6 italic"
+              style={{
+                background: "linear-gradient(135deg, #fda4af, #fecdd3, #fb7185)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               "Ánh sáng là thước đo tự nhiên của mọi giá trị"
             </p>
           </motion.section>

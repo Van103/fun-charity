@@ -165,6 +165,11 @@ export const translations: Translations = {
     th: "การทำงานด่วน", fr: "Actions rapides", de: "Schnellaktionen", es: "Acciones rápidas",
     pt: "Ações rápidas", ru: "Быстрые действия", ar: "إجراءات سريعة", hi: "त्वरित कार्य"
   },
+  "sidebar.constitution": {
+    en: "Light Constitution", vi: "Hiến Pháp Ánh Sáng", zh: "光明宪法", ja: "光の憲法", ko: "빛의 헌법",
+    th: "รัฐธรรมนูญแสง", fr: "Constitution de Lumière", de: "Lichtverfassung", es: "Constitución de Luz",
+    pt: "Constituição da Luz", ru: "Конституция Света", ar: "دستور النور", hi: "प्रकाश संविधान"
+  },
   "sidebar.honorBoard": {
     en: "Honor Board", vi: "Bảng Vinh Danh", zh: "荣誉榜", ja: "栄誉の殿堂", ko: "명예의 전당",
     th: "เกียรติยศ", fr: "Tableau d'honneur", de: "Ehrentafel", es: "Cuadro de Honor",

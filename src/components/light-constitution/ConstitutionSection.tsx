@@ -94,14 +94,11 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
 
       {/* Section Title - Golden with Playfair Display */}
       <h3 
-        className="text-xl md:text-2xl font-bold mb-1"
+        className="text-2xl md:text-3xl font-bold mb-1"
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          background: "linear-gradient(135deg, #C49B3D 0%, #D4AA4F 50%, #E8C066 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
+          color: "#E8A84C",
         }}
       >
         {section.title}

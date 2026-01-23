@@ -24,7 +24,7 @@ export function FourPillars() {
         </h3>
         <p 
           className="text-sm italic"
-          style={{ color: "#8B7EC8" }}
+          style={{ color: "#C9A064" }}
         >
           The Four Pillars of a FUN Human
         </p>
@@ -62,7 +62,7 @@ export function FourPillars() {
             <h4 
               className="text-lg font-bold mb-1"
               style={{
-                color: "#6B3D7B",
+                color: "#8B5A9B",
               }}
             >
               {pillar.vi}

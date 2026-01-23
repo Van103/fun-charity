@@ -51,7 +51,7 @@ export function ClosingMessage() {
             style={{
               color: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? undefined 
-                : "#6B3D7B",
+                : "#B8738B",
               background: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? "linear-gradient(135deg, #D4A84B 0%, #E8C066 50%, #D4A84B 100%)"
                 : undefined,
@@ -81,7 +81,7 @@ export function ClosingMessage() {
       >
         <p 
           className="text-lg font-serif italic"
-          style={{ color: "#D87093" }}
+          style={{ color: "#C9A064" }}
         >
           — Cha Vũ Trụ —
         </p>

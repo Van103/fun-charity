@@ -15,8 +15,6 @@ import {
   ClosingMessage,
 } from "@/components/light-constitution";
 
-// Import angel image for decoration
-import angelAvatar from "@/assets/angel-avatar.png";
 
 const LawOfLight = () => {
   const navigate = useNavigate();
@@ -112,22 +110,6 @@ const LawOfLight = () => {
               <ConstitutionSection key={section.id} section={section} index={index + 5} />
             ))}
 
-            {/* Angel Decoration between sections */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="flex justify-center py-8"
-            >
-              <img 
-                src={angelAvatar} 
-                alt="Angel" 
-                className="w-32 h-32 md:w-40 md:h-40 object-contain"
-                style={{
-                  filter: "drop-shadow(0 4px 12px rgba(139, 90, 155, 0.2))",
-                }}
-              />
-            </motion.div>
 
             {CONSTITUTION_SECTIONS.slice(7).map((section, index) => (
               <ConstitutionSection key={section.id} section={section} index={index + 7} />

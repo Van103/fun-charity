@@ -36,7 +36,7 @@ export function ConstitutionHeader() {
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#6B4C9A",
+          color: "#9B6AAB",
         }}
       >
         Hiến Pháp Ánh Sáng

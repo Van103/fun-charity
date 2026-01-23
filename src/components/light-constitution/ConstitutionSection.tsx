@@ -94,11 +94,12 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
 
       {/* Section Title - Golden with Playfair Display */}
       <h3 
-        className="text-2xl md:text-3xl font-bold mb-1"
+        className="text-3xl md:text-4xl font-bold mb-2"
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
           color: "#DAA520",
+          letterSpacing: "0.03em",
         }}
       >
         {section.title}
@@ -107,8 +108,12 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
       {/* English subtitle */}
       {section.titleEn && (
         <p 
-          className="text-sm italic mb-4"
-          style={{ color: "#C9A064" }}
+          className="text-base italic mb-5"
+          style={{ 
+            fontFamily: "'Playfair Display', serif",
+            color: "#C9A064",
+            letterSpacing: "0.02em",
+          }}
         >
           {section.titleEn}
         </p>
@@ -123,11 +128,12 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         }}
       >
         {/* Content */}
-        <div className="space-y-3" style={{ color: "#5C4033" }}>
+        <div className="space-y-4" style={{ color: "#5C4033" }}>
           {section.content.map((line, i) => (
             <p 
               key={i} 
-              className={`leading-relaxed ${line.startsWith("•") || line.startsWith("✨") ? "ml-2" : ""}`}
+              className={`text-base md:text-lg leading-relaxed ${line.startsWith("•") || line.startsWith("✨") ? "ml-2" : ""}`}
+              style={{ letterSpacing: "0.01em" }}
             >
               {highlightKeywords(line)}
             </p>
@@ -144,18 +150,19 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 + i * 0.1 }}
-                className="relative pl-4 py-3 rounded-r-md"
+                className="relative pl-5 py-4 rounded-r-md"
                 style={{
                   background: "rgba(139, 126, 200, 0.08)",
                   borderLeft: "3px solid #8B7EC8",
                 }}
               >
                 <p 
-                  className="leading-relaxed"
+                  className="text-lg md:text-xl leading-relaxed"
                   style={{
                     fontFamily: "'Playfair Display', serif",
                     fontStyle: "italic",
                     color: "#D63384",
+                    letterSpacing: "0.02em",
                   }}
                 >
                   "{highlight}"

@@ -87,9 +87,11 @@ export function ConstitutionHeader() {
         >
           {/* Vietnamese */}
           <p 
-            className="text-base md:text-lg font-bold mb-2"
+            className="text-lg md:text-xl font-bold mb-3"
             style={{
+              fontFamily: "'Playfair Display', serif",
               color: "#6B3D7B",
+              letterSpacing: "0.04em",
             }}
           >
             {LIGHT_CONSTITUTION.corePrinciple.vi}
@@ -97,9 +99,11 @@ export function ConstitutionHeader() {
           
           {/* English */}
           <p 
-            className="text-sm md:text-base font-medium italic"
+            className="text-base md:text-lg font-medium italic"
             style={{
+              fontFamily: "'Playfair Display', serif",
               color: "#D4A84B",
+              letterSpacing: "0.02em",
             }}
           >
             {LIGHT_CONSTITUTION.corePrinciple.en}

@@ -35,8 +35,11 @@ export function MantrasGallery() {
         className="text-center mb-8"
       >
         <h3 
-          className="text-2xl md:text-3xl font-serif italic font-bold mb-2"
+          className="text-3xl md:text-4xl font-bold mb-3"
           style={{
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: "italic",
+            letterSpacing: "0.03em",
             background: "linear-gradient(135deg, #8B5A9B 0%, #6B3D7B 50%, #9B6AAB 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -46,8 +49,12 @@ export function MantrasGallery() {
           8 Thần Chú Ánh Sáng
         </h3>
         <p 
-          className="text-sm italic"
-          style={{ color: "#C9A064" }}
+          className="text-base italic"
+          style={{ 
+            fontFamily: "'Playfair Display', serif",
+            color: "#C9A064",
+            letterSpacing: "0.02em",
+          }}
         >
           The Eight Divine Mantras
         </p>
@@ -95,8 +102,13 @@ export function MantrasGallery() {
                 
                 {/* Vietnamese Text */}
                 <p 
-                  className="font-medium mb-2 leading-relaxed"
-                  style={{ color: "#D63384" }}
+                  className="text-lg font-semibold mb-2 leading-relaxed"
+                  style={{ 
+                    fontFamily: "'Playfair Display', serif",
+                    fontStyle: "italic",
+                    color: "#D63384",
+                    letterSpacing: "0.02em",
+                  }}
                 >
                   {mantra.vi}
                 </p>
@@ -104,7 +116,11 @@ export function MantrasGallery() {
                 {/* English Text */}
                 <p 
                   className="text-sm italic"
-                  style={{ color: "#C9A064" }}
+                  style={{ 
+                    fontFamily: "'Playfair Display', serif",
+                    color: "#C9A064",
+                    letterSpacing: "0.01em",
+                  }}
                 >
                   {mantra.en}
                 </p>

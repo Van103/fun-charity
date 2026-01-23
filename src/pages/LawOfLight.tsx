@@ -134,11 +134,16 @@ const LawOfLight = () => {
               boxShadow: "0 8px 32px rgba(139, 90, 155, 0.1)",
             }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="w-6 h-6" style={{ color: "#D63384" }} />
+            <div className="flex items-center gap-4 mb-6">
+              <Sparkles className="w-7 h-7" style={{ color: "#D63384" }} />
               <h3 
-                className="text-xl font-serif italic font-bold"
-                style={{ color: "#D63384" }}
+                className="text-2xl md:text-3xl font-bold"
+                style={{ 
+                  fontFamily: "'Playfair Display', serif",
+                  fontStyle: "italic",
+                  color: "#D63384",
+                  letterSpacing: "0.03em",
+                }}
               >
                 Cam Kết Ánh Sáng
               </h3>
@@ -166,8 +171,18 @@ const LawOfLight = () => {
                       borderColor: "#8B7EC8",
                     }}
                   />
-                  <span className="text-lg">{item.icon}</span>
-                  <span style={{ color: "#D63384" }}>{item.label}</span>
+                  <span className="text-xl">{item.icon}</span>
+                  <span 
+                    className="text-base md:text-lg"
+                    style={{ 
+                      fontFamily: "'Playfair Display', serif",
+                      fontStyle: "italic",
+                      color: "#D63384",
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {item.label}
+                  </span>
                 </label>
               ))}
             </div>

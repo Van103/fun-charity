@@ -12,8 +12,11 @@ export function FourPillars() {
         className="text-center mb-8"
       >
         <h3 
-          className="text-2xl md:text-3xl font-serif italic font-bold mb-2"
+          className="text-3xl md:text-4xl font-bold mb-3"
           style={{
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: "italic",
+            letterSpacing: "0.03em",
             background: "linear-gradient(135deg, #C49B3D 0%, #D4AA4F 50%, #E8C066 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -23,8 +26,12 @@ export function FourPillars() {
           4 Trụ Cột Của Con Người FUN
         </h3>
         <p 
-          className="text-sm italic"
-          style={{ color: "#C9A064" }}
+          className="text-base italic"
+          style={{ 
+            fontFamily: "'Playfair Display', serif",
+            color: "#C9A064",
+            letterSpacing: "0.02em",
+          }}
         >
           The Four Pillars of a FUN Human
         </p>
@@ -60,9 +67,12 @@ export function FourPillars() {
 
             {/* Vietnamese Title */}
             <h4 
-              className="text-lg font-bold mb-1"
+              className="text-xl font-bold mb-2"
               style={{
+                fontFamily: "'Playfair Display', serif",
+                fontStyle: "italic",
                 color: "#D63384",
+                letterSpacing: "0.02em",
               }}
             >
               {pillar.vi}
@@ -71,7 +81,11 @@ export function FourPillars() {
             {/* English Title */}
             <p 
               className="text-sm italic mb-3"
-              style={{ color: "#D4A84B" }}
+              style={{ 
+                fontFamily: "'Playfair Display', serif",
+                color: "#D4A84B",
+                letterSpacing: "0.01em",
+              }}
             >
               {pillar.en}
             </p>
@@ -79,7 +93,10 @@ export function FourPillars() {
             {/* Description */}
             <p 
               className="text-sm leading-relaxed"
-              style={{ color: "#D63384" }}
+              style={{ 
+                color: "#5C4033",
+                letterSpacing: "0.01em",
+              }}
             >
               {pillar.description}
             </p>

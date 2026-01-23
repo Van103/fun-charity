@@ -135,10 +135,10 @@ const LawOfLight = () => {
             }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="w-6 h-6" style={{ color: "#8B7EC8" }} />
+              <Sparkles className="w-6 h-6" style={{ color: "#D63384" }} />
               <h3 
                 className="text-xl font-serif italic font-bold"
-                style={{ color: "#6B3D7B" }}
+                style={{ color: "#D63384" }}
               >
                 Cam Kết Ánh Sáng
               </h3>
@@ -167,7 +167,7 @@ const LawOfLight = () => {
                     }}
                   />
                   <span className="text-lg">{item.icon}</span>
-                  <span style={{ color: "#4A4A4A" }}>{item.label}</span>
+                  <span style={{ color: "#D63384" }}>{item.label}</span>
                 </label>
               ))}
             </div>

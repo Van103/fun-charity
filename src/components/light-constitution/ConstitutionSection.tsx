@@ -47,7 +47,7 @@ function highlightKeywords(text: string): React.ReactNode {
     if (part.startsWith('%%HIGHLIGHT%%')) {
       const content = part.replace('%%HIGHLIGHT%%', '').replace('%%END%%', '');
       return (
-        <span key={i} style={{ color: "#D87093", fontWeight: 600 }}>
+        <span key={i} style={{ color: "#D63384", fontWeight: 600 }}>
           {content}
         </span>
       );
@@ -155,7 +155,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                   style={{
                     fontFamily: "'Playfair Display', serif",
                     fontStyle: "italic",
-                    color: "#B8738B",
+                    color: "#D63384",
                   }}
                 >
                   "{highlight}"

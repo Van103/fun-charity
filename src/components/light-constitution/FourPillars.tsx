@@ -62,7 +62,7 @@ export function FourPillars() {
             <h4 
               className="text-lg font-bold mb-1"
               style={{
-                color: "#8B5A9B",
+                color: "#D63384",
               }}
             >
               {pillar.vi}
@@ -79,7 +79,7 @@ export function FourPillars() {
             {/* Description */}
             <p 
               className="text-sm leading-relaxed"
-              style={{ color: "#6B6B6B" }}
+              style={{ color: "#D63384" }}
             >
               {pillar.description}
             </p>

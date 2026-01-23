@@ -96,7 +96,7 @@ export function MantrasGallery() {
                 {/* Vietnamese Text */}
                 <p 
                   className="font-medium mb-2 leading-relaxed"
-                  style={{ color: "#D87093" }}
+                  style={{ color: "#D63384" }}
                 >
                   {mantra.vi}
                 </p>

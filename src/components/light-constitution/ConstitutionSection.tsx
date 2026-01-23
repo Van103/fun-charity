@@ -92,12 +92,11 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         </span>
       </div>
 
-      {/* Section Title - Golden with Playfair Display */}
+      {/* Section Title - Golden with Francois One */}
       <h3 
         className="text-3xl md:text-4xl font-bold mb-2"
         style={{
-          fontFamily: "'Playfair Display', serif",
-          fontStyle: "italic",
+          fontFamily: "'Francois One', sans-serif",
           color: "#DAA520",
           letterSpacing: "0.03em",
         }}
@@ -108,9 +107,9 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
       {/* English subtitle */}
       {section.titleEn && (
         <p 
-          className="text-base italic mb-5"
+          className="text-base mb-5"
           style={{ 
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'Francois One', sans-serif",
             color: "#C9A064",
             letterSpacing: "0.02em",
           }}
@@ -159,8 +158,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                 <p 
                   className="text-lg md:text-xl leading-relaxed"
                   style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontStyle: "italic",
+                    fontFamily: "'Francois One', sans-serif",
                     color: "#D63384",
                     letterSpacing: "0.02em",
                   }}

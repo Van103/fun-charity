@@ -14,8 +14,7 @@ export function FourPillars() {
         <h3 
           className="text-3xl md:text-4xl font-bold mb-3"
           style={{
-            fontFamily: "'Playfair Display', serif",
-            fontStyle: "italic",
+            fontFamily: "'Francois One', sans-serif",
             letterSpacing: "0.03em",
             background: "linear-gradient(135deg, #C49B3D 0%, #D4AA4F 50%, #E8C066 100%)",
             WebkitBackgroundClip: "text",
@@ -26,9 +25,9 @@ export function FourPillars() {
           4 Trụ Cột Của Con Người FUN
         </h3>
         <p 
-          className="text-base italic"
+          className="text-base"
           style={{ 
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'Francois One', sans-serif",
             color: "#C9A064",
             letterSpacing: "0.02em",
           }}
@@ -69,8 +68,7 @@ export function FourPillars() {
             <h4 
               className="text-xl font-bold mb-2"
               style={{
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: "italic",
+                fontFamily: "'Francois One', sans-serif",
                 color: "#D63384",
                 letterSpacing: "0.02em",
               }}
@@ -80,9 +78,9 @@ export function FourPillars() {
 
             {/* English Title */}
             <p 
-              className="text-sm italic mb-3"
+              className="text-sm mb-3"
               style={{ 
-                fontFamily: "'Playfair Display', serif",
+                fontFamily: "'Francois One', sans-serif",
                 color: "#D4A84B",
                 letterSpacing: "0.01em",
               }}

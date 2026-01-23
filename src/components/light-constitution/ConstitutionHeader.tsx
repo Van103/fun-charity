@@ -36,7 +36,7 @@ export function ConstitutionHeader() {
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#7B5A9B",
+          color: "#6B4C9A",
         }}
       >
         Hiến Pháp Ánh Sáng
@@ -51,7 +51,7 @@ export function ConstitutionHeader() {
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#D4884C",
+          color: "#C9862F",
         }}
       >
         FUN Ecosystem

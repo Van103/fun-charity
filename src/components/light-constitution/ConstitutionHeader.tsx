@@ -27,13 +27,15 @@ export function ConstitutionHeader() {
         </span>
       </motion.div>
 
-      {/* Main Title - Purple Italic Script */}
+      {/* Main Title - Purple Script with Playfair Display */}
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
-        className="text-4xl md:text-5xl lg:text-6xl font-serif italic font-bold mb-4"
+        className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
         style={{
+          fontFamily: "'Playfair Display', serif",
+          fontStyle: "italic",
           background: "linear-gradient(135deg, #8B5A9B 0%, #6B3D7B 50%, #9B6AAB 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
@@ -48,8 +50,10 @@ export function ConstitutionHeader() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
-        className="text-2xl md:text-3xl font-serif italic mb-4"
+        className="text-2xl md:text-3xl mb-4"
         style={{
+          fontFamily: "'Playfair Display', serif",
+          fontStyle: "italic",
           color: "#D4A84B",
         }}
       >

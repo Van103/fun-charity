@@ -49,8 +49,7 @@ export function ClosingMessage() {
               index === LIGHT_CONSTITUTION.closing.lines.length - 1 ? "font-bold" : "font-medium"
             }`}
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontStyle: "italic",
+              fontFamily: "'Francois One', sans-serif",
               letterSpacing: "0.03em",
               color: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? undefined 
@@ -85,8 +84,7 @@ export function ClosingMessage() {
         <p 
           className="text-xl md:text-2xl"
           style={{ 
-            fontFamily: "'Playfair Display', serif",
-            fontStyle: "italic",
+            fontFamily: "'Francois One', sans-serif",
             color: "#C9A064",
             letterSpacing: "0.05em",
           }}

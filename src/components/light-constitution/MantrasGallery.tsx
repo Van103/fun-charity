@@ -37,8 +37,7 @@ export function MantrasGallery() {
         <h3 
           className="text-3xl md:text-4xl font-bold mb-3"
           style={{
-            fontFamily: "'Playfair Display', serif",
-            fontStyle: "italic",
+            fontFamily: "'Francois One', sans-serif",
             letterSpacing: "0.03em",
             background: "linear-gradient(135deg, #8B5A9B 0%, #6B3D7B 50%, #9B6AAB 100%)",
             WebkitBackgroundClip: "text",
@@ -49,9 +48,9 @@ export function MantrasGallery() {
           8 Thần Chú Ánh Sáng
         </h3>
         <p 
-          className="text-base italic"
+          className="text-base"
           style={{ 
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'Francois One', sans-serif",
             color: "#C9A064",
             letterSpacing: "0.02em",
           }}
@@ -104,8 +103,7 @@ export function MantrasGallery() {
                 <p 
                   className="text-lg font-semibold mb-2 leading-relaxed"
                   style={{ 
-                    fontFamily: "'Playfair Display', serif",
-                    fontStyle: "italic",
+                    fontFamily: "'Francois One', sans-serif",
                     color: "#D63384",
                     letterSpacing: "0.02em",
                   }}
@@ -115,9 +113,9 @@ export function MantrasGallery() {
 
                 {/* English Text */}
                 <p 
-                  className="text-sm italic"
+                  className="text-sm"
                   style={{ 
-                    fontFamily: "'Playfair Display', serif",
+                    fontFamily: "'Francois One', sans-serif",
                     color: "#C9A064",
                     letterSpacing: "0.01em",
                   }}

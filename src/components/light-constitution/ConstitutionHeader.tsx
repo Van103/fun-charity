@@ -34,23 +34,21 @@ export function ConstitutionHeader() {
         transition={{ delay: 0.3, duration: 0.6 }}
         className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4"
         style={{
-          fontFamily: "'Playfair Display', serif",
-          fontStyle: "italic",
+          fontFamily: "'Francois One', sans-serif",
           color: "#9B59B6",
         }}
       >
         Hiến Pháp Ánh Sáng
       </motion.h1>
 
-      {/* FUN Ecosystem - Golden Italic */}
+      {/* FUN Ecosystem - Golden */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
         className="text-3xl md:text-4xl mb-4"
         style={{
-          fontFamily: "'Playfair Display', serif",
-          fontStyle: "italic",
+          fontFamily: "'Francois One', sans-serif",
           color: "#DAA520",
         }}
       >
@@ -89,7 +87,7 @@ export function ConstitutionHeader() {
           <p 
             className="text-lg md:text-xl font-bold mb-3"
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Francois One', sans-serif",
               color: "#6B3D7B",
               letterSpacing: "0.04em",
             }}
@@ -99,9 +97,9 @@ export function ConstitutionHeader() {
           
           {/* English */}
           <p 
-            className="text-base md:text-lg font-medium italic"
+            className="text-base md:text-lg font-medium"
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Francois One', sans-serif",
               color: "#D4A84B",
               letterSpacing: "0.02em",
             }}

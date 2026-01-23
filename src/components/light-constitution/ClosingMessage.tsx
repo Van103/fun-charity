@@ -12,7 +12,7 @@ export function ClosingMessage() {
     >
       {/* Decorative Hearts */}
       <div className="flex justify-center gap-4 mb-8">
-        {["#D87093", "#8B7EC8", "#D4A84B"].map((color, i) => (
+        {["#D63384", "#D63384", "#D63384"].map((color, i) => (
           <motion.div
             key={i}
             animate={{
@@ -51,7 +51,7 @@ export function ClosingMessage() {
             style={{
               color: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? undefined 
-                : "#B8738B",
+                : "#D63384",
               background: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? "linear-gradient(135deg, #D4A84B 0%, #E8C066 50%, #D4A84B 100%)"
                 : undefined,
@@ -96,7 +96,7 @@ export function ClosingMessage() {
         className="mt-8 mx-auto h-1 rounded-full"
         style={{
           width: "200px",
-          background: "linear-gradient(90deg, #D87093, #8B7EC8, #D4A84B)",
+          background: "linear-gradient(90deg, #D63384, #D63384, #D63384)",
         }}
       />
     </motion.section>

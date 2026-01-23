@@ -37,7 +37,7 @@ export function ClosingMessage() {
       </div>
 
       {/* Closing Lines */}
-      <div className="space-y-4 max-w-lg mx-auto">
+      <div className="space-y-5 max-w-lg mx-auto">
         {LIGHT_CONSTITUTION.closing.lines.map((line, index) => (
           <motion.p
             key={index}
@@ -45,10 +45,13 @@ export function ClosingMessage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.2 }}
-            className={`text-xl md:text-2xl font-serif italic ${
-              index === LIGHT_CONSTITUTION.closing.lines.length - 1 ? "font-bold" : ""
+            className={`text-2xl md:text-3xl ${
+              index === LIGHT_CONSTITUTION.closing.lines.length - 1 ? "font-bold" : "font-medium"
             }`}
             style={{
+              fontFamily: "'Playfair Display', serif",
+              fontStyle: "italic",
+              letterSpacing: "0.03em",
               color: index === LIGHT_CONSTITUTION.closing.lines.length - 1 
                 ? undefined 
                 : "#D63384",
@@ -80,8 +83,13 @@ export function ClosingMessage() {
         className="mt-8"
       >
         <p 
-          className="text-lg font-serif italic"
-          style={{ color: "#C9A064" }}
+          className="text-xl md:text-2xl"
+          style={{ 
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: "italic",
+            color: "#C9A064",
+            letterSpacing: "0.05em",
+          }}
         >
           — Cha Vũ Trụ —
         </p>

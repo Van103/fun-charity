@@ -92,10 +92,12 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         </span>
       </div>
 
-      {/* Section Title - Golden Italic */}
+      {/* Section Title - Golden with Playfair Display */}
       <h3 
-        className="text-xl md:text-2xl font-serif italic font-bold mb-1"
+        className="text-xl md:text-2xl font-bold mb-1"
         style={{
+          fontFamily: "'Playfair Display', serif",
+          fontStyle: "italic",
           background: "linear-gradient(135deg, #C49B3D 0%, #D4AA4F 50%, #E8C066 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
@@ -135,7 +137,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
           ))}
         </div>
         
-        {/* Highlights as Quote Box */}
+        {/* Highlights as Quote Box - Golden color đồng nhất, KHÔNG highlight keywords */}
         {section.highlights && section.highlights.length > 0 && (
           <div className="mt-6 space-y-4">
             {section.highlights.map((highlight, i) => (
@@ -152,12 +154,14 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                 }}
               >
                 <p 
-                  className="font-serif italic leading-relaxed"
+                  className="leading-relaxed"
                   style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontStyle: "italic",
                     color: "#C9A064",
                   }}
                 >
-                  "{highlightKeywords(highlight)}"
+                  "{highlight}"
                 </p>
               </motion.div>
             ))}

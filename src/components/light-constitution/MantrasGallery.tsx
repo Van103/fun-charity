@@ -47,7 +47,7 @@ export function MantrasGallery() {
         </h3>
         <p 
           className="text-sm italic"
-          style={{ color: "#8B7EC8" }}
+          style={{ color: "#C9A064" }}
         >
           The Eight Divine Mantras
         </p>
@@ -104,7 +104,7 @@ export function MantrasGallery() {
                 {/* English Text */}
                 <p 
                   className="text-sm italic"
-                  style={{ color: "#8B7EC8" }}
+                  style={{ color: "#C9A064" }}
                 >
                   {mantra.en}
                 </p>

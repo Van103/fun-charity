@@ -108,7 +108,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
       {section.titleEn && (
         <p 
           className="text-sm italic mb-4"
-          style={{ color: "#8B7EC8" }}
+          style={{ color: "#C9A064" }}
         >
           {section.titleEn}
         </p>
@@ -123,7 +123,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         }}
       >
         {/* Content */}
-        <div className="space-y-3" style={{ color: "#4A4A4A" }}>
+        <div className="space-y-3" style={{ color: "#5C4033" }}>
           {section.content.map((line, i) => (
             <p 
               key={i} 
@@ -155,7 +155,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                   style={{
                     fontFamily: "'Playfair Display', serif",
                     fontStyle: "italic",
-                    color: "#C9A064",
+                    color: "#B8738B",
                   }}
                 >
                   "{highlight}"

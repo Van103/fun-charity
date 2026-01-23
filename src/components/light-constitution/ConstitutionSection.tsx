@@ -84,7 +84,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         <span 
           className="text-sm font-bold tracking-wide"
           style={{
-            color: "#E8A44D",
+            color: "#DAA520",
             letterSpacing: "0.1em",
           }}
         >
@@ -98,7 +98,7 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#E8A84C",
+          color: "#DAA520",
         }}
       >
         {section.title}

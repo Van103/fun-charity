@@ -34,7 +34,8 @@ export function ConstitutionHeader() {
         transition={{ delay: 0.3, duration: 0.6 }}
         className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4"
         style={{
-          fontFamily: "'Francois One', sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 800,
           color: "#9B59B6",
         }}
       >
@@ -48,7 +49,8 @@ export function ConstitutionHeader() {
         transition={{ delay: 0.5, duration: 0.5 }}
         className="text-3xl md:text-4xl mb-4"
         style={{
-          fontFamily: "'Francois One', sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 700,
           color: "#DAA520",
         }}
       >
@@ -87,7 +89,8 @@ export function ConstitutionHeader() {
           <p 
             className="text-lg md:text-xl font-bold mb-3"
             style={{
-              fontFamily: "'Francois One', sans-serif",
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 700,
               color: "#6B3D7B",
               letterSpacing: "0.04em",
             }}
@@ -99,7 +102,8 @@ export function ConstitutionHeader() {
           <p 
             className="text-base md:text-lg font-medium"
             style={{
-              fontFamily: "'Francois One', sans-serif",
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 600,
               color: "#D4A84B",
               letterSpacing: "0.02em",
             }}

@@ -96,7 +96,8 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
       <h3 
         className="text-3xl md:text-4xl font-bold mb-2"
         style={{
-          fontFamily: "'Francois One', sans-serif",
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 700,
           color: "#DAA520",
           letterSpacing: "0.03em",
         }}
@@ -109,7 +110,8 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
         <p 
           className="text-base mb-5"
           style={{ 
-            fontFamily: "'Francois One', sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
             color: "#C9A064",
             letterSpacing: "0.02em",
           }}
@@ -158,7 +160,8 @@ export function ConstitutionSection({ section, index }: ConstitutionSectionProps
                 <p 
                   className="text-lg md:text-xl leading-relaxed"
                   style={{
-                    fontFamily: "'Francois One', sans-serif",
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 600,
                     color: "#D63384",
                     letterSpacing: "0.02em",
                   }}

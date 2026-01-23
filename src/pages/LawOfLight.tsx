@@ -139,7 +139,8 @@ const LawOfLight = () => {
               <h3 
                 className="text-2xl md:text-3xl font-bold"
                 style={{ 
-                  fontFamily: "'Francois One', sans-serif",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 700,
                   color: "#D63384",
                   letterSpacing: "0.03em",
                 }}
@@ -174,7 +175,8 @@ const LawOfLight = () => {
                   <span 
                     className="text-base md:text-lg"
                     style={{ 
-                      fontFamily: "'Francois One', sans-serif",
+                      fontFamily: "'Montserrat', sans-serif",
+                      fontWeight: 600,
                       color: "#D63384",
                       letterSpacing: "0.02em",
                     }}

@@ -37,7 +37,8 @@ export function MantrasGallery() {
         <h3 
           className="text-3xl md:text-4xl font-bold mb-3"
           style={{
-            fontFamily: "'Francois One', sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 700,
             letterSpacing: "0.03em",
             background: "linear-gradient(135deg, #8B5A9B 0%, #6B3D7B 50%, #9B6AAB 100%)",
             WebkitBackgroundClip: "text",
@@ -50,7 +51,8 @@ export function MantrasGallery() {
         <p 
           className="text-base"
           style={{ 
-            fontFamily: "'Francois One', sans-serif",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
             color: "#C9A064",
             letterSpacing: "0.02em",
           }}
@@ -103,7 +105,8 @@ export function MantrasGallery() {
                 <p 
                   className="text-lg font-semibold mb-2 leading-relaxed"
                   style={{ 
-                    fontFamily: "'Francois One', sans-serif",
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 700,
                     color: "#D63384",
                     letterSpacing: "0.02em",
                   }}
@@ -115,7 +118,8 @@ export function MantrasGallery() {
                 <p 
                   className="text-sm"
                   style={{ 
-                    fontFamily: "'Francois One', sans-serif",
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 600,
                     color: "#C9A064",
                     letterSpacing: "0.01em",
                   }}

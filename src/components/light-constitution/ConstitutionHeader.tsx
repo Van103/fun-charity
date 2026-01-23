@@ -19,7 +19,7 @@ export function ConstitutionHeader() {
         <span 
           className="inline-block px-6 py-2 text-sm md:text-base font-medium tracking-widest"
           style={{
-            color: "#8B7EC8",
+            color: "#DAA520",
             letterSpacing: "0.2em",
           }}
         >
@@ -36,7 +36,7 @@ export function ConstitutionHeader() {
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#6B4C9A",
+          color: "#9B59B6",
         }}
       >
         Hiến Pháp Ánh Sáng
@@ -51,7 +51,7 @@ export function ConstitutionHeader() {
         style={{
           fontFamily: "'Playfair Display', serif",
           fontStyle: "italic",
-          color: "#C9862F",
+          color: "#DAA520",
         }}
       >
         FUN Ecosystem
@@ -64,7 +64,7 @@ export function ConstitutionHeader() {
         transition={{ delay: 0.6, duration: 0.5 }}
         className="text-base md:text-lg font-medium mb-8"
         style={{
-          color: "#8B7EC8",
+          color: "#DAA520",
         }}
       >
         {LIGHT_CONSTITUTION.subtitle}

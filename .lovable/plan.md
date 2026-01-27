@@ -1,75 +1,103 @@
 
 
-# KẾ HOẠCH CẬP NHẬT GIAO DIỆN FUN CHARITY
+# KẾ HOẠCH CẬP NHẬT SIDEBAR FUN CHARITY
 
 ## TÓM TẮT YÊU CẦU
 
-1. Đổi màu chữ Quick Actions sang **tím hồng**
-2. Làm **chữ và thư mục to hơn**
-3. Logo FUN CHARITY **to lớn hơn và sáng hơn**
+1. **Thêm logo CAMLY COIN** - sử dụng hình vàng đã upload
+2. **Màu chữ CAMLY COIN** - đổi sang tím hồng gradient
+3. **Cập nhật tất cả các chữ sang IN HOA**:
+   - FUN ECOSYSTEM PLATFORMS
+   - FUN PROFILE
+   - FUN FARM
+   - FUN PLANET
+   - FUN PLAY
+   - FUN WALLET (đã có)
+   - FUN ACADEMY
+   - FUN TREASURY (đã có)
+   - GREEN EARTH (đã có)
+   - FUN CHAT
+   - FUN LEGAL
 
 ---
 
-## PHASE 1: Cập nhật Quick Actions trong LeftSidebar.tsx
+## PHASE 1: Copy Logo CAMLY COIN vào dự án
 
-### 1.1 Tiêu đề Quick Actions - Màu tím hồng + To hơn
+Sao chép hình ảnh từ user-uploads vào thư mục assets:
 
-Thay đổi từ:
-```tsx
-<h3 className="font-semibold mb-3 text-[#4C1D95] ..." style={{ fontSize: '18px' }}>
+```
+user-uploads://image-278.png → src/assets/camly-coin-logo.png
 ```
 
-Thành:
+---
+
+## PHASE 2: Cập nhật LanguageContext.tsx - Chữ IN HOA
+
+### 2.1 Tiêu đề Ecosystem - IN HOA
+
+| Key | Trước | Sau |
+|-----|-------|-----|
+| `sidebar.ecosystem` | F.U. Ecosystem Platforms | FUN ECOSYSTEM PLATFORMS |
+
+### 2.2 Các menu items - IN HOA
+
+| Key | Trước | Sau |
+|-----|-------|-----|
+| `menu.profile` | Fun Profile | FUN PROFILE |
+| `menu.farm` | Fun Farm | FUN FARM |
+| `menu.planet` | Fun Planet | FUN PLANET |
+| `menu.play` | Fun Play | FUN PLAY |
+| `menu.academy` | Fun Academy | FUN ACADEMY |
+| `menu.chat` | Fun Chat | FUN CHAT |
+| `menu.legal` | Fun Legal | FUN LEGAL |
+
+(menu.wallet, menu.treasury, menu.greenearth đã là IN HOA)
+
+---
+
+## PHASE 3: Cập nhật LeftSidebar.tsx
+
+### 3.1 Import logo CAMLY COIN
+
 ```tsx
-<h3 className="font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
+import camlyCoinLogo from "@/assets/camly-coin-logo.png";
 ```
 
-### 1.2 Kích thước các item Quick Actions - To hơn
+### 3.2 Thay đổi icon CAMLY COIN thành hình ảnh logo
 
-| Yếu tố | Trước | Sau |
-|--------|-------|-----|
-| Icon size | `w-4 h-4` | `w-5 h-5` |
-| Icon wrapper | `p-1.5` | `p-2` |
-| Font size | `15px` | `17px` |
-| Padding | `py-2.5` | `py-3` |
-
-### 1.3 Màu chữ Quick Actions - Tím hồng
-
-Thay đổi text color từ `text-foreground` sang gradient tím hồng:
+**Trước:**
 ```tsx
-<span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '17px' }}>
-  {t(item.labelKey)}
+<div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-champagne to-gold-light flex items-center justify-center shadow-md">
+  <Coins className="w-4 h-4 text-white" />
+</div>
+<span className="text-sm font-medium text-foreground">CAMLY COIN</span>
+```
+
+**Sau:**
+```tsx
+<div className="relative">
+  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
+  <img 
+    src={camlyCoinLogo} 
+    alt="CAMLY COIN" 
+    className="relative w-10 h-10 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
+  />
+</div>
+<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '16px' }}>
+  CAMLY COIN
 </span>
 ```
 
----
+### 3.3 Đổi tiêu đề Ecosystem sang tím hồng
 
-## PHASE 2: Cập nhật Logo FUN CHARITY to lớn hơn và sáng hơn
-
-### 2.1 Tăng kích thước Logo trong Logo.tsx
-
-Thay đổi sizes object:
-
-| Size | Trước | Sau |
-|------|-------|-----|
-| sm | 72px | 80px |
-| md | 96px | 120px |
-| lg | 120px | 150px |
-| xl | 160px | 200px |
-
-### 2.2 Thêm hiệu ứng sáng hơn
-
-Thêm filter brightness và glow effect:
+**Trước:**
 ```tsx
-<motion.div
-  ...
-  className="relative drop-shadow-[0_0_15px_rgba(147,51,234,0.4)]"
->
-  <img
-    ...
-    className="w-full h-full object-contain brightness-110"
-  />
-</motion.div>
+<h3 className="font-semibold mb-1 text-[#4C1D95]" style={{ fontSize: '20px' }}>
+```
+
+**Sau:**
+```tsx
+<h3 className="font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
 ```
 
 ---
@@ -78,12 +106,16 @@ Thêm filter brightness và glow effect:
 
 | Yếu tố | Trước | Sau |
 |--------|-------|-----|
-| Quick Actions title | Tím đậm `#4C1D95`, 18px | Gradient tím-hồng, 20px, bold |
-| Quick Actions text | `text-foreground`, 15px | Gradient tím-hồng, 17px |
-| Quick Actions icon | `w-4 h-4`, `p-1.5` | `w-5 h-5`, `p-2` |
-| Quick Actions padding | `py-2.5` | `py-3` |
-| Logo size (md) | 96px | 120px |
-| Logo effect | Không có | Brightness 110%, glow tím |
+| CAMLY COIN icon | Icon Coins | Logo hình ảnh vàng |
+| CAMLY COIN text | `text-foreground`, text-sm | Tím hồng gradient, 16px, bold |
+| Ecosystem title | `text-[#4C1D95]` | Tím hồng gradient |
+| FUN PROFILE | Fun Profile | FUN PROFILE |
+| FUN FARM | Fun Farm | FUN FARM |
+| FUN PLANET | Fun Planet | FUN PLANET |
+| FUN PLAY | Fun Play | FUN PLAY |
+| FUN ACADEMY | Fun Academy | FUN ACADEMY |
+| FUN CHAT | Fun Chat | FUN CHAT |
+| FUN LEGAL | Fun Legal | FUN LEGAL |
 
 ---
 
@@ -91,24 +123,27 @@ Thêm filter brightness và glow effect:
 
 | File | Thay đổi |
 |------|----------|
-| `src/components/social/LeftSidebar.tsx` | Quick Actions: màu tím hồng, kích thước to hơn |
-| `src/components/brand/Logo.tsx` | Logo to hơn, sáng hơn với glow effect |
+| `src/assets/camly-coin-logo.png` | Copy logo từ user-uploads |
+| `src/contexts/LanguageContext.tsx` | Cập nhật 8 translation keys sang IN HOA |
+| `src/components/social/LeftSidebar.tsx` | Thêm logo CAMLY COIN, đổi màu chữ tím hồng |
 
 ---
 
 ## KẾT QUẢ MONG ĐỢI
 
-1. Quick Actions có màu tím hồng gradient đẹp mắt
-2. Thư mục và chữ Quick Actions to rõ ràng hơn
-3. Logo FUN CHARITY to lớn và rực rỡ hơn với hiệu ứng phát sáng
-4. Giao diện tổng thể sang trọng và nổi bật
+1. Logo CAMLY COIN hiển thị hình vàng đẹp với viền ánh kim
+2. Chữ CAMLY COIN màu tím hồng gradient nổi bật
+3. Tất cả các tên menu FUN Ecosystem là chữ IN HOA
+4. Tiêu đề "FUN ECOSYSTEM PLATFORMS" IN HOA và màu tím hồng
+5. Giao diện đồng bộ, sang trọng và chuyên nghiệp
 
 ---
 
 ## THỜI GIAN THỰC HIỆN
 
-- Phase 1 (Quick Actions): ~8 phút
-- Phase 2 (Logo): ~5 phút
+- Phase 1 (Copy logo): ~1 phút
+- Phase 2 (Translation keys): ~5 phút
+- Phase 3 (LeftSidebar): ~5 phút
 
-**Tổng: ~13 phút**
+**Tổng: ~11 phút**
 

@@ -1,83 +1,76 @@
 
 
-# KẾ HOẠCH CHỈNH SỬA SIDEBAR FUN CHARITY
+# KẾ HOẠCH CẬP NHẬT GIAO DIỆN FUN CHARITY
 
 ## TÓM TẮT YÊU CẦU
 
-1. Logo tròn đều, rõ ràng, kích thước phù hợp
-2. Đồng bộ kích thước chữ và logo cho đẹp, sang trọng
-3. Cập nhật chữ **FUN TREASURY** (có khoảng trắng)
-4. Màu chữ sidebar tím sáng thuần, bỏ gradient đỏ phía sau
+1. Đổi màu chữ Quick Actions sang **tím hồng**
+2. Làm **chữ và thư mục to hơn**
+3. Logo FUN CHARITY **to lớn hơn và sáng hơn**
 
 ---
 
-## PHASE 1: Cập nhật Translation Key
+## PHASE 1: Cập nhật Quick Actions trong LeftSidebar.tsx
 
-### File: `src/contexts/LanguageContext.tsx`
+### 1.1 Tiêu đề Quick Actions - Màu tím hồng + To hơn
 
-Sửa `menu.treasury` từ "FUNTREASURY" thành "FUN TREASURY":
+Thay đổi từ:
+```tsx
+<h3 className="font-semibold mb-3 text-[#4C1D95] ..." style={{ fontSize: '18px' }}>
+```
 
-| Trước | Sau |
-|-------|-----|
-| FUNTREASURY | FUN TREASURY |
+Thành:
+```tsx
+<h3 className="font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
+```
+
+### 1.2 Kích thước các item Quick Actions - To hơn
+
+| Yếu tố | Trước | Sau |
+|--------|-------|-----|
+| Icon size | `w-4 h-4` | `w-5 h-5` |
+| Icon wrapper | `p-1.5` | `p-2` |
+| Font size | `15px` | `17px` |
+| Padding | `py-2.5` | `py-3` |
+
+### 1.3 Màu chữ Quick Actions - Tím hồng
+
+Thay đổi text color từ `text-foreground` sang gradient tím hồng:
+```tsx
+<span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '17px' }}>
+  {t(item.labelKey)}
+</span>
+```
 
 ---
 
-## PHASE 2: Chỉnh sửa LeftSidebar.tsx
+## PHASE 2: Cập nhật Logo FUN CHARITY to lớn hơn và sáng hơn
 
-### 2.1 Giảm kích thước logo cho cân đối
+### 2.1 Tăng kích thước Logo trong Logo.tsx
 
-Kích thước hiện tại `w-16 h-16` (64px) quá to, gây mất cân đối.
+Thay đổi sizes object:
 
-| Trước | Sau |
-|-------|-----|
-| `w-16 h-16` (64px) | `w-12 h-12` (48px) |
+| Size | Trước | Sau |
+|------|-------|-----|
+| sm | 72px | 80px |
+| md | 96px | 120px |
+| lg | 120px | 150px |
+| xl | 160px | 200px |
 
-### 2.2 Đồng bộ kích thước chữ
+### 2.2 Thêm hiệu ứng sáng hơn
 
-Giảm font size để cân đối với logo mới:
-
-| Trước | Sau |
-|-------|-----|
-| `fontSize: '20px'` | `fontSize: '16px'` |
-
-### 2.3 Đổi màu chữ sang Tím Sáng Thuần (bỏ gradient đỏ)
-
-**Trước (gradient tím-đỏ):**
+Thêm filter brightness và glow effect:
 ```tsx
-className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
-```
-
-**Sau (tím sáng thuần):**
-```tsx
-className="text-purple-600 font-bold"
-```
-
-Hoặc dùng màu `#9333EA` (Purple 600) - tím sáng rực rỡ, không có đỏ.
-
-### 2.4 Cập nhật viền logo sáng nhẹ hơn
-
-Giữ viền ánh kim nhưng tinh chỉnh kích thước cho phù hợp với logo nhỏ hơn:
-
-```tsx
-<div className="relative">
-  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
-  <img 
-    src={item.image} 
-    alt="" 
-    className="relative w-12 h-12 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
+<motion.div
+  ...
+  className="relative drop-shadow-[0_0_15px_rgba(147,51,234,0.4)]"
+>
+  <img
+    ...
+    className="w-full h-full object-contain brightness-110"
   />
-</div>
+</motion.div>
 ```
-
----
-
-## PHASE 3: Đồng bộ MobileBottomNav.tsx
-
-Áp dụng các thay đổi tương tự:
-- Logo size: `w-12 h-12` (hoặc nhỏ hơn cho mobile: `w-10 h-10`)
-- Font size: `16px`
-- Màu chữ: Tím sáng thuần `text-purple-600`
 
 ---
 
@@ -85,11 +78,12 @@ Giữ viền ánh kim nhưng tinh chỉnh kích thước cho phù hợp với lo
 
 | Yếu tố | Trước | Sau |
 |--------|-------|-----|
-| Kích thước logo | 64px (quá to) | 48px (cân đối) |
-| Font size | 20px | 16px |
-| Màu chữ | Gradient tím→fuchsia→đỏ | Tím sáng thuần (#9333EA) |
-| Viền logo | Blur 2px, scale 110% | Blur 1px, scale 105% (nhẹ hơn) |
-| FUN TREASURY | FUNTREASURY | FUN TREASURY |
+| Quick Actions title | Tím đậm `#4C1D95`, 18px | Gradient tím-hồng, 20px, bold |
+| Quick Actions text | `text-foreground`, 15px | Gradient tím-hồng, 17px |
+| Quick Actions icon | `w-4 h-4`, `p-1.5` | `w-5 h-5`, `p-2` |
+| Quick Actions padding | `py-2.5` | `py-3` |
+| Logo size (md) | 96px | 120px |
+| Logo effect | Không có | Brightness 110%, glow tím |
 
 ---
 
@@ -97,27 +91,24 @@ Giữ viền ánh kim nhưng tinh chỉnh kích thước cho phù hợp với lo
 
 | File | Thay đổi |
 |------|----------|
-| `src/contexts/LanguageContext.tsx` | Sửa "FUNTREASURY" → "FUN TREASURY" |
-| `src/components/social/LeftSidebar.tsx` | Logo size, font size, màu chữ tím thuần |
-| `src/components/layout/MobileBottomNav.tsx` | Đồng bộ thay đổi |
+| `src/components/social/LeftSidebar.tsx` | Quick Actions: màu tím hồng, kích thước to hơn |
+| `src/components/brand/Logo.tsx` | Logo to hơn, sáng hơn với glow effect |
 
 ---
 
 ## KẾT QUẢ MONG ĐỢI
 
-1. Logo tròn đều, kích thước cân đối (48px)
-2. Chữ và logo đồng bộ, sang trọng
-3. Màu tím sáng thuần, không có gradient đỏ
-4. "FUN TREASURY" hiển thị đúng với khoảng trắng
-5. Giao diện tổng thể hài hòa, sang trọng hơn
+1. Quick Actions có màu tím hồng gradient đẹp mắt
+2. Thư mục và chữ Quick Actions to rõ ràng hơn
+3. Logo FUN CHARITY to lớn và rực rỡ hơn với hiệu ứng phát sáng
+4. Giao diện tổng thể sang trọng và nổi bật
 
 ---
 
 ## THỜI GIAN THỰC HIỆN
 
-- Phase 1 (Translation): ~2 phút
-- Phase 2 (LeftSidebar): ~5 phút
-- Phase 3 (MobileBottomNav): ~5 phút
+- Phase 1 (Quick Actions): ~8 phút
+- Phase 2 (Logo): ~5 phút
 
-**Tổng: ~12 phút**
+**Tổng: ~13 phút**
 

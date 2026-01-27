@@ -90,10 +90,10 @@ async function chromaKeyToTransparentPng(src: string) {
 export const Logo = forwardRef<HTMLDivElement, LogoProps>(
   function Logo({ size = "md", showText = false, className = "" }, ref) {
     const sizes = {
-      sm: { icon: 72, text: "text-lg" },
-      md: { icon: 96, text: "text-xl" },
-      lg: { icon: 120, text: "text-2xl" },
-      xl: { icon: 160, text: "text-3xl" },
+      sm: { icon: 80, text: "text-lg" },
+      md: { icon: 120, text: "text-xl" },
+      lg: { icon: 150, text: "text-2xl" },
+      xl: { icon: 200, text: "text-3xl" },
     };
 
     const s = sizes[size];
@@ -122,13 +122,13 @@ export const Logo = forwardRef<HTMLDivElement, LogoProps>(
         <motion.div
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.2 }}
-          className="relative"
+          className="relative drop-shadow-[0_0_15px_rgba(147,51,234,0.4)]"
           style={{ width: s.icon, height: s.icon }}
         >
           <img
             src={logoSrc}
             alt="FUN Charity Logo"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain brightness-110"
             draggable={false}
           />
         </motion.div>

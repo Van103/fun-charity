@@ -5,16 +5,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  GraduationCap,
-  TrendingUp,
-  PiggyBank,
-  Heart,
   Scale,
-  Globe,
   Coins,
   Edit,
-  Sprout,
-  Gamepad2,
   MessageCircle,
   Trophy,
   HandHeart,
@@ -22,9 +15,13 @@ import {
   ScrollText,
 } from "lucide-react";
 import funProfileLogo from "@/assets/fun-profile-logo.webp";
-import funPlayLogo from "@/assets/fun-play-logo.png";
+import funPlayLogo from "@/assets/fun-play-logo-new.png";
 import funPlanetLogo from "@/assets/fun-planet-logo.png";
-import funFarmLogo from "@/assets/fun-farm-logo.png";
+import funFarmLogo from "@/assets/fun-farm-logo-new.png";
+import funWalletLogo from "@/assets/fun-wallet-logo.png";
+import funAcademyLogo from "@/assets/fun-academy-logo.png";
+import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
+import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
 
 interface MenuItem {
   icon?: React.ComponentType<{ className?: string }>;
@@ -36,14 +33,14 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { image: funProfileLogo, labelKey: "menu.profile", href: "https://fun.rich/", external: true },
-  { image: funFarmLogo, labelKey: "menu.farm", href: "https://funfarm.life/feed", external: true },
+  { image: funFarmLogo, labelKey: "menu.farm", href: "https://farm.fun.rich/", external: true },
   { image: funPlanetLogo, labelKey: "menu.planet", href: "https://planet.fun.rich/", external: true },
   { image: funPlayLogo, labelKey: "menu.play", href: "https://play.fun.rich/", external: true },
+  { image: funWalletLogo, labelKey: "menu.wallet", href: "https://wallet.fun.rich/", external: true },
+  { image: funAcademyLogo, labelKey: "menu.academy", href: "https://academy.fun.rich/", external: true },
+  { image: funTreasuryLogo, labelKey: "menu.treasury", href: "https://treasury.fun.rich/", external: true },
+  { image: funGreenEarthLogo, labelKey: "menu.greenearth", href: "https://greenearth-fun.lovable.app/", external: true },
   { icon: MessageCircle, labelKey: "menu.chat", href: "/messages", external: false },
-  { icon: GraduationCap, labelKey: "menu.academy", href: "https://academy.fun.rich/", external: true },
-  { icon: TrendingUp, labelKey: "menu.trading", href: "https://trading.fun.rich/", external: true },
-  { icon: PiggyBank, labelKey: "menu.investment", href: "https://investment.fun.rich/", external: true },
-  { icon: Heart, labelKey: "menu.life", href: "https://life.fun.rich/", external: true },
   { icon: Scale, labelKey: "menu.legal", href: "/legal", external: false },
 ];
 

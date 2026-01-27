@@ -113,8 +113,9 @@ serve(async (req) => {
       let creatorsMap: Record<string, { id: string; user_id: string; full_name: string | null; avatar_url: string | null; is_verified: boolean | null }> = {};
       
       if (creatorIds.length > 0) {
+        // Use profiles_public view to exclude sensitive data (email, wallet_address)
         const { data: profiles } = await supabaseClient
-          .from('profiles')
+          .from('profiles_public')
           .select('id, user_id, full_name, avatar_url, is_verified')
           .in('user_id', creatorIds);
         

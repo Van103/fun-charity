@@ -245,10 +245,10 @@ Deno.serve(async (req) => {
       matches.sort((a, b) => b.match_score - a.match_score);
       const topMatches = matches.slice(0, limit);
 
-      // Fetch profiles for matched volunteers
+      // Fetch profiles for matched volunteers using public view
       const volunteerUserIds = topMatches.map(m => m.volunteer_id);
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('user_id, full_name, avatar_url')
         .in('user_id', volunteerUserIds);
 

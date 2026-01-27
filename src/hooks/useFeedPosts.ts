@@ -87,8 +87,9 @@ async function fetchPostsWithData(posts: any[]): Promise<FeedPost[]> {
   const postsWithData = await Promise.all(
     posts.map(async (post) => {
       const [profileResult, reactionsResult, commentsResult] = await Promise.all([
+        // Use profiles_public view to exclude sensitive data
         supabase
-          .from("profiles")
+          .from("profiles_public")
           .select("full_name, avatar_url, reputation_score, is_verified")
           .eq("user_id", post.user_id)
           .maybeSingle(),

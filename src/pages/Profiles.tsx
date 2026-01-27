@@ -35,17 +35,21 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 
+// Profile interface matches profiles_public view (excludes sensitive fields: email, wallet_address, blocked_reason)
 interface Profile {
   id: string;
   user_id: string;
   full_name: string | null;
   avatar_url: string | null;
   bio: string | null;
+  cover_url: string | null;
   role: "donor" | "volunteer" | "ngo" | "beneficiary" | null;
   reputation_score: number | null;
   is_verified: boolean | null;
-  wallet_address: string | null;
+  total_tokens_claimed: number | null;
+  is_blocked: boolean | null;
   created_at: string | null;
+  updated_at: string | null;
 }
 
 interface Friendship {
@@ -194,8 +198,9 @@ const Profiles = () => {
   const fetchProfiles = async () => {
     setLoading(true);
     try {
+      // Use profiles_public view to exclude sensitive data (email, wallet_address, blocked_reason)
       const { data, error } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("*")
         .order("reputation_score", { ascending: false });
 
@@ -435,12 +440,7 @@ const Profiles = () => {
                 <span className="text-xs text-green-600 font-medium">● Online</span>
               )}
             </div>
-            {profile.wallet_address && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
-                <Wallet className="w-3 h-3" />
-                {shortenAddress(profile.wallet_address)}
-              </div>
-            )}
+            {/* wallet_address is now hidden for security - removed from public view */}
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
               <Calendar className="w-3 h-3" />
               Tham gia {formatDate(profile.created_at)}

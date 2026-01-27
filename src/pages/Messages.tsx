@@ -31,6 +31,8 @@ import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useMessageReactions } from "@/hooks/useMessageReactions";
 import { ChatStickerPicker } from "@/components/chat/ChatStickerPicker";
 import { ChatGifPicker } from "@/components/chat/ChatGifPicker";
+import { ChatSettingsPanel } from "@/components/chat/ChatSettingsPanel";
+import { MessageSearch } from "@/components/chat/MessageSearch";
 
 import { AgoraVideoCallModal } from "@/components/chat/AgoraVideoCallModal";
 import { AgoraGroupCallModal } from "@/components/chat/AgoraGroupCallModal";
@@ -128,9 +130,9 @@ export default function Messages() {
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showRightPanel, setShowRightPanel] = useState(false);
+  const [showMessageSearch, setShowMessageSearch] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "groups" | "calls">("all");
-  const [mediaOpen, setMediaOpen] = useState(false);
-  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [autoAnswerCall, setAutoAnswerCall] = useState(false);
   const [incomingCallSessionId, setIncomingCallSessionId] = useState<string | null>(null);
@@ -1186,11 +1188,31 @@ export default function Messages() {
             </div>
 
             {/* Security notice */}
-            <div className="px-4 py-2 bg-muted/30 text-center">
+            <div className="px-4 py-2 bg-muted/30 text-center relative">
               <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
                 <Lock className="w-3 h-3" />
                 {t('messages.encryptedMessages')}
               </p>
+              
+              {/* Message Search Overlay */}
+              <AnimatePresence>
+                {showMessageSearch && (
+                  <MessageSearch
+                    conversationId={activeConversation.id}
+                    onMessageSelect={(messageId) => {
+                      setHighlightedMessageId(messageId);
+                      // Scroll to message
+                      const messageEl = document.getElementById(`message-${messageId}`);
+                      if (messageEl) {
+                        messageEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Remove highlight after 2 seconds
+                        setTimeout(() => setHighlightedMessageId(null), 2000);
+                      }
+                    }}
+                    onClose={() => setShowMessageSearch(false)}
+                  />
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Messages */}
@@ -1218,9 +1240,15 @@ export default function Messages() {
                     return (
                       <motion.div
                         key={msg.id}
+                        id={`message-${msg.id}`}
                         initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`flex items-end gap-2 group ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
+                        animate={{ 
+                          opacity: 1, 
+                          y: 0,
+                          backgroundColor: highlightedMessageId === msg.id ? 'hsl(var(--primary) / 0.2)' : 'transparent'
+                        }}
+                        transition={{ backgroundColor: { duration: 0.3 } }}
+                        className={`flex items-end gap-2 group rounded-lg p-1 -mx-1 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
                       >
                         {/* Avatar for other user's messages */}
                         {!isCurrentUser && (
@@ -1488,151 +1516,48 @@ export default function Messages() {
         )}
       </div>
 
-      {/* Right Sidebar - Chat Info */}
+      {/* Right Sidebar - Chat Settings Panel */}
       <AnimatePresence>
-        {showRightPanel && activeConversation && (
+        {showRightPanel && activeConversation && currentUserId && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             className="hidden lg:flex flex-col border-l border-border bg-card overflow-hidden"
           >
-            <ScrollArea className="flex-1">
-              <div className="p-6">
-                {/* Profile Section */}
-                <div className="text-center mb-6">
-                  <Avatar className="w-20 h-20 mx-auto mb-3">
-                    <AvatarImage src={activeConversation.otherUser?.avatar_url || ""} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-2xl">
-                      {(activeConversation.otherUser?.full_name || "U").charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-bold text-lg">{activeConversation.otherUser?.full_name || t('messages.user')}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {activeConversation.isOnline ? t('messages.online') : t('messages.recentlyActive')}
-                  </p>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex justify-center gap-4 mb-6">
-                  <div className="text-center">
-                    <Link 
-                      to={`/user/${activeConversation.otherUser?.user_id}`}
-                      className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-1 hover:bg-muted/80 transition-colors"
-                    >
-                    <Users className="w-5 h-5" />
-                    </Link>
-                    <span className="text-xs text-muted-foreground">{t('messages.profile')}</span>
-                  </div>
-                  <div className="text-center">
-                    <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-1 hover:bg-muted/80 transition-colors">
-                      <Bell className="w-5 h-5" />
-                    </button>
-                    <span className="text-xs text-muted-foreground">{t('messages.muteNotifications')}</span>
-                  </div>
-                  <div className="text-center">
-                    <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto mb-1 hover:bg-muted/80 transition-colors">
-                      <Search className="w-5 h-5" />
-                    </button>
-                    <span className="text-xs text-muted-foreground">{t('common.search')}</span>
-                  </div>
-                </div>
-
-                {/* Collapsible Sections */}
-                <div className="space-y-2">
-                  {/* Chat Info */}
-                  <Collapsible>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                      <span className="font-medium">{t('messages.chatInfo')}</span>
-                      <ChevronDown className="w-5 h-5" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-3 py-2">
-                      <p className="text-sm text-muted-foreground">
-                        {t('messages.conversationCreated')} {formatDistanceToNow(new Date(activeConversation.last_message_at), { locale: dateLocale, addSuffix: true })}
-                      </p>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  {/* Customize Chat */}
-                  <Collapsible>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                      <span className="font-medium">{t('messages.customizeChat')}</span>
-                      <ChevronDown className="w-5 h-5" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-3 py-2 space-y-2">
-                      <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                        <span className="w-2 h-2 rounded-full bg-primary" />
-                        <span className="text-sm">{t('messages.changeTheme')}</span>
-                      </button>
-                      <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                        <Edit3 className="w-4 h-4" />
-                        <span className="text-sm">{t('messages.changeNickname')}</span>
-                      </button>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  {/* Media & Files */}
-                  <Collapsible open={mediaOpen} onOpenChange={setMediaOpen}>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                      <span className="font-medium">{t('messages.mediaFiles')}</span>
-                      <ChevronDown className={`w-5 h-5 transition-transform ${mediaOpen ? 'rotate-180' : ''}`} />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-3 py-2">
-                      {messageMedia.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">{t('messages.noFiles')}</p>
-                      ) : (
-                        <div className="grid grid-cols-3 gap-2">
-                          {messageMedia.slice(0, 6).map((msg) => (
-                            isVideoUrl(msg.image_url!) ? (
-                              <div 
-                                key={msg.id}
-                                className="aspect-square rounded-lg cursor-pointer hover:opacity-80 transition-opacity relative bg-muted overflow-hidden"
-                                onClick={() => window.open(msg.image_url!, '_blank')}
-                              >
-                                <video 
-                                  src={msg.image_url!}
-                                  className="w-full h-full object-cover"
-                                  preload="metadata"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                  <Video className="w-6 h-6 text-white" />
-                                </div>
-                              </div>
-                            ) : (
-                              <img
-                                key={msg.id}
-                                src={msg.image_url!}
-                                alt="Media"
-                                className="aspect-square object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                                onClick={() => window.open(msg.image_url!, '_blank')}
-                              />
-                            )
-                          ))}
-                        </div>
-                      )}
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  {/* Privacy & Support */}
-                  <Collapsible open={privacyOpen} onOpenChange={setPrivacyOpen}>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                      <span className="font-medium">{t('messages.privacySupport')}</span>
-                      <ChevronDown className={`w-5 h-5 transition-transform ${privacyOpen ? 'rotate-180' : ''}`} />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-3 py-2 space-y-2">
-                      <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                        <BellOff className="w-4 h-4" />
-                        <span className="text-sm">{t('messages.muteNotifications')}</span>
-                      </button>
-                      <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted/50 transition-colors text-destructive">
-                        <Shield className="w-4 h-4" />
-                        <span className="text-sm">{t('messages.block')}</span>
-                      </button>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              </div>
-            </ScrollArea>
+            <ChatSettingsPanel
+              conversationId={activeConversation.id}
+              currentUserId={currentUserId}
+              otherUser={activeConversation.otherUser}
+              isGroup={activeConversation.is_group}
+              groupName={activeConversation.name}
+              participants={activeConversation.participants}
+              mediaMessages={messageMedia.map(m => ({
+                id: m.id,
+                image_url: m.image_url!,
+                created_at: m.created_at
+              }))}
+              isOnline={activeConversation.isOnline}
+              onSearchClick={() => setShowMessageSearch(true)}
+              onBlockUser={() => {
+                toast({
+                  title: t('messages.blockUser'),
+                  description: t('messages.blockUserConfirm'),
+                });
+              }}
+              onDeleteConversation={() => {
+                toast({
+                  title: t('messages.deleteConversation'),
+                  description: t('messages.deleteConversationConfirm'),
+                });
+              }}
+              onLeaveGroup={() => {
+                toast({
+                  title: t('messages.leaveGroup'),
+                  description: t('messages.leaveGroupConfirm'),
+                });
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

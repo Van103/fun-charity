@@ -647,36 +647,89 @@ export type Database = {
           },
         ]
       }
+      conversation_settings: {
+        Row: {
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          nickname: string | null
+          notifications_enabled: boolean | null
+          theme_color: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          nickname?: string | null
+          notifications_enabled?: boolean | null
+          theme_color?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          nickname?: string | null
+          notifications_enabled?: boolean | null
+          theme_color?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_settings_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
+          avatar_url: string | null
           created_at: string
           created_by: string | null
           id: string
+          is_archived: boolean | null
           is_group: boolean | null
+          is_pinned: boolean | null
           last_message_at: string | null
           name: string | null
           participant1_id: string
           participant2_id: string
+          pinned_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
+          is_archived?: boolean | null
           is_group?: boolean | null
+          is_pinned?: boolean | null
           last_message_at?: string | null
           name?: string | null
           participant1_id: string
           participant2_id: string
+          pinned_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
+          is_archived?: boolean | null
           is_group?: boolean | null
+          is_pinned?: boolean | null
           last_message_at?: string | null
           name?: string | null
           participant1_id?: string
           participant2_id?: string
+          pinned_at?: string | null
         }
         Relationships: []
       }

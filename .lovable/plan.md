@@ -1,157 +1,358 @@
 
 
-# KẾ HOẠCH SỬA LỖI LIVESTREAM VÀ VIDEO CALL
+# KẾ HOẠCH NÂNG CẤP FUN CHAT GIỐNG MESSENGER
 
-## VẤN ĐỀ ĐÃ XÁC ĐỊNH
+## 📊 PHÂN TÍCH HIỆN TRẠNG
 
-Lỗi: **"invalid vendor key, can not find appid"** - SDK Agora không thể đọc được App ID từ token được tạo.
+### Tính năng đã có (hoạt động tốt):
+| Tính năng | Trạng thái | Ghi chú |
+|-----------|------------|---------|
+| Chat 1:1 | ✅ Hoạt động | Realtime với Supabase |
+| Chat nhóm | ✅ Hoạt động | Tạo nhóm, thêm thành viên |
+| Video Call 1:1 | ✅ Hoạt động | Agora SDK 4.x với AccessToken2 |
+| Group Video Call | ✅ Hoạt động | Agora multi-user |
+| Audio Call | ✅ Hoạt động | Hỗ trợ cả 1:1 và nhóm |
+| Gửi ảnh/video | ✅ Hoạt động | Upload qua Supabase Storage |
+| Sticker/Emoji | ✅ Hoạt động | 5 packs emoji |
+| GIF | ✅ Hoạt động | Hardcoded GIFs |
+| Message Reactions | ✅ Hoạt động | 6 emoji reactions |
+| Typing Indicator | ✅ Hoạt động | Realtime |
+| Online Status | ✅ Hoạt động | Presence tracking |
+| Incoming Call Notification | ✅ Hoạt động | Global listener |
+| Call History | ✅ Hoạt động | Tabs với lịch sử cuộc gọi |
+| Right Panel Info | ✅ Hoạt động | Media, Privacy settings |
 
-### Nguyên nhân chính:
-- Thuật toán tạo token tùy chỉnh trong `agora-token` Edge Function sử dụng phiên bản cũ (**VERSION "006"**) 
-- SDK `agora-rtc-sdk-ng` phiên bản 4.x yêu cầu token theo chuẩn **AccessToken2 (007)** hoặc token được tạo từ thư viện chính thức
+### Tính năng cần bổ sung (theo chuẩn Messenger):
+| Tính năng | Mức độ | Mô tả |
+|-----------|--------|-------|
+| Chat Settings Page | 🔴 Thiếu | Trang cài đặt riêng biệt |
+| Notification Settings | 🔴 Thiếu | Tắt/bật thông báo theo cuộc hội thoại |
+| Theme/Color Customization | 🟡 Cơ bản | Chưa hoạt động |
+| Nicknames | 🔴 Thiếu | Đặt biệt danh trong chat |
+| Message Search | 🔴 Thiếu | Tìm kiếm tin nhắn trong hội thoại |
+| Pin Conversations | 🔴 Thiếu | Ghim cuộc hội thoại |
+| Archive Conversations | 🔴 Thiếu | Ẩn hội thoại |
+| Voice Messages | 🔴 Thiếu | Ghi âm và gửi |
+| Reply to Messages | 🔴 Thiếu | Trả lời tin nhắn cụ thể |
+| Forward Messages | 🔴 Thiếu | Chuyển tiếp tin nhắn |
+| Message Read Receipts | 🟡 Cơ bản | Chưa hiển thị ai đã đọc |
+| Group Admin Features | 🔴 Thiếu | Quản lý admin, kick thành viên |
+| Vanish Mode | 🔴 Thiếu | Tin nhắn tự xóa |
+| Encrypted Chats | 🟡 UI Only | Chưa mã hóa thực sự |
 
 ---
 
-## GIẢI PHÁP
+## 🚀 KẾ HOẠCH NÂNG CẤP CHI TIẾT
 
-Thay thế thuật toán tạo token thủ công bằng **thư viện chính thức `agora-token`** của Agora sử dụng `RtcTokenBuilder.buildTokenWithUid()`.
+### PHASE 1: CẢI THIỆN UX/UI CƠ BẢN (1-2 tuần)
 
----
+#### 1.1 Chat Settings Page mới
+Tạo trang cài đặt riêng biệt cho mỗi cuộc hội thoại với đầy đủ tùy chọn.
 
-## PHASE 1: Cập nhật Edge Function `agora-token`
-
-### File: `supabase/functions/agora-token/index.ts`
-
-**Thay đổi chính:**
-
-1. **Import thư viện chính thức** thay vì thuật toán tùy chỉnh:
-
-```typescript
-import { RtcTokenBuilder, RtcRole } from "npm:agora-token";
+**File mới:** `src/components/chat/ChatSettingsPanel.tsx`
+```
+Bao gồm:
+- Notification toggle (tắt/bật thông báo)
+- Theme color picker (chọn màu chat)
+- Nickname editor (đặt biệt danh)
+- Media gallery (xem tất cả ảnh/video)
+- Search in conversation
+- Block/Report user
+- Leave group / Delete conversation
 ```
 
-2. **Xóa toàn bộ code tạo token thủ công** (các hàm `crc32`, `packUint16`, `packUint32`, `buildAccessToken`, v.v.)
+#### 1.2 Cải thiện Right Panel
+Nâng cấp panel bên phải với các tính năng thực sự hoạt động.
 
-3. **Sử dụng RtcTokenBuilder chuẩn**:
+**Cập nhật:** `src/pages/Messages.tsx` (phần Right Panel)
+```
+- Notification toggle: Lưu vào DB, realtime
+- Theme picker: 10+ màu sắc preset
+- Nickname: Lưu và hiển thị trong chat
+- Media gallery: Phân loại ảnh/video/file
+- Shared links: Danh sách link đã chia sẻ
+```
 
-```typescript
-const token = RtcTokenBuilder.buildTokenWithUid(
-  AGORA_APP_ID,
-  AGORA_APP_CERTIFICATE,
-  channelName,
-  uid || 0,
-  role === 1 ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
-  tokenExpireSeconds,     // Token expiration
-  privilegeExpireSeconds  // Privilege expiration
+#### 1.3 Pin & Archive Conversations
+Cho phép ghim và ẩn cuộc hội thoại.
+
+**Cập nhật Database:**
+```sql
+ALTER TABLE conversations ADD COLUMN is_pinned BOOLEAN DEFAULT false;
+ALTER TABLE conversations ADD COLUMN is_archived BOOLEAN DEFAULT false;
+ALTER TABLE conversations ADD COLUMN pinned_at TIMESTAMPTZ;
+```
+
+**Cập nhật UI:**
+- Swipe actions trên mobile (ghim/ẩn)
+- Context menu trên desktop
+- Phần "Ghim" hiển thị đầu tiên trong danh sách
+
+---
+
+### PHASE 2: TÍNH NĂNG NÂNG CAO (2-3 tuần)
+
+#### 2.1 Reply to Message (Trả lời tin nhắn)
+Cho phép reply trực tiếp vào tin nhắn cụ thể như Messenger.
+
+**Cập nhật Database:**
+```sql
+ALTER TABLE messages ADD COLUMN reply_to_id UUID REFERENCES messages(id);
+```
+
+**UI Changes:**
+- Swipe right để reply (mobile)
+- Hover action button (desktop)
+- Preview tin nhắn được reply phía trên input
+- Hiển thị quote trong bubble tin nhắn
+
+#### 2.2 Forward Message (Chuyển tiếp)
+Cho phép chuyển tiếp tin nhắn sang cuộc hội thoại khác.
+
+**File mới:** `src/components/chat/ForwardMessageModal.tsx`
+```
+- Chọn nhiều cuộc hội thoại
+- Preview tin nhắn
+- Forward cả ảnh/video
+```
+
+#### 2.3 Voice Messages (Tin nhắn thoại)
+Ghi âm và gửi voice message như Messenger.
+
+**File mới:** `src/components/chat/VoiceRecorder.tsx`
+```
+- Record button với waveform visualization
+- Pause/Resume recording
+- Cancel/Send actions
+- Upload audio to Supabase Storage
+```
+
+**Cập nhật Database:**
+```sql
+ALTER TABLE messages ADD COLUMN audio_url TEXT;
+ALTER TABLE messages ADD COLUMN audio_duration INTEGER; -- seconds
+```
+
+#### 2.4 Message Search
+Tìm kiếm tin nhắn trong cuộc hội thoại.
+
+**File mới:** `src/components/chat/MessageSearch.tsx`
+```
+- Search input trong Right Panel
+- Highlight matching text
+- Jump to message trong scroll area
+- Filter by sender, date range
+```
+
+---
+
+### PHASE 3: GROUP MANAGEMENT (1-2 tuần)
+
+#### 3.1 Group Admin Features
+Quản lý nhóm chat như Messenger.
+
+**Cập nhật Database:**
+```sql
+ALTER TABLE conversation_participants ADD COLUMN role TEXT DEFAULT 'member'; -- 'admin', 'member'
+ALTER TABLE conversation_participants ADD COLUMN joined_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE conversation_participants ADD COLUMN added_by UUID REFERENCES profiles(user_id);
+```
+
+**Tính năng Admin:**
+- Thăng/hạ admin
+- Kick thành viên
+- Approve join requests
+- Change group name/avatar
+- Set group permissions
+
+#### 3.2 Add/Remove Members
+Thêm/xóa thành viên từ nhóm.
+
+**File mới:** `src/components/chat/ManageGroupMembers.tsx`
+```
+- Danh sách thành viên với role
+- Add friends to group
+- Remove members (admin only)
+- View member profile
+```
+
+#### 3.3 Group Avatar & Name Edit
+Cho phép thay đổi ảnh và tên nhóm.
+
+**Cập nhật Database:**
+```sql
+ALTER TABLE conversations ADD COLUMN avatar_url TEXT;
+```
+
+---
+
+### PHASE 4: TRẢI NGHIỆM MESSENGER-LIKE (2-3 tuần)
+
+#### 4.1 Read Receipts Enhancement
+Hiển thị ai đã đọc tin nhắn (như Messenger).
+
+**Cập nhật Database:**
+```sql
+CREATE TABLE message_read_receipts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
+  read_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(message_id, user_id)
 );
 ```
 
-### So sánh trước và sau:
+**UI:**
+- Avatar nhỏ ở cuối tin nhắn đã đọc
+- Tooltip hiển thị "Đã xem bởi X, Y, Z"
+- "Đã gửi" / "Đã nhận" / "Đã xem" indicators
 
-| Yếu tố | Trước | Sau |
-|--------|-------|-----|
-| Phương pháp | Thuật toán thủ công VERSION "006" | Thư viện chính thức `agora-token` |
-| Độ tương thích | Không hoạt động với SDK 4.x | Tương thích hoàn toàn |
-| Bảo trì | Khó bảo trì, dễ lỗi | Cập nhật tự động từ thư viện |
-| Token format | AccessToken cũ | AccessToken2 chuẩn |
+#### 4.2 Active Now & Last Seen
+Hiển thị "Đang hoạt động" hoặc "Hoạt động X phút trước".
 
----
+**Cập nhật:** `src/hooks/usePresence.ts`
+```
+- Track last_seen timestamp
+- Calculate relative time
+- Display in conversation list and header
+```
 
-## PHASE 2: Cải thiện xử lý lỗi
+#### 4.3 Quick Reactions (Double-tap to like)
+Double-tap vào tin nhắn để thả tim như Messenger.
 
-Thêm logging chi tiết và xử lý lỗi tốt hơn trong Edge Function để dễ debug trong tương lai.
+**Cập nhật:** Message bubble component
+```
+- onDoubleClick → add ❤️ reaction
+- Animation giống Messenger
+```
 
-```typescript
-try {
-  console.log(`[agora-token] Building token with RtcTokenBuilder`);
-  console.log(`[agora-token] AppID: ${AGORA_APP_ID.substring(0, 8)}...`);
-  console.log(`[agora-token] Channel: ${channelName}, UID: ${uid}, Role: ${role}`);
-  
-  const token = RtcTokenBuilder.buildTokenWithUid(...);
-  
-  console.log(`[agora-token] Token generated successfully, length: ${token.length}`);
-} catch (error) {
-  console.error(`[agora-token] Token generation failed:`, error);
-  throw error;
-}
+#### 4.4 Emoji Reactions Expansion
+Mở rộng reactions với nhiều emoji hơn.
+
+**Cập nhật:** `src/components/chat/MessageReactionPicker.tsx`
+```
+- Thêm emoji picker full
+- Recent reactions
+- Frequently used
 ```
 
 ---
 
-## CODE SAU KHI CẬP NHẬT
+## 📁 CẤU TRÚC FILE SAU NÂNG CẤP
 
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { RtcTokenBuilder, RtcRole } from "npm:agora-token";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    // Authentication check...
-    
-    const AGORA_APP_ID = Deno.env.get('AGORA_APP_ID');
-    const AGORA_APP_CERTIFICATE = Deno.env.get('AGORA_APP_CERTIFICATE');
-
-    const { channelName, uid, role = 1 } = await req.json();
-
-    // Token expires in 24 hours
-    const tokenExpireSeconds = 86400;
-    const privilegeExpireSeconds = 86400;
-
-    // Use official RtcTokenBuilder
-    const token = RtcTokenBuilder.buildTokenWithUid(
-      AGORA_APP_ID,
-      AGORA_APP_CERTIFICATE,
-      channelName,
-      uid || 0,
-      role === 1 ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
-      tokenExpireSeconds,
-      privilegeExpireSeconds
-    );
-
-    return new Response(
-      JSON.stringify({ token, appId: AGORA_APP_ID, channel: channelName, uid: uid || 0 }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    // Error handling...
-  }
-});
+```
+src/components/chat/
+├── AgoraVideoCallModal.tsx      (existing - enhanced)
+├── AgoraGroupCallModal.tsx      (existing - enhanced)
+├── CallsTab.tsx                 (existing)
+├── CallHistoryCard.tsx          (existing)
+├── CallMessageBubble.tsx        (existing)
+├── ChatGifPicker.tsx            (existing - enhance with API)
+├── ChatStickerPicker.tsx        (existing)
+├── ChatSettingsPanel.tsx        ✨ NEW
+├── CreateGroupModal.tsx         (existing - enhanced)
+├── ForwardMessageModal.tsx      ✨ NEW
+├── IncomingCallNotification.tsx (existing)
+├── ManageGroupMembers.tsx       ✨ NEW
+├── MessageReactionPicker.tsx    (existing - enhanced)
+├── MessageReplyPreview.tsx      ✨ NEW
+├── MessageSearch.tsx            ✨ NEW
+├── VoiceRecorder.tsx            ✨ NEW
+└── ReadReceiptAvatars.tsx       ✨ NEW
 ```
 
 ---
 
-## FILES CẦN SỬA
+## 🗄️ DATABASE CHANGES SUMMARY
 
-| File | Thay đổi |
-|------|----------|
-| `supabase/functions/agora-token/index.ts` | Thay thế thuật toán thủ công bằng thư viện `agora-token` |
+```sql
+-- Phase 1: Pin & Archive
+ALTER TABLE conversations 
+  ADD COLUMN is_pinned BOOLEAN DEFAULT false,
+  ADD COLUMN is_archived BOOLEAN DEFAULT false,
+  ADD COLUMN pinned_at TIMESTAMPTZ,
+  ADD COLUMN avatar_url TEXT;
+
+-- Phase 2: Reply & Voice
+ALTER TABLE messages 
+  ADD COLUMN reply_to_id UUID REFERENCES messages(id),
+  ADD COLUMN audio_url TEXT,
+  ADD COLUMN audio_duration INTEGER;
+
+-- Phase 3: Group Management
+ALTER TABLE conversation_participants 
+  ADD COLUMN role TEXT DEFAULT 'member',
+  ADD COLUMN joined_at TIMESTAMPTZ DEFAULT NOW(),
+  ADD COLUMN added_by UUID REFERENCES profiles(user_id);
+
+-- Phase 4: Read Receipts
+CREATE TABLE message_read_receipts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
+  read_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(message_id, user_id)
+);
+
+-- Chat Settings per conversation
+CREATE TABLE conversation_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
+  nickname TEXT,
+  theme_color TEXT DEFAULT '#8B5CF6',
+  notifications_enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(conversation_id, user_id)
+);
+```
 
 ---
 
-## KẾT QUẢ MONG ĐỢI
+## ⏰ TIMELINE
 
-1. **Livestream hoạt động** - Có thể phát trực tiếp mượt mà
-2. **Video Call hoạt động** - Gọi video 1-1 và nhóm đều ổn định
-3. **Không còn lỗi "invalid vendor key"** - Token được tạo đúng chuẩn
-4. **Tương thích với mọi thiết bị** - Điện thoại, máy tính đều hoạt động
+| Phase | Thời gian | Tính năng chính |
+|-------|-----------|-----------------|
+| Phase 1 | Tuần 1-2 | Settings Panel, Pin/Archive, Theme Colors |
+| Phase 2 | Tuần 3-5 | Reply, Forward, Voice Messages, Search |
+| Phase 3 | Tuần 6-7 | Group Admin, Member Management |
+| Phase 4 | Tuần 8-10 | Read Receipts, Active Status, Quick Reactions |
 
 ---
 
-## THỜI GIAN THỰC HIỆN
+## 🎯 ƯU TIÊN TRIỂN KHAI NGAY
 
-- Phase 1 (Cập nhật Edge Function): ~10 phút
-- Phase 2 (Testing): ~5 phút
-- Deploy và kiểm tra: ~5 phút
+Dựa trên yêu cầu "SUÔN MƯỢT, MẠNH MẼ", tôi đề xuất bắt đầu với:
 
-**Tổng: ~20 phút**
+1. **Chat Settings Panel** - Cài đặt rõ ràng cho từng cuộc hội thoại
+2. **Reply to Message** - Tính năng quan trọng nhất của Messenger
+3. **Pin Conversations** - Ghim chat quan trọng lên đầu
+4. **Voice Messages** - Tính năng được yêu thích trên mobile
+5. **Read Receipts** - Biết ai đã đọc tin nhắn
+
+---
+
+## 🔧 PHẦN KỸ THUẬT CHI TIẾT
+
+### Database Migrations:
+- 4 ALTER TABLE statements cho `conversations`
+- 3 ALTER TABLE statements cho `messages`
+- 3 ALTER TABLE statements cho `conversation_participants`
+- 2 CREATE TABLE mới
+
+### New Components (7 files):
+- ChatSettingsPanel.tsx (~300 lines)
+- ForwardMessageModal.tsx (~200 lines)
+- ManageGroupMembers.tsx (~250 lines)
+- MessageReplyPreview.tsx (~80 lines)
+- MessageSearch.tsx (~150 lines)
+- VoiceRecorder.tsx (~200 lines)
+- ReadReceiptAvatars.tsx (~100 lines)
+
+### Updated Files:
+- Messages.tsx (major enhancements)
+- CreateGroupModal.tsx (add admin features)
+- MessageReactionPicker.tsx (expand reactions)
+- usePresence.ts (last seen tracking)
 

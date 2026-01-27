@@ -284,11 +284,11 @@ export function MobileBottomNav() {
                           <div className="relative mb-2">
                             {item.image ? (
                               <>
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
                                 <img 
                                   src={item.image} 
                                   alt="" 
-                                  className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                                  className="relative w-10 h-10 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
                                 />
                               </>
                             ) : Icon ? (
@@ -298,8 +298,8 @@ export function MobileBottomNav() {
                             ) : null}
                           </div>
                           <span 
-                            className="text-xs font-bold text-center leading-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
-                            style={{ fontSize: '13px' }}
+                            className="text-xs font-bold text-center leading-tight text-purple-600"
+                            style={{ fontSize: '12px' }}
                           >
                             {t(item.labelKey)}
                           </span>
@@ -322,11 +322,11 @@ export function MobileBottomNav() {
                         <div className={`relative mb-2 ${isActive ? "" : ""}`}>
                           {item.image ? (
                             <>
-                              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
                               <img 
                                 src={item.image} 
                                 alt="" 
-                                className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                                className="relative w-10 h-10 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
                               />
                             </>
                           ) : Icon ? (
@@ -336,8 +336,8 @@ export function MobileBottomNav() {
                           ) : null}
                         </div>
                         <span 
-                          className="text-xs font-bold text-center leading-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
-                          style={{ fontSize: '13px' }}
+                          className="text-xs font-bold text-center leading-tight text-purple-600"
+                          style={{ fontSize: '12px' }}
                         >
                           {t(item.labelKey)}
                         </span>

@@ -3,9 +3,9 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 export type BokehPreset = 'minimal' | 'normal' | 'intense' | 'custom';
 
 export const BOKEH_PRESETS: Record<Exclude<BokehPreset, 'custom'>, { particleCount: number; speed: number }> = {
-  minimal: { particleCount: 20, speed: 0.3 },
-  normal: { particleCount: 50, speed: 1.0 },
-  intense: { particleCount: 100, speed: 1.5 },
+  minimal: { particleCount: 15, speed: 0.3 },
+  normal: { particleCount: 30, speed: 0.8 },
+  intense: { particleCount: 60, speed: 1.2 },
 };
 
 interface MotionContextType {
@@ -21,6 +21,8 @@ interface MotionContextType {
   setBokehParticleCount: (count: number) => void;
   bokehSpeed: number;
   setBokehSpeed: (speed: number) => void;
+  performanceMode: boolean;
+  setPerformanceMode: (value: boolean) => void;
 }
 
 const MotionContext = createContext<MotionContextType | undefined>(undefined);
@@ -55,6 +57,12 @@ export function MotionProvider({ children }: { children: ReactNode }) {
   const [bokehSpeed, setBokehSpeedState] = useState(() => {
     const saved = localStorage.getItem("bokeh-speed");
     return saved !== null ? parseFloat(saved) : BOKEH_PRESETS.normal.speed;
+  });
+
+  // Performance mode - turns off all heavy animations at once
+  const [performanceMode, setPerformanceModeState] = useState(() => {
+    const saved = localStorage.getItem("performance-mode");
+    return saved === "true";
   });
 
   const setReduceMotion = (value: boolean) => {
@@ -113,6 +121,19 @@ export function MotionProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setPerformanceMode = (value: boolean) => {
+    setPerformanceModeState(value);
+    localStorage.setItem("performance-mode", String(value));
+    
+    if (value) {
+      // Turn off all heavy animations
+      setBackgroundEnabledState(false);
+      setBokehEnabledState(false);
+      localStorage.setItem("background-enabled", "false");
+      localStorage.setItem("bokeh-enabled", "false");
+    }
+  };
+
   // Listen for system preference changes
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -148,6 +169,8 @@ export function MotionProvider({ children }: { children: ReactNode }) {
       setBokehParticleCount,
       bokehSpeed,
       setBokehSpeed,
+      performanceMode,
+      setPerformanceMode,
     }}>
       {children}
     </MotionContext.Provider>

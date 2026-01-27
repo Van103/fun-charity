@@ -53,7 +53,7 @@ function drawParticle(ctx: CanvasRenderingContext2D, p: BokehParticle) {
 }
 
 export function EnergyBokeh() {
-  const { reduceMotion, bokehEnabled, bokehParticleCount, bokehSpeed } = useMotion();
+  const { reduceMotion, bokehEnabled, bokehParticleCount, bokehSpeed, performanceMode } = useMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<BokehParticle[]>([]);
   const animationRef = useRef<number>();
@@ -101,7 +101,7 @@ export function EnergyBokeh() {
   }, [bokehSpeed]);
 
   useEffect(() => {
-    if (reduceMotion || !bokehEnabled) return;
+    if (reduceMotion || !bokehEnabled || performanceMode) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -135,12 +135,12 @@ export function EnergyBokeh() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [reduceMotion, bokehEnabled, bokehParticleCount, animate, initParticles]);
+  }, [reduceMotion, bokehEnabled, bokehParticleCount, animate, initParticles, performanceMode]);
 
   // Update particle count when it changes
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || reduceMotion || !bokehEnabled) return;
+    if (!canvas || reduceMotion || !bokehEnabled || performanceMode) return;
     
     const currentCount = particlesRef.current.length;
     // Reduce by 60% on mobile
@@ -155,9 +155,9 @@ export function EnergyBokeh() {
       // Remove particles
       particlesRef.current = particlesRef.current.slice(0, targetCount);
     }
-  }, [bokehParticleCount, reduceMotion, bokehEnabled, isMobile]);
+  }, [bokehParticleCount, reduceMotion, bokehEnabled, isMobile, performanceMode]);
 
-  if (reduceMotion || !bokehEnabled) return null;
+  if (reduceMotion || !bokehEnabled || performanceMode) return null;
 
   return (
     <canvas

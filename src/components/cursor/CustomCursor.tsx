@@ -33,8 +33,8 @@ const CustomCursor = () => {
     return window.innerWidth < 768;
   }, []);
 
-  // Reduced particle limit for better performance
-  const PARTICLE_LIMIT = isMobile ? 25 : 45;
+  // Further reduced particle limit for better performance
+  const PARTICLE_LIMIT = isMobile ? 15 : 35;
 
   const createParticle = useCallback((x: number, y: number): Particle => {
     // Gold/yellow sparkle color palette

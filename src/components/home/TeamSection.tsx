@@ -110,7 +110,7 @@ export function TeamSection() {
                 <div className="relative mx-auto mb-6">
                   <div className={`absolute inset-0 bg-gradient-to-br ${founder.color} rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity`} />
                   <Avatar className="w-32 h-32 ring-4 ring-white shadow-xl relative">
-                    <AvatarImage src={founder.avatar} alt={founder.name} className="object-cover" />
+                    <AvatarImage src={founder.avatar} alt={founder.name} className="object-cover" loading="lazy" />
                     <AvatarFallback className={`bg-gradient-to-br ${founder.color} text-white text-2xl`}>
                       {founder.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
@@ -170,7 +170,7 @@ export function TeamSection() {
               <div className="relative mx-auto mb-4 w-fit">
                 <div className={`absolute inset-0 bg-gradient-to-br ${member.color} rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity`} />
                 <Avatar className="w-20 h-20 md:w-24 md:h-24 ring-3 ring-white shadow-lg relative group-hover:scale-105 transition-transform">
-                  <AvatarImage src={member.avatar} alt={member.name} className="object-cover" />
+                  <AvatarImage src={member.avatar} alt={member.name} className="object-cover" loading="lazy" />
                   <AvatarFallback className={`bg-gradient-to-br ${member.color} text-white`}>
                     {member.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>

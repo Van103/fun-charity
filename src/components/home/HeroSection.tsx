@@ -48,9 +48,17 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Video Background */}
+      {/* Video Background with Poster for fast LCP */}
       <div className="absolute inset-0">
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          poster="/images/hero-poster.jpg"
+          preload="metadata"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-primary/60" />

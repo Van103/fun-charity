@@ -64,8 +64,8 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60, // 1 minute
-      gcTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5, // 5 minutes - increased for better caching
+      gcTime: 1000 * 60 * 10, // 10 minutes
     },
   },
 });
@@ -146,6 +146,20 @@ function IncomingCallListener() {
   );
 }
 
+// Deferred EnergyBokeh wrapper for better initial load performance
+function DeferredEnergyBokeh() {
+  const [showBokeh, setShowBokeh] = useState(false);
+  
+  useEffect(() => {
+    // Delay bokeh initialization to prioritize LCP
+    const timer = setTimeout(() => setShowBokeh(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (!showBokeh) return null;
+  return <EnergyBokeh />;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
@@ -160,7 +174,7 @@ const App = () => (
                 <FlyingAngel />
                 <BrowserRouter>
                   <BackgroundWithVariant />
-                  <EnergyBokeh />
+                  <DeferredEnergyBokeh />
                   <IncomingCallListener />
                   <GlobalEmailVerificationBanner />
                   <InstallAppBanner />

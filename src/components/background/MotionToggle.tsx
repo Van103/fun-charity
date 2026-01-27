@@ -3,7 +3,7 @@ import { useMotion, BokehPreset, BOKEH_PRESETS } from "@/contexts/MotionContext"
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Sparkles, Eye, EyeOff, Stars, Zap, Flame, Settings2 } from "lucide-react";
+import { Sparkles, Eye, EyeOff, Stars, Zap, Flame, Settings2, BatteryLow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const GOLD_COLORS = ['#F5C77A', '#FFD700', '#FFEAA7'];
@@ -169,17 +169,37 @@ export function MotionToggle() {
     setBokehParticleCount,
     bokehSpeed,
     setBokehSpeed,
+    performanceMode,
+    setPerformanceMode,
   } = useMotion();
 
   return (
     <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border">
+      {/* Performance Mode Toggle - at top for visibility */}
+      <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+        <div className="flex items-center gap-2">
+          <BatteryLow className="w-4 h-4 text-amber-500" />
+          <div>
+            <Label htmlFor="performance-toggle" className="text-sm font-medium">
+              Tiết kiệm pin 🔋
+            </Label>
+            <p className="text-[10px] text-muted-foreground">Tắt tất cả hiệu ứng nặng</p>
+          </div>
+        </div>
+        <Switch
+          id="performance-toggle"
+          checked={performanceMode}
+          onCheckedChange={setPerformanceMode}
+        />
+      </div>
+
       {/* Live Preview */}
       <div className="space-y-2">
         <Label className="text-xs text-muted-foreground uppercase tracking-wider">Live Preview</Label>
         <BokehPreviewCanvas 
           particleCount={bokehParticleCount} 
           speed={bokehSpeed} 
-          enabled={bokehEnabled && !reduceMotion}
+          enabled={bokehEnabled && !reduceMotion && !performanceMode}
         />
       </div>
 
@@ -213,8 +233,8 @@ export function MotionToggle() {
         />
       </div>
 
-      {/* Bokeh Settings (only show when bokeh is enabled) */}
-      {bokehEnabled && !reduceMotion && (
+      {/* Bokeh Settings (only show when bokeh is enabled and not in performance mode) */}
+      {bokehEnabled && !reduceMotion && !performanceMode && (
         <div className="space-y-4 pt-2 border-t border-border/50">
           {/* Preset Selection */}
           <div className="space-y-2">

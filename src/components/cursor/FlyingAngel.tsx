@@ -273,8 +273,8 @@ const FlyingAngel = () => {
       color: colors[Math.floor(Math.random() * colors.length)],
       rotation: Math.random() * 360,
     };
-    // Reduced from 15 to 8 for performance
-    setSparkles((prev) => [...prev.slice(-8), sparkle]);
+    // Further reduced from 8 to 5 for performance
+    setSparkles((prev) => [...prev.slice(-5), sparkle]);
     
     // Remove after animation
     setTimeout(() => {
@@ -290,8 +290,8 @@ const FlyingAngel = () => {
       y,
       opacity: 1,
     };
-    // Reduced from 18 to 10 for performance
-    setTrail((prev) => [...prev.slice(-10), trailPoint]);
+    // Further reduced from 10 to 6 for performance
+    setTrail((prev) => [...prev.slice(-6), trailPoint]);
     
     // Remove after animation
     setTimeout(() => {
@@ -309,8 +309,8 @@ const FlyingAngel = () => {
       'rgba(255,215,0,0.85)',
     ];
     
-    // Create 5-8 rays emanating from behind the angel
-    const numRays = 5 + Math.floor(Math.random() * 4);
+    // Create 3-5 rays for performance (reduced from 5-8)
+    const numRays = 3 + Math.floor(Math.random() * 3);
     const newRays: LightRay[] = [];
     
     for (let i = 0; i < numRays; i++) {
@@ -330,8 +330,8 @@ const FlyingAngel = () => {
       newRays.push(ray);
     }
     
-    // Reduced from 25 to 12 for performance
-    setLightRays((prev) => [...prev.slice(-12), ...newRays]);
+    // Further reduced from 12 to 8 for performance
+    setLightRays((prev) => [...prev.slice(-8), ...newRays]);
     
     // Remove after animation
     setTimeout(() => {

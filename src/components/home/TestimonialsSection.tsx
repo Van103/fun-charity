@@ -138,7 +138,7 @@ export function TestimonialsSection() {
                 {/* Author */}
                 <div className="flex items-center gap-3 pt-4 border-t border-rose-100/50">
                   <Avatar className="w-12 h-12 ring-2 ring-white shadow-md">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} loading="lazy" />
                     <AvatarFallback className="bg-gradient-to-br from-rose-400 to-pink-500 text-white">
                       {testimonial.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>

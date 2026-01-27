@@ -59,10 +59,10 @@ async function fetchVolunteerRanking(): Promise<VolunteerRanker[]> {
       return mockVolunteers;
     }
 
-    // Fetch profiles
+    // Fetch profiles using public view
     const userIds = sortedUsers.map(([id]) => id);
     const { data: profiles } = await supabase
-      .from("profiles")
+      .from("profiles_public")
       .select("user_id, full_name, avatar_url, is_verified")
       .in("user_id", userIds);
 

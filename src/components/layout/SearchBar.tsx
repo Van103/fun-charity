@@ -161,8 +161,9 @@ export function SearchBar() {
     const allResults: SearchResult[] = [];
 
     try {
+      // Use profiles_public view for search to exclude sensitive data
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("user_id, full_name, avatar_url")
         .ilike("full_name", `%${searchQuery}%`)
         .limit(5);

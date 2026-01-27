@@ -2574,6 +2574,54 @@ export type Database = {
       }
     }
     Views: {
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          cover_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          is_blocked: boolean | null
+          is_verified: boolean | null
+          reputation_score: number | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          total_tokens_claimed: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_blocked?: boolean | null
+          is_verified?: boolean | null
+          reputation_score?: number | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          total_tokens_claimed?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_blocked?: boolean | null
+          is_verified?: boolean | null
+          reputation_score?: number | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          total_tokens_claimed?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       public_profiles: {
         Row: {
           avatar_url: string | null

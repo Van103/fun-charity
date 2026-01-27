@@ -35,10 +35,10 @@ async function fetchLeaderboard(type: LeaderboardType): Promise<LeaderboardUser[
         .sort((a, b) => b[1] - a[1])
         .slice(0, 50);
 
-      // Get profiles
+      // Get profiles using public view to exclude sensitive data
       const userIds = sorted.map(([id]) => id);
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('user_id, full_name, avatar_url, is_verified')
         .in('user_id', userIds);
 
@@ -82,10 +82,10 @@ async function fetchLeaderboard(type: LeaderboardType): Promise<LeaderboardUser[
         .sort((a, b) => b[1] - a[1])
         .slice(0, 50);
 
-      // Get profiles
+      // Get profiles using public view
       const userIds = sorted.map(([id]) => id);
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('user_id, full_name, avatar_url, is_verified')
         .in('user_id', userIds);
 
@@ -127,10 +127,10 @@ async function fetchLeaderboard(type: LeaderboardType): Promise<LeaderboardUser[
         .sort((a, b) => b[1] - a[1])
         .slice(0, 50);
 
-      // Get profiles
+      // Get profiles using public view
       const userIds = sorted.map(([id]) => id);
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('user_id, full_name, avatar_url, is_verified')
         .in('user_id', userIds);
 
@@ -162,10 +162,10 @@ async function fetchLeaderboard(type: LeaderboardType): Promise<LeaderboardUser[
 
       if (error) throw error;
 
-      // Get profiles
+      // Get profiles using public view
       const userIds = (data || []).map(b => b.user_id);
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public')
         .select('user_id, full_name, avatar_url, is_verified')
         .in('user_id', userIds);
 

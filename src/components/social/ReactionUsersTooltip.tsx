@@ -31,8 +31,9 @@ export function ReactionUsersTooltip({ postId, children }: ReactionUsersTooltipP
       if (error || !reactions || reactions.length === 0) return [];
 
       const userIds = [...new Set(reactions.map((r) => r.user_id))];
+      // Use profiles_public view to exclude sensitive data
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("user_id, full_name")
         .in("user_id", userIds);
 

@@ -75,8 +75,9 @@ export function TransferModal({ open, onOpenChange, currentBalance }: TransferMo
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Use profiles_public view for search to exclude sensitive data
       const { data, error } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("user_id, full_name, avatar_url")
         .neq("user_id", user.id)
         .or(`full_name.ilike.%${query}%`)

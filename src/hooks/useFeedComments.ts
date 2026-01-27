@@ -44,10 +44,10 @@ export function useFeedComments(postId: string) {
 
       if (error) throw error;
 
-      // Fetch profiles for all comments
+      // Fetch profiles for all comments using public view
       const userIds = [...new Set(data.map((c) => c.user_id))];
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("user_id, full_name, avatar_url, is_verified")
         .in("user_id", userIds);
 

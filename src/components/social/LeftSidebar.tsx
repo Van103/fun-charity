@@ -22,6 +22,7 @@ import funAcademyLogo from "@/assets/fun-academy-logo.png";
 import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
 import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
 import camlyCoinLogo from "@/assets/camly-coin-logo.png";
+import funEcosystemLogo from "@/assets/fun-ecosystem-logo.png";
 
 interface MenuItem {
   icon?: React.ComponentType<{ className?: string }>;
@@ -144,7 +145,19 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
 
         {/* Platform Ecosystem */}
         <div className="glass-card p-4 hover-luxury-glow">
-          <h3 className="font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
+          {/* Logo Section */}
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 via-blue-400/30 to-pink-500/30 blur-md scale-110" />
+              <img 
+                src={funEcosystemLogo} 
+                alt="FUN ECOSYSTEM" 
+                className="relative w-20 h-20 rounded-full object-cover ring-2 ring-purple-500/40 shadow-lg" 
+              />
+            </div>
+          </div>
+          
+          <h3 className="font-bold mb-1 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '18px' }}>
             {t("sidebar.ecosystem")}
           </h3>
           <p className="text-xs mb-4 text-primary/60">{t("sidebar.comingSoon")}</p>

@@ -563,11 +563,12 @@ export const AgoraVideoCallModal = ({
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && endCall()}>
       <DialogContent 
-        className={`p-0 overflow-hidden ${isFullscreen ? 'fixed inset-0 max-w-none w-screen h-screen rounded-none' : 'max-w-2xl w-full aspect-video'}`}
+        className={`p-0 overflow-hidden ${isFullscreen ? 'fixed inset-0 max-w-none w-screen h-screen rounded-none' : 'max-w-2xl w-full aspect-video sm:aspect-video max-h-[80vh]'}`}
         onMouseMove={() => setShowControls(true)}
+        onTouchStart={() => setShowControls(true)}
       >
         {/* Video Container */}
-        <div className="relative w-full h-full bg-black min-h-[400px]">
+        <div className="relative w-full h-full bg-black min-h-[350px] sm:min-h-[400px]">
           {/* Remote Video (Full screen) */}
           {callType === 'video' && remoteUsers.length > 0 ? (
             <div ref={remoteVideoRef} className="absolute inset-0 w-full h-full" />
@@ -622,17 +623,17 @@ export const AgoraVideoCallModal = ({
             </div>
           )}
 
-          {/* Local Video (Picture-in-Picture) */}
+          {/* Local Video (Picture-in-Picture) - Mobile optimized */}
           {callType === 'video' && internalCallStatus === 'active' && (
             <motion.div
-              className="absolute bottom-24 right-4 w-32 h-48 md:w-40 md:h-56 rounded-lg overflow-hidden shadow-lg border-2 border-white/20"
+              className="absolute bottom-24 right-2 sm:right-4 w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-56 rounded-lg overflow-hidden shadow-lg border-2 border-white/20"
               drag
               dragConstraints={{ top: 0, bottom: 0, left: -200, right: 0 }}
             >
               <div ref={localVideoRef} className="w-full h-full bg-gray-800" />
               {isVideoOff && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                  <VideoOff className="w-8 h-8 text-white/50" />
+                  <VideoOff className="w-6 h-6 sm:w-8 sm:h-8 text-white/50" />
                 </div>
               )}
             </motion.div>
@@ -662,9 +663,9 @@ export const AgoraVideoCallModal = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent"
+                className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/80 to-transparent safe-area-bottom"
               >
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
                   {/* Incoming call: Answer & Decline buttons */}
                   {isIncoming && internalCallStatus === 'ringing' && (
                     <>
@@ -693,7 +694,7 @@ export const AgoraVideoCallModal = ({
                       <Button
                         variant={isMuted ? 'destructive' : 'secondary'}
                         size="lg"
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-11 h-11 sm:w-12 sm:h-12"
                         onClick={toggleMute}
                       >
                         {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -704,19 +705,19 @@ export const AgoraVideoCallModal = ({
                         <Button
                           variant={isVideoOff ? 'destructive' : 'secondary'}
                           size="lg"
-                          className="rounded-full w-12 h-12"
+                          className="rounded-full w-11 h-11 sm:w-12 sm:h-12"
                           onClick={toggleVideo}
                         >
                           {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
                         </Button>
                       )}
 
-                      {/* Screen share (video calls only) */}
+                      {/* Screen share (video calls only - desktop only) */}
                       {callType === 'video' && (
                         <Button
                           variant={isScreenSharing ? 'default' : 'secondary'}
                           size="lg"
-                          className="rounded-full w-12 h-12"
+                          className="rounded-full w-11 h-11 sm:w-12 sm:h-12 hidden sm:flex"
                           onClick={toggleScreenShare}
                         >
                           {isScreenSharing ? <MonitorOff className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
@@ -728,18 +729,18 @@ export const AgoraVideoCallModal = ({
                         <Button
                           variant="secondary"
                           size="lg"
-                          className="rounded-full w-12 h-12"
+                          className="rounded-full w-11 h-11 sm:w-12 sm:h-12"
                           onClick={switchCamera}
                         >
                           <RotateCcw className="w-5 h-5" />
                         </Button>
                       )}
 
-                      {/* Fullscreen toggle */}
+                      {/* Fullscreen toggle - desktop only */}
                       <Button
                         variant="secondary"
                         size="lg"
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-11 h-11 sm:w-12 sm:h-12 hidden sm:flex"
                         onClick={() => setIsFullscreen(!isFullscreen)}
                       >
                         {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
@@ -749,10 +750,10 @@ export const AgoraVideoCallModal = ({
                       <Button
                         variant="destructive"
                         size="lg"
-                        className="rounded-full w-14 h-14"
+                        className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
                         onClick={endCall}
                       >
-                        <PhoneOff className="w-6 h-6" />
+                        <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6" />
                       </Button>
                     </>
                   )}

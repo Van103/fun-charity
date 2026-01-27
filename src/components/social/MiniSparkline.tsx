@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, forwardRef } from "react";
 
 interface MiniSparklineProps {
   data: number[];
@@ -8,13 +8,13 @@ interface MiniSparklineProps {
   showDot?: boolean;
 }
 
-export function MiniSparkline({ 
+export const MiniSparkline = forwardRef<SVGSVGElement, MiniSparklineProps>(function MiniSparkline({ 
   data, 
   width = 40, 
   height = 16, 
   color = "#FFD700",
   showDot = true 
-}: MiniSparklineProps) {
+}, ref) {
   const path = useMemo(() => {
     if (data.length < 2) return "";
     
@@ -71,7 +71,7 @@ export function MiniSparkline({
   const trendColor = trend === "up" ? "#22c55e" : trend === "down" ? "#ef4444" : color;
 
   return (
-    <svg width={width} height={height} className="overflow-visible">
+    <svg ref={ref} width={width} height={height} className="overflow-visible">
       {/* Gradient definition */}
       <defs>
         <linearGradient id={`sparkline-gradient-${color.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -110,4 +110,4 @@ export function MiniSparkline({
       )}
     </svg>
   );
-}
+});

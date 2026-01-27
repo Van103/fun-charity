@@ -1,149 +1,62 @@
+# KẾ HOẠCH CẬP NHẬT FUN CHARITY - HOÀN TẤT ✅
 
+## CÁC THAY ĐỔI ĐÃ THỰC HIỆN
 
-# KẾ HOẠCH CẬP NHẬT SIDEBAR FUN CHARITY
+### 1. Logo FUN ECOSYSTEM PLATFORMS ✅
+- Đã thêm logo FUN ECOSYSTEM mới vào sidebar trái
+- Logo có hiệu ứng glow tím-hồng-xanh rất đẹp
+- Kích thước 80px, có ring và shadow
 
-## TÓM TẮT YÊU CẦU
+### 2. Cập nhật Mobile Navigation ✅  
+- Đã thêm logo FUN ECOSYSTEM vào mobile bottom nav
+- Logo có glow effect tương tự desktop
+- Tiêu đề "FUN ECOSYSTEM PLATFORMS" màu tím hồng gradient
 
-1. **Thêm logo CAMLY COIN** - sử dụng hình vàng đã upload
-2. **Màu chữ CAMLY COIN** - đổi sang tím hồng gradient
-3. **Cập nhật tất cả các chữ sang IN HOA**:
-   - FUN ECOSYSTEM PLATFORMS
-   - FUN PROFILE
-   - FUN FARM
-   - FUN PLANET
-   - FUN PLAY
-   - FUN WALLET (đã có)
-   - FUN ACADEMY
-   - FUN TREASURY (đã có)
-   - GREEN EARTH (đã có)
-   - FUN CHAT
-   - FUN LEGAL
+### 3. Sửa lỗi forwardRef MiniSparkline ✅
+- Component MiniSparkline đã được cập nhật sử dụng forwardRef
+- Khắc phục cảnh báo "Function components cannot be given refs"
 
----
+### 4. Tối ưu Video Call cho Mobile ✅
+- UI controls nhỏ gọn hơn trên mobile (w-11 h-11)
+- Local video PIP nhỏ hơn trên mobile (w-24 h-36)
+- Ẩn nút Screen Share trên mobile (không hỗ trợ)
+- Ẩn nút Fullscreen trên mobile
+- Thêm touch support để hiện controls
+- Safe area bottom cho controls
 
-## PHASE 1: Copy Logo CAMLY COIN vào dự án
-
-Sao chép hình ảnh từ user-uploads vào thư mục assets:
-
-```
-user-uploads://image-278.png → src/assets/camly-coin-logo.png
-```
-
----
-
-## PHASE 2: Cập nhật LanguageContext.tsx - Chữ IN HOA
-
-### 2.1 Tiêu đề Ecosystem - IN HOA
-
-| Key | Trước | Sau |
-|-----|-------|-----|
-| `sidebar.ecosystem` | F.U. Ecosystem Platforms | FUN ECOSYSTEM PLATFORMS |
-
-### 2.2 Các menu items - IN HOA
-
-| Key | Trước | Sau |
-|-----|-------|-----|
-| `menu.profile` | Fun Profile | FUN PROFILE |
-| `menu.farm` | Fun Farm | FUN FARM |
-| `menu.planet` | Fun Planet | FUN PLANET |
-| `menu.play` | Fun Play | FUN PLAY |
-| `menu.academy` | Fun Academy | FUN ACADEMY |
-| `menu.chat` | Fun Chat | FUN CHAT |
-| `menu.legal` | Fun Legal | FUN LEGAL |
-
-(menu.wallet, menu.treasury, menu.greenearth đã là IN HOA)
+### 5. Kiểm tra Agora Infrastructure ✅
+- Edge function agora-token hoạt động bình thường (status 200)
+- Token được tạo thành công
+- AGORA_APP_ID và AGORA_APP_CERTIFICATE đã được cấu hình
 
 ---
 
-## PHASE 3: Cập nhật LeftSidebar.tsx
-
-### 3.1 Import logo CAMLY COIN
-
-```tsx
-import camlyCoinLogo from "@/assets/camly-coin-logo.png";
-```
-
-### 3.2 Thay đổi icon CAMLY COIN thành hình ảnh logo
-
-**Trước:**
-```tsx
-<div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-champagne to-gold-light flex items-center justify-center shadow-md">
-  <Coins className="w-4 h-4 text-white" />
-</div>
-<span className="text-sm font-medium text-foreground">CAMLY COIN</span>
-```
-
-**Sau:**
-```tsx
-<div className="relative">
-  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
-  <img 
-    src={camlyCoinLogo} 
-    alt="CAMLY COIN" 
-    className="relative w-10 h-10 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
-  />
-</div>
-<span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '16px' }}>
-  CAMLY COIN
-</span>
-```
-
-### 3.3 Đổi tiêu đề Ecosystem sang tím hồng
-
-**Trước:**
-```tsx
-<h3 className="font-semibold mb-1 text-[#4C1D95]" style={{ fontSize: '20px' }}>
-```
-
-**Sau:**
-```tsx
-<h3 className="font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
-```
-
----
-
-## SO SÁNH TRƯỚC VÀ SAU
-
-| Yếu tố | Trước | Sau |
-|--------|-------|-----|
-| CAMLY COIN icon | Icon Coins | Logo hình ảnh vàng |
-| CAMLY COIN text | `text-foreground`, text-sm | Tím hồng gradient, 16px, bold |
-| Ecosystem title | `text-[#4C1D95]` | Tím hồng gradient |
-| FUN PROFILE | Fun Profile | FUN PROFILE |
-| FUN FARM | Fun Farm | FUN FARM |
-| FUN PLANET | Fun Planet | FUN PLANET |
-| FUN PLAY | Fun Play | FUN PLAY |
-| FUN ACADEMY | Fun Academy | FUN ACADEMY |
-| FUN CHAT | Fun Chat | FUN CHAT |
-| FUN LEGAL | Fun Legal | FUN LEGAL |
-
----
-
-## FILES CẦN SỬA
+## FILES ĐÃ SỬA
 
 | File | Thay đổi |
 |------|----------|
-| `src/assets/camly-coin-logo.png` | Copy logo từ user-uploads |
-| `src/contexts/LanguageContext.tsx` | Cập nhật 8 translation keys sang IN HOA |
-| `src/components/social/LeftSidebar.tsx` | Thêm logo CAMLY COIN, đổi màu chữ tím hồng |
+| `src/assets/fun-ecosystem-logo.png` | Logo mới từ user upload |
+| `src/components/social/LeftSidebar.tsx` | Thêm logo FUN ECOSYSTEM với glow |
+| `src/components/layout/MobileBottomNav.tsx` | Thêm logo FUN ECOSYSTEM |
+| `src/components/social/MiniSparkline.tsx` | Sửa forwardRef |
+| `src/components/chat/AgoraVideoCallModal.tsx` | Tối ưu mobile UI |
 
 ---
 
-## KẾT QUẢ MONG ĐỢI
+## GHI CHÚ KỸ THUẬT
 
-1. Logo CAMLY COIN hiển thị hình vàng đẹp với viền ánh kim
-2. Chữ CAMLY COIN màu tím hồng gradient nổi bật
-3. Tất cả các tên menu FUN Ecosystem là chữ IN HOA
-4. Tiêu đề "FUN ECOSYSTEM PLATFORMS" IN HOA và màu tím hồng
-5. Giao diện đồng bộ, sang trọng và chuyên nghiệp
+### Agora Livestream & Video Call
+- Sử dụng Agora SDK với chế độ Secured (App ID + Token)
+- Token được tạo động qua edge function `agora-token`
+- Token hợp lệ trong 24 giờ
+- Hỗ trợ cả audio và video call
+
+### Mobile Optimization
+- Responsive breakpoints: sm (640px), md (768px)
+- Touch-friendly controls với kích thước tối thiểu 44px
+- Safe area support cho iPhone notch
+- Ẩn các tính năng không hỗ trợ trên mobile (screen share)
 
 ---
 
-## THỜI GIAN THỰC HIỆN
-
-- Phase 1 (Copy logo): ~1 phút
-- Phase 2 (Translation keys): ~5 phút
-- Phase 3 (LeftSidebar): ~5 phút
-
-**Tổng: ~11 phút**
-
+## TRẠNG THÁI: HOÀN TẤT ✅

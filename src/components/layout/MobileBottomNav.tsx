@@ -27,6 +27,7 @@ import funWalletLogo from "@/assets/fun-wallet-logo.png";
 import funAcademyLogo from "@/assets/fun-academy-logo.png";
 import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
 import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
+import funEcosystemLogo from "@/assets/fun-ecosystem-logo.png";
 
 const mainNavItems = [
   { icon: Home, labelKey: "nav.home", href: "/social" },
@@ -263,9 +264,19 @@ export function MobileBottomNav() {
 
               {/* FUN Ecosystem Section */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
-                  FUN Ecosystem
-                </h3>
+                <div className="flex flex-col items-center mb-4">
+                  <div className="relative mb-2">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 via-blue-400/30 to-pink-500/30 blur-md scale-110" />
+                    <img 
+                      src={funEcosystemLogo} 
+                      alt="FUN ECOSYSTEM" 
+                      className="relative w-16 h-16 rounded-full object-cover ring-2 ring-purple-500/40 shadow-lg" 
+                    />
+                  </div>
+                  <h3 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
+                    FUN ECOSYSTEM PLATFORMS
+                  </h3>
+                </div>
                 <div className="grid grid-cols-4 gap-3">
                   {menuItems.map((item) => {
                     const Icon = item.icon;

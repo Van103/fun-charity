@@ -9,7 +9,7 @@ const corsHeaders = {
 interface ModerationRequest {
   text?: string;
   imageUrls?: string[];
-  userId: string;
+  userId?: string; // Now optional, validated from auth
 }
 
 interface ModerationResult {
@@ -25,6 +25,28 @@ interface ModerationResult {
 
 const AI_MODEL = "google/gemini-2.5-flash";
 
+// Rate limiting map (in-memory, resets on function restart)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 60; // 60 requests per minute per user
+
+function isRateLimited(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+  
+  entry.count++;
+  return false;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -37,11 +59,45 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const { text, imageUrls, userId }: ModerationRequest = await req.json();
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    if (!userId) {
-      throw new Error("userId is required");
+    // SECURITY: Require and validate authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      console.log("Content Moderation: Missing authorization header");
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.log("Content Moderation: Invalid token or user not found", authError?.message);
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Use authenticated user ID, ignore any userId in request body
+    const authenticatedUserId = user.id;
+    console.log("Content Moderation: Authenticated user", authenticatedUserId);
+
+    // Rate limiting per user
+    if (isRateLimited(authenticatedUserId)) {
+      console.log("Content Moderation: Rate limit exceeded for user", authenticatedUserId);
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please wait." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { text, imageUrls }: ModerationRequest = await req.json();
 
     // Build the content to analyze
     let contentToAnalyze = "";
@@ -59,7 +115,8 @@ serve(async (req) => {
           safe: true, 
           reason: null, 
           categories: [], 
-          confidence_score: 1.0 
+          confidence_score: 1.0,
+          suggested_status: "approved"
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -159,7 +216,8 @@ Trả về JSON:
           safe: true, 
           reason: null, 
           categories: [], 
-          confidence_score: 0.5 
+          confidence_score: 0.5,
+          suggested_status: "approved"
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -205,23 +263,16 @@ Trả về JSON:
     if (result.decision !== "SAFE") {
       console.log("Content flagged:", result.decision, result.reason);
       
-      const supabaseUrl = Deno.env.get("SUPABASE_URL");
-      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-      
-      if (supabaseUrl && supabaseServiceKey) {
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
-        
-        await supabase.from("moderation_logs").insert({
-          user_id: userId,
-          content_type: imageUrls?.length ? (text ? "mixed" : "image") : "text",
-          content: text || null,
-          media_urls: imageUrls || null,
-          reason: result.reason || `${result.decision}: Vi phạm tiêu chuẩn cộng đồng`,
-          categories: result.categories || [],
-          ai_score: result.confidence_score || 0,
-          ai_model: AI_MODEL,
-        });
-      }
+      await supabase.from("moderation_logs").insert({
+        user_id: authenticatedUserId,
+        content_type: imageUrls?.length ? (text ? "mixed" : "image") : "text",
+        content: text || null,
+        media_urls: imageUrls || null,
+        reason: result.reason || `${result.decision}: Vi phạm tiêu chuẩn cộng đồng`,
+        categories: result.categories || [],
+        ai_score: result.confidence_score || 0,
+        ai_model: AI_MODEL,
+      });
     }
 
     return new Response(

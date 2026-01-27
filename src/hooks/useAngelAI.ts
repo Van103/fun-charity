@@ -83,13 +83,18 @@ export function useAngelAI(options?: UseAngelAIOptions) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
+      // Require authentication for Angel AI
+      if (!session?.access_token) {
+        throw new Error('Vui lòng đăng nhập để sử dụng Angel AI');
+      }
+      
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/angel-ai`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Authorization': `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             action: 'chat',

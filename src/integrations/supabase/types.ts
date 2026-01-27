@@ -1406,30 +1406,39 @@ export type Database = {
       }
       messages: {
         Row: {
+          audio_duration: number | null
+          audio_url: string | null
           content: string
           conversation_id: string
           created_at: string
           id: string
           image_url: string | null
           is_read: boolean | null
+          reply_to_id: string | null
           sender_id: string
         }
         Insert: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content: string
           conversation_id: string
           created_at?: string
           id?: string
           image_url?: string | null
           is_read?: boolean | null
+          reply_to_id?: string | null
           sender_id: string
         }
         Update: {
+          audio_duration?: number | null
+          audio_url?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
           id?: string
           image_url?: string | null
           is_read?: boolean | null
+          reply_to_id?: string | null
           sender_id?: string
         }
         Relationships: [
@@ -1438,6 +1447,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
         ]

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Scale,
-  Coins,
   Edit,
   MessageCircle,
   Trophy,
@@ -22,6 +21,7 @@ import funWalletLogo from "@/assets/fun-wallet-logo.png";
 import funAcademyLogo from "@/assets/fun-academy-logo.png";
 import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
 import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
+import camlyCoinLogo from "@/assets/camly-coin-logo.png";
 
 interface MenuItem {
   icon?: React.ComponentType<{ className?: string }>;
@@ -144,7 +144,7 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
 
         {/* Platform Ecosystem */}
         <div className="glass-card p-4 hover-luxury-glow">
-          <h3 className="font-semibold mb-1 text-[#4C1D95]" style={{ fontSize: '20px' }}>
+          <h3 className="font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '20px' }}>
             {t("sidebar.ecosystem")}
           </h3>
           <p className="text-xs mb-4 text-primary/60">{t("sidebar.comingSoon")}</p>
@@ -233,10 +233,17 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
             to="/wallet" 
             className="flex items-center gap-3 p-2 -mx-2 rounded-xl hover:bg-muted/50 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-champagne to-gold-light flex items-center justify-center shadow-md">
-              <Coins className="w-4 h-4 text-white" />
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
+              <img 
+                src={camlyCoinLogo} 
+                alt="CAMLY COIN" 
+                className="relative w-10 h-10 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
+              />
             </div>
-            <span className="text-sm font-medium text-foreground">CAMLY COIN</span>
+            <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" style={{ fontSize: '16px' }}>
+              CAMLY COIN
+            </span>
           </Link>
         </div>
 

@@ -136,9 +136,9 @@ export const translations: Translations = {
 
   // Left Sidebar
   "sidebar.ecosystem": {
-    en: "F.U. Ecosystem Platforms", vi: "Các Platform F.U. Ecosystem", zh: "F.U. 生态系统平台", ja: "F.U. エコシステムプラットフォーム", ko: "F.U. 생태계 플랫폼",
-    th: "แพลตฟอร์ม F.U. Ecosystem", fr: "Plateformes de l'écosystème F.U.", de: "F.U. Ökosystem-Plattformen", es: "Plataformas del ecosistema F.U.",
-    pt: "Plataformas do ecossistema F.U.", ru: "Платформы экосистемы F.U.", ar: "منصات نظام F.U. البيئي", hi: "F.U. इकोसिस्टम प्लेटफॉर्म"
+    en: "FUN ECOSYSTEM PLATFORMS", vi: "FUN ECOSYSTEM PLATFORMS", zh: "FUN ECOSYSTEM PLATFORMS", ja: "FUN ECOSYSTEM PLATFORMS", ko: "FUN ECOSYSTEM PLATFORMS",
+    th: "FUN ECOSYSTEM PLATFORMS", fr: "FUN ECOSYSTEM PLATFORMS", de: "FUN ECOSYSTEM PLATFORMS", es: "FUN ECOSYSTEM PLATFORMS",
+    pt: "FUN ECOSYSTEM PLATFORMS", ru: "FUN ECOSYSTEM PLATFORMS", ar: "FUN ECOSYSTEM PLATFORMS", hi: "FUN ECOSYSTEM PLATFORMS"
   },
   "sidebar.comingSoon": {
     en: "Coming soon", vi: "Sắp ra mắt", zh: "即将推出", ja: "近日公開", ko: "곧 출시",
@@ -198,54 +198,54 @@ export const translations: Translations = {
 
   // Menu items
   "menu.profile": {
-    en: "Fun Profile", vi: "Fun Profile", zh: "Fun Profile", ja: "Fun Profile", ko: "Fun Profile",
-    th: "Fun Profile", fr: "Fun Profile", de: "Fun Profile", es: "Fun Profile",
-    pt: "Fun Profile", ru: "Fun Profile", ar: "Fun Profile", hi: "Fun Profile"
+    en: "FUN PROFILE", vi: "FUN PROFILE", zh: "FUN PROFILE", ja: "FUN PROFILE", ko: "FUN PROFILE",
+    th: "FUN PROFILE", fr: "FUN PROFILE", de: "FUN PROFILE", es: "FUN PROFILE",
+    pt: "FUN PROFILE", ru: "FUN PROFILE", ar: "FUN PROFILE", hi: "FUN PROFILE"
   },
   "menu.farm": {
-    en: "Fun Farm", vi: "Fun Farm", zh: "Fun Farm", ja: "Fun Farm", ko: "Fun Farm",
-    th: "Fun Farm", fr: "Fun Farm", de: "Fun Farm", es: "Fun Farm",
-    pt: "Fun Farm", ru: "Fun Farm", ar: "Fun Farm", hi: "Fun Farm"
+    en: "FUN FARM", vi: "FUN FARM", zh: "FUN FARM", ja: "FUN FARM", ko: "FUN FARM",
+    th: "FUN FARM", fr: "FUN FARM", de: "FUN FARM", es: "FUN FARM",
+    pt: "FUN FARM", ru: "FUN FARM", ar: "FUN FARM", hi: "FUN FARM"
   },
   "menu.planet": {
-    en: "Fun Planet", vi: "Fun Planet", zh: "Fun Planet", ja: "Fun Planet", ko: "Fun Planet",
-    th: "Fun Planet", fr: "Fun Planet", de: "Fun Planet", es: "Fun Planet",
-    pt: "Fun Planet", ru: "Fun Planet", ar: "Fun Planet", hi: "Fun Planet"
+    en: "FUN PLANET", vi: "FUN PLANET", zh: "FUN PLANET", ja: "FUN PLANET", ko: "FUN PLANET",
+    th: "FUN PLANET", fr: "FUN PLANET", de: "FUN PLANET", es: "FUN PLANET",
+    pt: "FUN PLANET", ru: "FUN PLANET", ar: "FUN PLANET", hi: "FUN PLANET"
   },
   "menu.play": {
-    en: "Fun Play", vi: "Fun Play", zh: "Fun Play", ja: "Fun Play", ko: "Fun Play",
-    th: "Fun Play", fr: "Fun Play", de: "Fun Play", es: "Fun Play",
-    pt: "Fun Play", ru: "Fun Play", ar: "Fun Play", hi: "Fun Play"
+    en: "FUN PLAY", vi: "FUN PLAY", zh: "FUN PLAY", ja: "FUN PLAY", ko: "FUN PLAY",
+    th: "FUN PLAY", fr: "FUN PLAY", de: "FUN PLAY", es: "FUN PLAY",
+    pt: "FUN PLAY", ru: "FUN PLAY", ar: "FUN PLAY", hi: "FUN PLAY"
   },
   "menu.chat": {
-    en: "Fun Chat", vi: "Fun Chat", zh: "Fun Chat", ja: "Fun Chat", ko: "Fun Chat",
-    th: "Fun Chat", fr: "Fun Chat", de: "Fun Chat", es: "Fun Chat",
-    pt: "Fun Chat", ru: "Fun Chat", ar: "Fun Chat", hi: "Fun Chat"
+    en: "FUN CHAT", vi: "FUN CHAT", zh: "FUN CHAT", ja: "FUN CHAT", ko: "FUN CHAT",
+    th: "FUN CHAT", fr: "FUN CHAT", de: "FUN CHAT", es: "FUN CHAT",
+    pt: "FUN CHAT", ru: "FUN CHAT", ar: "FUN CHAT", hi: "FUN CHAT"
   },
   "menu.academy": {
-    en: "Fun Academy", vi: "Fun Academy", zh: "Fun Academy", ja: "Fun Academy", ko: "Fun Academy",
-    th: "Fun Academy", fr: "Fun Academy", de: "Fun Academy", es: "Fun Academy",
-    pt: "Fun Academy", ru: "Fun Academy", ar: "Fun Academy", hi: "Fun Academy"
+    en: "FUN ACADEMY", vi: "FUN ACADEMY", zh: "FUN ACADEMY", ja: "FUN ACADEMY", ko: "FUN ACADEMY",
+    th: "FUN ACADEMY", fr: "FUN ACADEMY", de: "FUN ACADEMY", es: "FUN ACADEMY",
+    pt: "FUN ACADEMY", ru: "FUN ACADEMY", ar: "FUN ACADEMY", hi: "FUN ACADEMY"
   },
   "menu.trading": {
-    en: "Fun Trading", vi: "Fun Trading", zh: "Fun Trading", ja: "Fun Trading", ko: "Fun Trading",
-    th: "Fun Trading", fr: "Fun Trading", de: "Fun Trading", es: "Fun Trading",
-    pt: "Fun Trading", ru: "Fun Trading", ar: "Fun Trading", hi: "Fun Trading"
+    en: "FUN TRADING", vi: "FUN TRADING", zh: "FUN TRADING", ja: "FUN TRADING", ko: "FUN TRADING",
+    th: "FUN TRADING", fr: "FUN TRADING", de: "FUN TRADING", es: "FUN TRADING",
+    pt: "FUN TRADING", ru: "FUN TRADING", ar: "FUN TRADING", hi: "FUN TRADING"
   },
   "menu.investment": {
-    en: "Fun Investment", vi: "Fun Investment", zh: "Fun Investment", ja: "Fun Investment", ko: "Fun Investment",
-    th: "Fun Investment", fr: "Fun Investment", de: "Fun Investment", es: "Fun Investment",
-    pt: "Fun Investment", ru: "Fun Investment", ar: "Fun Investment", hi: "Fun Investment"
+    en: "FUN INVESTMENT", vi: "FUN INVESTMENT", zh: "FUN INVESTMENT", ja: "FUN INVESTMENT", ko: "FUN INVESTMENT",
+    th: "FUN INVESTMENT", fr: "FUN INVESTMENT", de: "FUN INVESTMENT", es: "FUN INVESTMENT",
+    pt: "FUN INVESTMENT", ru: "FUN INVESTMENT", ar: "FUN INVESTMENT", hi: "FUN INVESTMENT"
   },
   "menu.life": {
-    en: "Fun Life", vi: "Fun Life", zh: "Fun Life", ja: "Fun Life", ko: "Fun Life",
-    th: "Fun Life", fr: "Fun Life", de: "Fun Life", es: "Fun Life",
-    pt: "Fun Life", ru: "Fun Life", ar: "Fun Life", hi: "Fun Life"
+    en: "FUN LIFE", vi: "FUN LIFE", zh: "FUN LIFE", ja: "FUN LIFE", ko: "FUN LIFE",
+    th: "FUN LIFE", fr: "FUN LIFE", de: "FUN LIFE", es: "FUN LIFE",
+    pt: "FUN LIFE", ru: "FUN LIFE", ar: "FUN LIFE", hi: "FUN LIFE"
   },
   "menu.legal": {
-    en: "Fun Legal", vi: "Fun Legal", zh: "Fun Legal", ja: "Fun Legal", ko: "Fun Legal",
-    th: "Fun Legal", fr: "Fun Legal", de: "Fun Legal", es: "Fun Legal",
-    pt: "Fun Legal", ru: "Fun Legal", ar: "Fun Legal", hi: "Fun Legal"
+    en: "FUN LEGAL", vi: "FUN LEGAL", zh: "FUN LEGAL", ja: "FUN LEGAL", ko: "FUN LEGAL",
+    th: "FUN LEGAL", fr: "FUN LEGAL", de: "FUN LEGAL", es: "FUN LEGAL",
+    pt: "FUN LEGAL", ru: "FUN LEGAL", ar: "FUN LEGAL", hi: "FUN LEGAL"
   },
   "menu.wallet": {
     en: "FUN WALLET", vi: "FUN WALLET", zh: "FUN WALLET", ja: "FUN WALLET", ko: "FUN WALLET",

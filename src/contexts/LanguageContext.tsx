@@ -595,6 +595,11 @@ export const translations: Translations = {
     th: "ยกเลิก", fr: "Annuler", de: "Abbrechen", es: "Cancelar",
     pt: "Cancelar", ru: "Отмена", ar: "إلغاء", hi: "रद्द करें"
   },
+  "common.menu": {
+    en: "Menu", vi: "Menu", zh: "菜单", ja: "メニュー", ko: "메뉴",
+    th: "เมนู", fr: "Menu", de: "Menü", es: "Menú",
+    pt: "Menu", ru: "Меню", ar: "القائمة", hi: "मेन्यू"
+  },
   "common.save": {
     en: "Save", vi: "Lưu", zh: "保存", ja: "保存", ko: "저장",
     th: "บันทึก", fr: "Enregistrer", de: "Speichern", es: "Guardar",

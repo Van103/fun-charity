@@ -68,6 +68,28 @@ interface ChatMessage {
   content: string;
 }
 
+// Rate limiting map (in-memory, resets on function restart)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requests per minute per user
+
+function isRateLimited(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+  
+  entry.count++;
+  return false;
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -86,16 +108,37 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get auth header for user identification
+    // SECURITY: Require authentication
     const authHeader = req.headers.get("Authorization");
-    let userId: string | null = null;
+    if (!authHeader) {
+      console.log("Angel AI: Missing authorization header");
+      return new Response(
+        JSON.stringify({ error: "Vui lòng đăng nhập để sử dụng Angel AI" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      if (!error && user) {
-        userId = user.id;
-      }
+    if (authError || !user) {
+      console.log("Angel AI: Invalid token or user not found", authError?.message);
+      return new Response(
+        JSON.stringify({ error: "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = user.id;
+    console.log("Angel AI: Authenticated user", userId);
+
+    // Rate limiting per user
+    if (isRateLimited(userId)) {
+      console.log("Angel AI: Rate limit exceeded for user", userId);
+      return new Response(
+        JSON.stringify({ error: "Bạn đang gửi quá nhiều tin nhắn. Vui lòng đợi một phút." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Build messages array with conversation history

@@ -28,7 +28,13 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.content-moderation]
-verify_jwt = true
+verify_jwt = false
 
 [functions.angel-ai]
+verify_jwt = false
+
+[functions.process-document]
+verify_jwt = true
+
+[functions.kyc-document-access]
 verify_jwt = false

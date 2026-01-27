@@ -110,7 +110,7 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
       <div className="space-y-4 w-full">
         {/* Quick Actions */}
         <div className="glass-card p-4 hover-luxury-glow bg-gradient-to-br from-primary/5 to-accent/5">
-          <h3 className="font-semibold mb-3 text-[#4C1D95] flex items-center gap-2" style={{ fontSize: '18px' }}>
+          <h3 className="font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500 flex items-center gap-2" style={{ fontSize: '20px' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             {t("sidebar.quickActions")}
           </h3>
@@ -124,16 +124,16 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                 <Link
                   key={item.labelKey}
                   to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group ${
+                  className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 group ${
                     isActive 
                       ? "glossy-btn glossy-btn-gradient shadow-lg font-semibold" 
                       : `bg-gradient-to-r ${item.gradient} hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-primary/20`
                   }`}
                 >
-                  <div className={`p-1.5 rounded-lg ${isActive ? "bg-white/20" : `bg-gradient-to-br ${item.gradient}`}`}>
-                    <Icon className={`w-4 h-4 ${isActive ? "text-white" : item.iconColor} transition-transform group-hover:scale-110`} />
+                  <div className={`p-2 rounded-lg ${isActive ? "bg-white/20" : `bg-gradient-to-br ${item.gradient}`}`}>
+                    <Icon className={`w-5 h-5 ${isActive ? "text-white" : item.iconColor} transition-transform group-hover:scale-110`} />
                   </div>
-                  <span className={`font-medium ${isActive ? "text-white" : "text-foreground"}`} style={{ fontSize: '15px' }}>
+                  <span className={`font-semibold ${isActive ? "text-white" : "text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500"}`} style={{ fontSize: '17px' }}>
                     {t(item.labelKey)}
                   </span>
                 </Link>

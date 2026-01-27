@@ -1,224 +1,145 @@
 
-# KẾ HOẠCH TỐI ƯU HÓA PERFORMANCE CHO FUN CHARITY
+# KẾ HOẠCH CẬP NHẬT LOGO VÀ LINK HỆ SINH THÁI FUN
 
-## TỔNG QUAN VẤN ĐỀ
+## TỔNG QUAN
 
-Hiện tại FUN Charity có thời gian tải trang chậm do các yếu tố sau:
-
-1. **Video nền hero-bg.mp4** tải ngay khi mở trang (không có preload/poster)
-2. **3 Canvas animation layers** chạy đồng thời: AnimatedBackground, EnergyBokeh, CustomCursor
-3. **FlyingAngel component** xử lý image phức tạp (flood-fill algorithm)
-4. **Hình ảnh không có lazy loading** (FeaturedCampaigns, avatars)
-5. **Thiếu preload cho critical assets**
-6. **React forwardRef warnings** trong Navbar
+Cập nhật toàn bộ logo và đường link của các nền tảng FUN ecosystem trong FUN Charity để đảm bảo liên kết mượt mà, thông suốt.
 
 ---
 
-## PHASE 1: CRITICAL - Tối ưu Video Background (Giảm 2-3s load time)
+## DANH SÁCH CÁC FUN PLATFORMS CẦN CẬP NHẬT
 
-### 1.1 Thêm Video Poster & Lazy Load
+| Platform | URL Mới | Logo (từ ảnh upload) | Trạng thái hiện tại |
+|----------|---------|---------------------|---------------------|
+| Fun Profile | `https://fun.rich` | Giữ logo hiện tại | Đã có |
+| Fun Play | `https://play.fun.rich` | image-268.png | Đã có, cần cập nhật logo |
+| Fun Farm | `https://farm.fun.rich` | image-269.png | Sai URL (funfarm.life), cần sửa |
+| Fun Wallet | `https://wallet.fun.rich` | image-270.png | Chưa có external link |
+| Fun Planet | `https://planet.fun.rich` | Giữ logo hiện tại | Đã có |
+| Fun Charity | `https://charity.fun.rich` | image-265.png | Logo mới (trang hiện tại) |
+| Fun Academy | `https://academy.fun.rich` | image-266.png | Thiếu logo custom |
+| Fun Treasury | `https://treasury.fun.rich` | image-271.png | Chưa có |
+| Fun Green Earth | `https://greenearth-fun.lovable.app` | image-272.png | Chưa có |
 
-Thay vì tải video ngay lập tức, sử dụng ảnh poster tĩnh và chỉ tải video khi cần:
+---
+
+## PHASE 1: Copy Logo Files vào Project
+
+Sao chép các logo từ user-uploads vào `src/assets/`:
 
 ```text
-┌─────────────────────────────────────────────────┐
-│           CURRENT STATE                         │
-│  ┌─────────────────────────────────────┐       │
-│  │  Page Load → Video Download (5MB+)  │       │
-│  │         → Render                    │       │
-│  └─────────────────────────────────────┘       │
-│                   ↓                             │
-│           OPTIMIZED STATE                       │
-│  ┌─────────────────────────────────────┐       │
-│  │  Page Load → Poster Image (50KB)    │       │
-│  │         → Render immediately        │       │
-│  │         → Lazy load video in bg     │       │
-│  └─────────────────────────────────────┘       │
-└─────────────────────────────────────────────────┘
-```
-
-**Thay đổi trong HeroSection.tsx:**
-- Thêm `poster` attribute với ảnh tĩnh từ video frame đầu
-- Thêm `preload="none"` hoặc `preload="metadata"` 
-- Lazy load video chỉ khi component đã mounted
-
-### 1.2 Preload Critical Assets trong index.html
-
-Thêm preload cho video poster:
-```html
-<link rel="preload" href="/images/hero-poster.webp" as="image" type="image/webp" />
+user-uploads://image-265.png → src/assets/fun-charity-logo-web3.png
+user-uploads://image-266.png → src/assets/fun-academy-logo.png
+user-uploads://image-267.png → src/assets/fun-bank-logo.png
+user-uploads://image-268.png → src/assets/fun-play-logo-new.png
+user-uploads://image-269.png → src/assets/fun-farm-logo-new.png
+user-uploads://image-270.png → src/assets/fun-wallet-logo.png
+user-uploads://image-271.png → src/assets/fun-treasury-logo.png
+user-uploads://image-272.png → src/assets/fun-greenearth-logo.png
 ```
 
 ---
 
-## PHASE 2: Animation Performance (Giảm 40% CPU usage)
+## PHASE 2: Cập nhật LeftSidebar.tsx
 
-### 2.1 Defer EnergyBokeh Loading
-
-Hiện tại EnergyBokeh canvas render ngay khi app load. Cải thiện:
-- Delay khởi tạo 1-2 giây sau khi page visible
-- Giảm particle count mặc định từ 50 → 30
-- Thêm "Performance Mode" option tắt tất cả effects
-
-**Thay đổi trong App.tsx:**
-```tsx
-// Lazy load EnergyBokeh after initial render
-const [showBokeh, setShowBokeh] = useState(false);
-
-useEffect(() => {
-  const timer = setTimeout(() => setShowBokeh(true), 1500);
-  return () => clearTimeout(timer);
-}, []);
-
-// Only render when ready
-{showBokeh && <EnergyBokeh />}
-```
-
-### 2.2 Simplify AnimatedBackground on Mobile
-
-Giảm thêm 50% số elements trên mobile và tắt shimmer overlay:
-- Mobile: Chỉ giữ 1 parallax layer thay vì 3
-- Tắt shimmer animation trên mobile hoàn toàn
-
-### 2.3 Optimize FlyingAngel Component
-
-FlyingAngel hiện đang chạy flood-fill algorithm mỗi khi thay đổi fairy color. Cải thiện:
-- Pre-process và cache tất cả fairy images khi app init
-- Giảm sparkle limit từ 8 → 5
-- Giảm trail limit từ 10 → 6
-- Giảm light ray limit từ 12 → 8
-
----
-
-## PHASE 3: Image Lazy Loading (Giảm initial payload 60%)
-
-### 3.1 Native Lazy Loading cho Images
-
-Thêm `loading="lazy"` cho tất cả images:
-
-**Files cần sửa:**
-- `FeaturedCampaigns.tsx` - Campaign images
-- `TestimonialsSection.tsx` - Avatar images
-- `TeamSection.tsx` - Team member photos
-- `PartnersSection.tsx` - Partner logos
-- `SocialPostCard.tsx` - Post images/avatars
-
-### 3.2 Tạo OptimizedImage Component
+### 2.1 Thêm import cho các logo mới
 
 ```tsx
-interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  className?: string;
-  priority?: boolean; // true = no lazy loading
-}
-
-const OptimizedImage = ({ src, alt, className, priority = false }: OptimizedImageProps) => (
-  <img 
-    src={src} 
-    alt={alt}
-    className={className}
-    loading={priority ? "eager" : "lazy"}
-    decoding="async"
-  />
-);
+import funAcademyLogo from "@/assets/fun-academy-logo.png";
+import funWalletLogo from "@/assets/fun-wallet-logo.png";
+import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
+import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
 ```
+
+### 2.2 Cập nhật menuItems array
+
+Menu items sẽ được cấu trúc lại với các link và logo chính xác:
+
+| Item | URL | Logo |
+|------|-----|------|
+| Fun Profile | https://fun.rich | funProfileLogo (giữ nguyên) |
+| Fun Farm | https://farm.fun.rich | funFarmLogo (cập nhật) |
+| Fun Planet | https://planet.fun.rich | funPlanetLogo (giữ nguyên) |
+| Fun Play | https://play.fun.rich | funPlayLogo (cập nhật) |
+| Fun Wallet | https://wallet.fun.rich | funWalletLogo (mới) |
+| Fun Academy | https://academy.fun.rich | funAcademyLogo (mới) |
+| Fun Treasury | https://treasury.fun.rich | funTreasuryLogo (mới) |
+| Fun Green Earth | https://greenearth-fun.lovable.app | funGreenEarthLogo (mới) |
+| Chat | /messages (internal) | MessageCircle icon |
+| Legal | /legal (internal) | Scale icon |
+
+### 2.3 Loại bỏ các link không còn sử dụng
+
+- Trading (https://trading.fun.rich) - Loại bỏ
+- Investment (https://investment.fun.rich) - Loại bỏ
+- Life (https://life.fun.rich) - Loại bỏ
 
 ---
 
-## PHASE 4: Bundle & Loading Optimizations
+## PHASE 3: Cập nhật MobileBottomNav.tsx
 
-### 4.1 React Query Stale Time Increase
-
-Tăng stale time để giảm re-fetch:
-```tsx
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes (từ 1 minute)
-      gcTime: 1000 * 60 * 10,   // 10 minutes (từ 5 minutes)
-    },
-  },
-});
-```
-
-### 4.2 Prefetch Critical Data
-
-Prefetch transparent stats và campaigns khi hover menu:
-```tsx
-// Prefetch on hover
-onMouseEnter={() => {
-  queryClient.prefetchQuery(['campaigns', 'featured']);
-  queryClient.prefetchQuery(['transparency-stats']);
-}}
-```
+Đồng bộ cấu trúc menuItems với LeftSidebar để đảm bảo tính nhất quán giữa desktop và mobile.
 
 ---
 
-## PHASE 5: Fix React Warnings
+## PHASE 4: Cập nhật Logo chính của FUN Charity
 
-### 5.1 Fix forwardRef Warnings in Navbar
+### 4.1 Thay thế Logo Component
 
-Console hiển thị warnings về components không có forwardRef:
-- Xác định component nào trong Navbar cần forwardRef
-- Wrap với React.forwardRef để fix warning
-
----
-
-## PHASE 6: Performance Mode Setting
-
-### 6.1 Thêm "Performance Mode" Toggle
-
-Cho phép user tắt tất cả animations trong 1 click:
-
-```tsx
-// Trong MotionContext
-performanceMode: boolean; // Tắt tất cả: bokeh, background, cursor effects, flying angel
-setPerformanceMode: (value: boolean) => void;
-```
-
-UI: Thêm toggle trong settings với label "Chế độ tiết kiệm pin 🔋"
+Sử dụng logo mới (image-265.png - FUN CHARITY WEB3 với vương miện kim cương) cho:
+- Navbar Logo
+- Footer Logo
+- Các vị trí khác sử dụng `<Logo />` component
 
 ---
 
-## TÓM TẮT CÁC FILE CẦN SỬA
+## FILES CẦN CHỈNH SỬA
 
 | File | Thay đổi |
 |------|----------|
-| `index.html` | Thêm preload cho poster image |
-| `src/components/home/HeroSection.tsx` | Video poster + lazy load |
-| `src/App.tsx` | Defer EnergyBokeh loading |
-| `src/components/background/AnimatedBackground.tsx` | Giảm layers mobile |
-| `src/components/background/EnergyBokeh.tsx` | Giảm default particles |
-| `src/components/cursor/FlyingAngel.tsx` | Cache processed images, giảm effects |
-| `src/components/cursor/CustomCursor.tsx` | Giảm particle limits |
-| `src/components/home/FeaturedCampaigns.tsx` | Native lazy loading |
-| `src/components/home/TestimonialsSection.tsx` | Native lazy loading |
-| `src/components/home/TeamSection.tsx` | Native lazy loading |
-| `src/contexts/MotionContext.tsx` | Thêm Performance Mode |
-| `src/components/layout/Navbar.tsx` | Fix forwardRef warnings |
+| `src/assets/` | Thêm 8 logo files mới |
+| `src/components/social/LeftSidebar.tsx` | Cập nhật imports và menuItems |
+| `src/components/layout/MobileBottomNav.tsx` | Đồng bộ menuItems |
+| `src/components/brand/Logo.tsx` | Tùy chọn: cập nhật logo chính |
+| `src/assets/fun-charity-logo-new.jpg` | Thay bằng image-265.png |
 
 ---
 
 ## KẾT QUẢ MONG ĐỢI
 
-| Metric | Trước | Sau |
-|--------|-------|-----|
-| First Contentful Paint | ~3.5s | ~1.2s |
-| Largest Contentful Paint | ~5.0s | ~2.0s |
-| Time to Interactive | ~6.0s | ~2.5s |
-| CPU Usage (animations) | ~40% | ~15% |
-| Initial Payload | ~8MB | ~3MB |
+1. Tất cả link FUN ecosystem mở đúng trang web external
+2. Mỗi platform có logo riêng biệt, đẹp mắt
+3. Thống nhất giữa desktop sidebar và mobile menu
+4. Loại bỏ các link không còn hoạt động (Trading, Investment, Life)
+5. Thêm các nền tảng mới: Treasury, Green Earth, Wallet (external)
 
 ---
 
-## TIMELINE THỰC HIỆN
+## DANH SÁCH LINK FINAL
 
-1. **Phase 1** (Video): ~20 phút
-2. **Phase 2** (Animations): ~30 phút  
-3. **Phase 3** (Images): ~15 phút
-4. **Phase 4** (Bundle): ~10 phút
-5. **Phase 5** (Warnings): ~10 phút
-6. **Phase 6** (Performance Mode): ~15 phút
+```text
+┌────────────────────┬─────────────────────────────────┐
+│ Platform           │ URL                             │
+├────────────────────┼─────────────────────────────────┤
+│ Fun Profile        │ https://fun.rich                │
+│ Fun Farm           │ https://farm.fun.rich           │
+│ Fun Planet         │ https://planet.fun.rich         │
+│ Fun Play           │ https://play.fun.rich           │
+│ Fun Wallet         │ https://wallet.fun.rich         │
+│ Fun Academy        │ https://academy.fun.rich        │
+│ Fun Treasury       │ https://treasury.fun.rich       │
+│ Fun Green Earth    │ https://greenearth-fun.lovable.app │
+│ Fun Charity        │ (trang hiện tại)                │
+└────────────────────┴─────────────────────────────────┘
+```
 
-**Tổng: ~1.5-2 giờ**
+---
+
+## THỜI GIAN THỰC HIỆN
+
+- Phase 1 (Copy logos): ~5 phút
+- Phase 2 (LeftSidebar): ~10 phút
+- Phase 3 (MobileBottomNav): ~10 phút
+- Phase 4 (Main Logo): ~5 phút
+
+**Tổng: ~30 phút**

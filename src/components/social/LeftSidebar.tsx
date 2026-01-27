@@ -158,7 +158,7 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                   : "text-muted-foreground hover:bg-primary hover:text-secondary font-medium hover:scale-[1.02] active:scale-[0.98]"
               }`;
               
-              if (item.external) {
+                  if (item.external) {
                 return (
                   <a
                     key={item.labelKey}
@@ -169,19 +169,19 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                   >
                     {item.image ? (
                       <div className="relative">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
                         <img 
                           src={item.image} 
                           alt="" 
-                          className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                          className="relative w-12 h-12 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
                         />
                       </div>
                     ) : item.icon ? (
                       <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-primary"}`} />
                     ) : null}
                     <span 
-                      className="font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
-                      style={{ fontSize: '20px' }}
+                      className="font-bold text-purple-600"
+                      style={{ fontSize: '16px' }}
                     >
                       {t(item.labelKey)}
                     </span>
@@ -197,19 +197,19 @@ export function LeftSidebar({ profile }: LeftSidebarProps) {
                 >
                   {item.image ? (
                     <div className="relative">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-50 blur-[1px] scale-105" />
                       <img 
                         src={item.image} 
                         alt="" 
-                        className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                        className="relative w-12 h-12 rounded-full object-cover ring-2 ring-gold-champagne/40 shadow-md" 
                       />
                     </div>
                   ) : item.icon ? (
                     <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-primary"}`} />
                   ) : null}
                   <span 
-                    className="font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
-                    style={{ fontSize: '20px' }}
+                    className="font-bold text-purple-600"
+                    style={{ fontSize: '16px' }}
                   >
                     {t(item.labelKey)}
                   </span>

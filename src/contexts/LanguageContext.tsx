@@ -253,9 +253,9 @@ export const translations: Translations = {
     pt: "FUN WALLET", ru: "FUN WALLET", ar: "FUN WALLET", hi: "FUN WALLET"
   },
   "menu.treasury": {
-    en: "FUNTREASURY", vi: "FUNTREASURY", zh: "FUNTREASURY", ja: "FUNTREASURY", ko: "FUNTREASURY",
-    th: "FUNTREASURY", fr: "FUNTREASURY", de: "FUNTREASURY", es: "FUNTREASURY",
-    pt: "FUNTREASURY", ru: "FUNTREASURY", ar: "FUNTREASURY", hi: "FUNTREASURY"
+    en: "FUN TREASURY", vi: "FUN TREASURY", zh: "FUN TREASURY", ja: "FUN TREASURY", ko: "FUN TREASURY",
+    th: "FUN TREASURY", fr: "FUN TREASURY", de: "FUN TREASURY", es: "FUN TREASURY",
+    pt: "FUN TREASURY", ru: "FUN TREASURY", ar: "FUN TREASURY", hi: "FUN TREASURY"
   },
   "menu.greenearth": {
     en: "GREEN EARTH", vi: "GREEN EARTH", zh: "GREEN EARTH", ja: "GREEN EARTH", ko: "GREEN EARTH",

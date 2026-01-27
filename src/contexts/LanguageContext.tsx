@@ -247,6 +247,21 @@ export const translations: Translations = {
     th: "Fun Legal", fr: "Fun Legal", de: "Fun Legal", es: "Fun Legal",
     pt: "Fun Legal", ru: "Fun Legal", ar: "Fun Legal", hi: "Fun Legal"
   },
+  "menu.wallet": {
+    en: "FUN WALLET", vi: "FUN WALLET", zh: "FUN WALLET", ja: "FUN WALLET", ko: "FUN WALLET",
+    th: "FUN WALLET", fr: "FUN WALLET", de: "FUN WALLET", es: "FUN WALLET",
+    pt: "FUN WALLET", ru: "FUN WALLET", ar: "FUN WALLET", hi: "FUN WALLET"
+  },
+  "menu.treasury": {
+    en: "FUNTREASURY", vi: "FUNTREASURY", zh: "FUNTREASURY", ja: "FUNTREASURY", ko: "FUNTREASURY",
+    th: "FUNTREASURY", fr: "FUNTREASURY", de: "FUNTREASURY", es: "FUNTREASURY",
+    pt: "FUNTREASURY", ru: "FUNTREASURY", ar: "FUNTREASURY", hi: "FUNTREASURY"
+  },
+  "menu.greenearth": {
+    en: "GREEN EARTH", vi: "GREEN EARTH", zh: "GREEN EARTH", ja: "GREEN EARTH", ko: "GREEN EARTH",
+    th: "GREEN EARTH", fr: "GREEN EARTH", de: "GREEN EARTH", es: "GREEN EARTH",
+    pt: "GREEN EARTH", ru: "GREEN EARTH", ar: "GREEN EARTH", hi: "GREEN EARTH"
+  },
 
   // Right Sidebar - Honor Board
   "honor.title": {

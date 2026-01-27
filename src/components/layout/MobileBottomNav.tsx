@@ -281,14 +281,26 @@ export function MobileBottomNav() {
                           onClick={() => setIsMenuOpen(false)}
                           className="flex flex-col items-center p-3 rounded-xl hover:bg-muted transition-all relative"
                         >
-                          <div className="p-2 rounded-full bg-muted mb-2 overflow-hidden">
+                          <div className="relative mb-2">
                             {item.image ? (
-                              <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
+                              <>
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                                <img 
+                                  src={item.image} 
+                                  alt="" 
+                                  className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                                />
+                              </>
                             ) : Icon ? (
-                              <Icon className="w-5 h-5 text-primary" />
+                              <div className="p-2 rounded-full bg-muted">
+                                <Icon className="w-5 h-5 text-primary" />
+                              </div>
                             ) : null}
                           </div>
-                          <span className="text-xs font-medium text-center leading-tight">
+                          <span 
+                            className="text-xs font-bold text-center leading-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
+                            style={{ fontSize: '13px' }}
+                          >
                             {t(item.labelKey)}
                           </span>
                           <ExternalLink className="w-3 h-3 absolute top-2 right-2 text-muted-foreground" />
@@ -307,16 +319,26 @@ export function MobileBottomNav() {
                             : "hover:bg-muted"
                         }`}
                       >
-                        <div className={`p-2 rounded-full mb-2 overflow-hidden ${
-                          isActive ? "bg-primary/20" : "bg-muted"
-                        }`}>
+                        <div className={`relative mb-2 ${isActive ? "" : ""}`}>
                           {item.image ? (
-                            <img src={item.image} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            <>
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-champagne via-yellow-300 to-gold-dark opacity-60 blur-[2px] scale-110" />
+                              <img 
+                                src={item.image} 
+                                alt="" 
+                                className="relative w-16 h-16 rounded-full object-cover ring-2 ring-gold-champagne/50 shadow-lg" 
+                              />
+                            </>
                           ) : Icon ? (
-                            <Icon className="w-5 h-5" />
+                            <div className={`p-2 rounded-full ${isActive ? "bg-primary/20" : "bg-muted"}`}>
+                              <Icon className="w-5 h-5" />
+                            </div>
                           ) : null}
                         </div>
-                        <span className="text-xs font-medium text-center leading-tight">
+                        <span 
+                          className="text-xs font-bold text-center leading-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-rose-500"
+                          style={{ fontSize: '13px' }}
+                        >
                           {t(item.labelKey)}
                         </span>
                       </Link>

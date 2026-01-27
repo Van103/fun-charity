@@ -1,62 +1,157 @@
-# KẾ HOẠCH CẬP NHẬT FUN CHARITY - HOÀN TẤT ✅
 
-## CÁC THAY ĐỔI ĐÃ THỰC HIỆN
 
-### 1. Logo FUN ECOSYSTEM PLATFORMS ✅
-- Đã thêm logo FUN ECOSYSTEM mới vào sidebar trái
-- Logo có hiệu ứng glow tím-hồng-xanh rất đẹp
-- Kích thước 80px, có ring và shadow
+# KẾ HOẠCH SỬA LỖI LIVESTREAM VÀ VIDEO CALL
 
-### 2. Cập nhật Mobile Navigation ✅  
-- Đã thêm logo FUN ECOSYSTEM vào mobile bottom nav
-- Logo có glow effect tương tự desktop
-- Tiêu đề "FUN ECOSYSTEM PLATFORMS" màu tím hồng gradient
+## VẤN ĐỀ ĐÃ XÁC ĐỊNH
 
-### 3. Sửa lỗi forwardRef MiniSparkline ✅
-- Component MiniSparkline đã được cập nhật sử dụng forwardRef
-- Khắc phục cảnh báo "Function components cannot be given refs"
+Lỗi: **"invalid vendor key, can not find appid"** - SDK Agora không thể đọc được App ID từ token được tạo.
 
-### 4. Tối ưu Video Call cho Mobile ✅
-- UI controls nhỏ gọn hơn trên mobile (w-11 h-11)
-- Local video PIP nhỏ hơn trên mobile (w-24 h-36)
-- Ẩn nút Screen Share trên mobile (không hỗ trợ)
-- Ẩn nút Fullscreen trên mobile
-- Thêm touch support để hiện controls
-- Safe area bottom cho controls
-
-### 5. Kiểm tra Agora Infrastructure ✅
-- Edge function agora-token hoạt động bình thường (status 200)
-- Token được tạo thành công
-- AGORA_APP_ID và AGORA_APP_CERTIFICATE đã được cấu hình
+### Nguyên nhân chính:
+- Thuật toán tạo token tùy chỉnh trong `agora-token` Edge Function sử dụng phiên bản cũ (**VERSION "006"**) 
+- SDK `agora-rtc-sdk-ng` phiên bản 4.x yêu cầu token theo chuẩn **AccessToken2 (007)** hoặc token được tạo từ thư viện chính thức
 
 ---
 
-## FILES ĐÃ SỬA
+## GIẢI PHÁP
+
+Thay thế thuật toán tạo token thủ công bằng **thư viện chính thức `agora-token`** của Agora sử dụng `RtcTokenBuilder.buildTokenWithUid()`.
+
+---
+
+## PHASE 1: Cập nhật Edge Function `agora-token`
+
+### File: `supabase/functions/agora-token/index.ts`
+
+**Thay đổi chính:**
+
+1. **Import thư viện chính thức** thay vì thuật toán tùy chỉnh:
+
+```typescript
+import { RtcTokenBuilder, RtcRole } from "npm:agora-token";
+```
+
+2. **Xóa toàn bộ code tạo token thủ công** (các hàm `crc32`, `packUint16`, `packUint32`, `buildAccessToken`, v.v.)
+
+3. **Sử dụng RtcTokenBuilder chuẩn**:
+
+```typescript
+const token = RtcTokenBuilder.buildTokenWithUid(
+  AGORA_APP_ID,
+  AGORA_APP_CERTIFICATE,
+  channelName,
+  uid || 0,
+  role === 1 ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
+  tokenExpireSeconds,     // Token expiration
+  privilegeExpireSeconds  // Privilege expiration
+);
+```
+
+### So sánh trước và sau:
+
+| Yếu tố | Trước | Sau |
+|--------|-------|-----|
+| Phương pháp | Thuật toán thủ công VERSION "006" | Thư viện chính thức `agora-token` |
+| Độ tương thích | Không hoạt động với SDK 4.x | Tương thích hoàn toàn |
+| Bảo trì | Khó bảo trì, dễ lỗi | Cập nhật tự động từ thư viện |
+| Token format | AccessToken cũ | AccessToken2 chuẩn |
+
+---
+
+## PHASE 2: Cải thiện xử lý lỗi
+
+Thêm logging chi tiết và xử lý lỗi tốt hơn trong Edge Function để dễ debug trong tương lai.
+
+```typescript
+try {
+  console.log(`[agora-token] Building token with RtcTokenBuilder`);
+  console.log(`[agora-token] AppID: ${AGORA_APP_ID.substring(0, 8)}...`);
+  console.log(`[agora-token] Channel: ${channelName}, UID: ${uid}, Role: ${role}`);
+  
+  const token = RtcTokenBuilder.buildTokenWithUid(...);
+  
+  console.log(`[agora-token] Token generated successfully, length: ${token.length}`);
+} catch (error) {
+  console.error(`[agora-token] Token generation failed:`, error);
+  throw error;
+}
+```
+
+---
+
+## CODE SAU KHI CẬP NHẬT
+
+```typescript
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { RtcTokenBuilder, RtcRole } from "npm:agora-token";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Authentication check...
+    
+    const AGORA_APP_ID = Deno.env.get('AGORA_APP_ID');
+    const AGORA_APP_CERTIFICATE = Deno.env.get('AGORA_APP_CERTIFICATE');
+
+    const { channelName, uid, role = 1 } = await req.json();
+
+    // Token expires in 24 hours
+    const tokenExpireSeconds = 86400;
+    const privilegeExpireSeconds = 86400;
+
+    // Use official RtcTokenBuilder
+    const token = RtcTokenBuilder.buildTokenWithUid(
+      AGORA_APP_ID,
+      AGORA_APP_CERTIFICATE,
+      channelName,
+      uid || 0,
+      role === 1 ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
+      tokenExpireSeconds,
+      privilegeExpireSeconds
+    );
+
+    return new Response(
+      JSON.stringify({ token, appId: AGORA_APP_ID, channel: channelName, uid: uid || 0 }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    // Error handling...
+  }
+});
+```
+
+---
+
+## FILES CẦN SỬA
 
 | File | Thay đổi |
 |------|----------|
-| `src/assets/fun-ecosystem-logo.png` | Logo mới từ user upload |
-| `src/components/social/LeftSidebar.tsx` | Thêm logo FUN ECOSYSTEM với glow |
-| `src/components/layout/MobileBottomNav.tsx` | Thêm logo FUN ECOSYSTEM |
-| `src/components/social/MiniSparkline.tsx` | Sửa forwardRef |
-| `src/components/chat/AgoraVideoCallModal.tsx` | Tối ưu mobile UI |
+| `supabase/functions/agora-token/index.ts` | Thay thế thuật toán thủ công bằng thư viện `agora-token` |
 
 ---
 
-## GHI CHÚ KỸ THUẬT
+## KẾT QUẢ MONG ĐỢI
 
-### Agora Livestream & Video Call
-- Sử dụng Agora SDK với chế độ Secured (App ID + Token)
-- Token được tạo động qua edge function `agora-token`
-- Token hợp lệ trong 24 giờ
-- Hỗ trợ cả audio và video call
-
-### Mobile Optimization
-- Responsive breakpoints: sm (640px), md (768px)
-- Touch-friendly controls với kích thước tối thiểu 44px
-- Safe area support cho iPhone notch
-- Ẩn các tính năng không hỗ trợ trên mobile (screen share)
+1. **Livestream hoạt động** - Có thể phát trực tiếp mượt mà
+2. **Video Call hoạt động** - Gọi video 1-1 và nhóm đều ổn định
+3. **Không còn lỗi "invalid vendor key"** - Token được tạo đúng chuẩn
+4. **Tương thích với mọi thiết bị** - Điện thoại, máy tính đều hoạt động
 
 ---
 
-## TRẠNG THÁI: HOÀN TẤT ✅
+## THỜI GIAN THỰC HIỆN
+
+- Phase 1 (Cập nhật Edge Function): ~10 phút
+- Phase 2 (Testing): ~5 phút
+- Deploy và kiểm tra: ~5 phút
+
+**Tổng: ~20 phút**
+

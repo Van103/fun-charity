@@ -1,358 +1,229 @@
 
-
-# KẾ HOẠCH NÂNG CẤP FUN CHAT GIỐNG MESSENGER
-
-## 📊 PHÂN TÍCH HIỆN TRẠNG
-
-### Tính năng đã có (hoạt động tốt):
-| Tính năng | Trạng thái | Ghi chú |
-|-----------|------------|---------|
-| Chat 1:1 | ✅ Hoạt động | Realtime với Supabase |
-| Chat nhóm | ✅ Hoạt động | Tạo nhóm, thêm thành viên |
-| Video Call 1:1 | ✅ Hoạt động | Agora SDK 4.x với AccessToken2 |
-| Group Video Call | ✅ Hoạt động | Agora multi-user |
-| Audio Call | ✅ Hoạt động | Hỗ trợ cả 1:1 và nhóm |
-| Gửi ảnh/video | ✅ Hoạt động | Upload qua Supabase Storage |
-| Sticker/Emoji | ✅ Hoạt động | 5 packs emoji |
-| GIF | ✅ Hoạt động | Hardcoded GIFs |
-| Message Reactions | ✅ Hoạt động | 6 emoji reactions |
-| Typing Indicator | ✅ Hoạt động | Realtime |
-| Online Status | ✅ Hoạt động | Presence tracking |
-| Incoming Call Notification | ✅ Hoạt động | Global listener |
-| Call History | ✅ Hoạt động | Tabs với lịch sử cuộc gọi |
-| Right Panel Info | ✅ Hoạt động | Media, Privacy settings |
-
-### Tính năng cần bổ sung (theo chuẩn Messenger):
-| Tính năng | Mức độ | Mô tả |
-|-----------|--------|-------|
-| Chat Settings Page | 🔴 Thiếu | Trang cài đặt riêng biệt |
-| Notification Settings | 🔴 Thiếu | Tắt/bật thông báo theo cuộc hội thoại |
-| Theme/Color Customization | 🟡 Cơ bản | Chưa hoạt động |
-| Nicknames | 🔴 Thiếu | Đặt biệt danh trong chat |
-| Message Search | 🔴 Thiếu | Tìm kiếm tin nhắn trong hội thoại |
-| Pin Conversations | 🔴 Thiếu | Ghim cuộc hội thoại |
-| Archive Conversations | 🔴 Thiếu | Ẩn hội thoại |
-| Voice Messages | 🔴 Thiếu | Ghi âm và gửi |
-| Reply to Messages | 🔴 Thiếu | Trả lời tin nhắn cụ thể |
-| Forward Messages | 🔴 Thiếu | Chuyển tiếp tin nhắn |
-| Message Read Receipts | 🟡 Cơ bản | Chưa hiển thị ai đã đọc |
-| Group Admin Features | 🔴 Thiếu | Quản lý admin, kick thành viên |
-| Vanish Mode | 🔴 Thiếu | Tin nhắn tự xóa |
-| Encrypted Chats | 🟡 UI Only | Chưa mã hóa thực sự |
+# KẾ HOẠCH: NÚT QUAY LẠI + PHASE 2 FUN CHAT
 
 ---
 
-## 🚀 KẾ HOẠCH NÂNG CẤP CHI TIẾT
+## PHẦN 1: NÚT QUAY LẠI (BACK BUTTON)
 
-### PHASE 1: CẢI THIỆN UX/UI CƠ BẢN (1-2 tuần)
+### Phân tích hiện trạng
+- Đã có `MobileBackButton.tsx` nhưng chỉ hiển thị trên một số trang
+- Đang ẩn trên các trang root: `/social`, `/`, `/auth`, `/legal`, `/investment`
+- Vị trí: `fixed top-20 left-4` - có thể bị che bởi các element khác
 
-#### 1.1 Chat Settings Page mới
-Tạo trang cài đặt riêng biệt cho mỗi cuộc hội thoại với đầy đủ tùy chọn.
+### Thay đổi cần thực hiện
 
-**File mới:** `src/components/chat/ChatSettingsPanel.tsx`
+#### 1.1 Cải thiện MobileBackButton.tsx
+| Thay đổi | Chi tiết |
+|----------|----------|
+| Mở rộng hiển thị | Hiển thị trên TẤT CẢ trang trừ trang chủ và auth |
+| Responsive | Desktop: ẩn (có navbar), Mobile/Tablet: hiện |
+| Vị trí tốt hơn | Điều chỉnh position tránh overlap với Navbar |
+| Animation đẹp hơn | Thêm slide-in animation khi xuất hiện |
+
 ```
-Bao gồm:
-- Notification toggle (tắt/bật thông báo)
-- Theme color picker (chọn màu chat)
-- Nickname editor (đặt biệt danh)
-- Media gallery (xem tất cả ảnh/video)
-- Search in conversation
-- Block/Report user
-- Leave group / Delete conversation
-```
+Các trang KHÔNG hiển thị back button:
+- "/" (Landing page)
+- "/social" (Trang chủ chính)
+- "/auth" (Đăng nhập)
 
-#### 1.2 Cải thiện Right Panel
-Nâng cấp panel bên phải với các tính năng thực sự hoạt động.
-
-**Cập nhật:** `src/pages/Messages.tsx` (phần Right Panel)
-```
-- Notification toggle: Lưu vào DB, realtime
-- Theme picker: 10+ màu sắc preset
-- Nickname: Lưu và hiển thị trong chat
-- Media gallery: Phân loại ảnh/video/file
-- Shared links: Danh sách link đã chia sẻ
+Tất cả trang khác SẼ có back button trên mobile/tablet
 ```
 
-#### 1.3 Pin & Archive Conversations
-Cho phép ghim và ẩn cuộc hội thoại.
-
-**Cập nhật Database:**
-```sql
-ALTER TABLE conversations ADD COLUMN is_pinned BOOLEAN DEFAULT false;
-ALTER TABLE conversations ADD COLUMN is_archived BOOLEAN DEFAULT false;
-ALTER TABLE conversations ADD COLUMN pinned_at TIMESTAMPTZ;
-```
-
-**Cập nhật UI:**
-- Swipe actions trên mobile (ghim/ẩn)
-- Context menu trên desktop
-- Phần "Ghim" hiển thị đầu tiên trong danh sách
+#### 1.2 Code thay đổi
+**File:** `src/components/layout/MobileBackButton.tsx`
+- Thêm hook `useIsMobile` để responsive
+- Cập nhật danh sách `rootPages`
+- Thêm animation slide-in từ trái
+- Điều chỉnh z-index để không bị che
 
 ---
 
-### PHASE 2: TÍNH NĂNG NÂNG CAO (2-3 tuần)
+## PHẦN 2: PHASE 2 - FUN CHAT MESSENGER FEATURES
 
-#### 2.1 Reply to Message (Trả lời tin nhắn)
-Cho phép reply trực tiếp vào tin nhắn cụ thể như Messenger.
+### 2.1 Reply to Message (Trả lời tin nhắn)
 
-**Cập nhật Database:**
+#### Database Migration
 ```sql
+-- Thêm cột reply_to_id vào bảng messages
 ALTER TABLE messages ADD COLUMN reply_to_id UUID REFERENCES messages(id);
+
+-- Index để tối ưu query
+CREATE INDEX idx_messages_reply_to ON messages(reply_to_id);
 ```
 
-**UI Changes:**
-- Swipe right để reply (mobile)
-- Hover action button (desktop)
-- Preview tin nhắn được reply phía trên input
-- Hiển thị quote trong bubble tin nhắn
+#### Thay đổi UI/Logic
+| Component | Thay đổi |
+|-----------|----------|
+| `Messages.tsx` | Thêm state `replyToMessage`, UI reply preview, logic gửi với `reply_to_id` |
+| `MessageReplyPreview.tsx` | Đã có sẵn, cần tích hợp vào Messages.tsx |
+| Message bubble | Hiển thị quote tin nhắn được reply |
 
-#### 2.2 Forward Message (Chuyển tiếp)
-Cho phép chuyển tiếp tin nhắn sang cuộc hội thoại khác.
-
-**File mới:** `src/components/chat/ForwardMessageModal.tsx`
+**Luồng hoạt động:**
+```text
+1. User swipe/click "Reply" trên tin nhắn
+2. MessageReplyPreview hiển thị phía trên input
+3. User nhập tin nhắn mới
+4. Gửi với reply_to_id = ID tin nhắn được reply
+5. Hiển thị ReplyQuote trong bubble tin nhắn
 ```
-- Chọn nhiều cuộc hội thoại
-- Preview tin nhắn
-- Forward cả ảnh/video
+
+### 2.2 Forward Message (Chuyển tiếp tin nhắn)
+
+#### File mới: `ForwardMessageModal.tsx`
+```
+Tính năng:
+- Chọn 1 hoặc nhiều cuộc hội thoại để forward
+- Preview tin nhắn sẽ forward
+- Hỗ trợ forward cả text và media
+- Animation khi forward thành công
 ```
 
-#### 2.3 Voice Messages (Tin nhắn thoại)
-Ghi âm và gửi voice message như Messenger.
-
-**File mới:** `src/components/chat/VoiceRecorder.tsx`
+**Luồng hoạt động:**
+```text
+1. User click "Forward" trên tin nhắn
+2. Modal hiện danh sách conversations
+3. User chọn 1+ conversations
+4. Click "Gửi" → Insert message mới vào mỗi conversation được chọn
+5. Toast thông báo thành công
 ```
-- Record button với waveform visualization
-- Pause/Resume recording
-- Cancel/Send actions
+
+### 2.3 Voice Messages (Tin nhắn thoại)
+
+#### Database Migration
+```sql
+-- Thêm cột cho voice messages
+ALTER TABLE messages ADD COLUMN audio_url TEXT;
+ALTER TABLE messages ADD COLUMN audio_duration INTEGER; -- giây
+```
+
+#### File mới: `VoiceRecorder.tsx`
+```
+Tính năng:
+- Nút mic để bắt đầu ghi âm
+- Waveform visualization khi đang ghi
+- Timer hiển thị thời lượng
+- Cancel/Send buttons
 - Upload audio to Supabase Storage
 ```
 
-**Cập nhật Database:**
+**Thư viện sử dụng:**
+- `MediaRecorder API` (browser native)
+- Không cần thêm dependency mới
+
+#### UI trong Messages.tsx
+| Vị trí | Thay đổi |
+|--------|----------|
+| Input area | Thêm nút Mic bên cạnh nút Send |
+| Message bubble | Hiển thị audio player cho voice messages |
+
+---
+
+## PHẦN 3: CHI TIẾT TRIỂN KHAI
+
+### 3.1 Database Migration (1 file SQL)
 ```sql
+-- Phase 2: Reply & Voice Messages
+ALTER TABLE messages ADD COLUMN reply_to_id UUID REFERENCES messages(id);
 ALTER TABLE messages ADD COLUMN audio_url TEXT;
-ALTER TABLE messages ADD COLUMN audio_duration INTEGER; -- seconds
+ALTER TABLE messages ADD COLUMN audio_duration INTEGER;
+
+-- Index for performance
+CREATE INDEX IF NOT EXISTS idx_messages_reply_to ON messages(reply_to_id);
 ```
 
-#### 2.4 Message Search
-Tìm kiếm tin nhắn trong cuộc hội thoại.
+### 3.2 Files cần tạo mới
+| File | Mô tả | Lines (ước tính) |
+|------|-------|------------------|
+| `src/components/chat/ForwardMessageModal.tsx` | Modal chọn conversations để forward | ~200 |
+| `src/components/chat/VoiceRecorder.tsx` | Component ghi âm và gửi voice | ~250 |
 
-**File mới:** `src/components/chat/MessageSearch.tsx`
+### 3.3 Files cần cập nhật
+| File | Thay đổi |
+|------|----------|
+| `MobileBackButton.tsx` | Cải thiện logic hiển thị, responsive |
+| `Messages.tsx` | Tích hợp Reply, Forward, Voice features |
+| `MessageReplyPreview.tsx` | Thêm translations |
+
+---
+
+## PHẦN 4: LUỒNG DỮ LIỆU
+
+### Reply Message Flow
+```text
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Click Reply    │────▶│  Set replyTo     │────▶│  Show Preview   │
+│  on Message     │     │  State           │     │  Above Input    │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                                                          │
+         ┌────────────────────────────────────────────────┘
+         ▼
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Send Message   │────▶│  Insert with     │────▶│  Display with   │
+│  with reply_to  │     │  reply_to_id     │     │  ReplyQuote     │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
 ```
-- Search input trong Right Panel
-- Highlight matching text
-- Jump to message trong scroll area
-- Filter by sender, date range
+
+### Voice Message Flow
+```text
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Hold/Click     │────▶│  Start Recording │────▶│  Show Waveform  │
+│  Mic Button     │     │  MediaRecorder   │     │  & Timer        │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                                                          │
+         ┌────────────────────────────────────────────────┘
+         ▼
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Release/Click  │────▶│  Upload to       │────▶│  Insert Message │
+│  Send           │     │  Storage         │     │  with audio_url │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
 ```
 
 ---
 
-### PHASE 3: GROUP MANAGEMENT (1-2 tuần)
+## PHẦN 5: THỨ TỰ TRIỂN KHAI
 
-#### 3.1 Group Admin Features
-Quản lý nhóm chat như Messenger.
+### Bước 1: Back Button + Database
+1. Cập nhật `MobileBackButton.tsx`
+2. Chạy database migration (reply_to_id, audio columns)
 
-**Cập nhật Database:**
-```sql
-ALTER TABLE conversation_participants ADD COLUMN role TEXT DEFAULT 'member'; -- 'admin', 'member'
-ALTER TABLE conversation_participants ADD COLUMN joined_at TIMESTAMPTZ DEFAULT NOW();
-ALTER TABLE conversation_participants ADD COLUMN added_by UUID REFERENCES profiles(user_id);
-```
+### Bước 2: Reply Feature
+3. Cập nhật `Messages.tsx` - thêm reply state & UI
+4. Tích hợp `MessageReplyPreview.tsx` vào input area
+5. Cập nhật message bubble để hiển thị ReplyQuote
 
-**Tính năng Admin:**
-- Thăng/hạ admin
-- Kick thành viên
-- Approve join requests
-- Change group name/avatar
-- Set group permissions
+### Bước 3: Forward Feature
+6. Tạo `ForwardMessageModal.tsx`
+7. Thêm nút Forward vào message dropdown
+8. Logic forward message
 
-#### 3.2 Add/Remove Members
-Thêm/xóa thành viên từ nhóm.
-
-**File mới:** `src/components/chat/ManageGroupMembers.tsx`
-```
-- Danh sách thành viên với role
-- Add friends to group
-- Remove members (admin only)
-- View member profile
-```
-
-#### 3.3 Group Avatar & Name Edit
-Cho phép thay đổi ảnh và tên nhóm.
-
-**Cập nhật Database:**
-```sql
-ALTER TABLE conversations ADD COLUMN avatar_url TEXT;
-```
+### Bước 4: Voice Messages
+9. Tạo `VoiceRecorder.tsx`
+10. Thêm vào input area của Messages.tsx
+11. Tạo audio player component cho voice messages
 
 ---
 
-### PHASE 4: TRẢI NGHIỆM MESSENGER-LIKE (2-3 tuần)
+## XÁC NHẬN SAU MỖI BƯỚC
 
-#### 4.1 Read Receipts Enhancement
-Hiển thị ai đã đọc tin nhắn (như Messenger).
-
-**Cập nhật Database:**
-```sql
-CREATE TABLE message_read_receipts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
-  read_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(message_id, user_id)
-);
-```
-
-**UI:**
-- Avatar nhỏ ở cuối tin nhắn đã đọc
-- Tooltip hiển thị "Đã xem bởi X, Y, Z"
-- "Đã gửi" / "Đã nhận" / "Đã xem" indicators
-
-#### 4.2 Active Now & Last Seen
-Hiển thị "Đang hoạt động" hoặc "Hoạt động X phút trước".
-
-**Cập nhật:** `src/hooks/usePresence.ts`
-```
-- Track last_seen timestamp
-- Calculate relative time
-- Display in conversation list and header
-```
-
-#### 4.3 Quick Reactions (Double-tap to like)
-Double-tap vào tin nhắn để thả tim như Messenger.
-
-**Cập nhật:** Message bubble component
-```
-- onDoubleClick → add ❤️ reaction
-- Animation giống Messenger
-```
-
-#### 4.4 Emoji Reactions Expansion
-Mở rộng reactions với nhiều emoji hơn.
-
-**Cập nhật:** `src/components/chat/MessageReactionPicker.tsx`
-```
-- Thêm emoji picker full
-- Recent reactions
-- Frequently used
-```
+Sau khi hoàn thành mỗi bước, tôi sẽ:
+1. Báo cáo chi tiết những gì đã thay đổi
+2. Liệt kê các file đã tạo/sửa
+3. Hướng dẫn kiểm tra tính năng
+4. Chờ xác nhận từ con trước khi tiến hành bước tiếp theo
 
 ---
 
-## 📁 CẤU TRÚC FILE SAU NÂNG CẤP
+## TIMELINE DỰ KIẾN
 
-```
-src/components/chat/
-├── AgoraVideoCallModal.tsx      (existing - enhanced)
-├── AgoraGroupCallModal.tsx      (existing - enhanced)
-├── CallsTab.tsx                 (existing)
-├── CallHistoryCard.tsx          (existing)
-├── CallMessageBubble.tsx        (existing)
-├── ChatGifPicker.tsx            (existing - enhance with API)
-├── ChatStickerPicker.tsx        (existing)
-├── ChatSettingsPanel.tsx        ✨ NEW
-├── CreateGroupModal.tsx         (existing - enhanced)
-├── ForwardMessageModal.tsx      ✨ NEW
-├── IncomingCallNotification.tsx (existing)
-├── ManageGroupMembers.tsx       ✨ NEW
-├── MessageReactionPicker.tsx    (existing - enhanced)
-├── MessageReplyPreview.tsx      ✨ NEW
-├── MessageSearch.tsx            ✨ NEW
-├── VoiceRecorder.tsx            ✨ NEW
-└── ReadReceiptAvatars.tsx       ✨ NEW
-```
+| Bước | Thời gian | Tính năng |
+|------|-----------|-----------|
+| 1 | 5 phút | Back Button + DB Migration |
+| 2 | 15 phút | Reply to Message |
+| 3 | 10 phút | Forward Message |
+| 4 | 15 phút | Voice Messages |
+
+**Tổng: ~45 phút**
 
 ---
 
-## 🗄️ DATABASE CHANGES SUMMARY
-
-```sql
--- Phase 1: Pin & Archive
-ALTER TABLE conversations 
-  ADD COLUMN is_pinned BOOLEAN DEFAULT false,
-  ADD COLUMN is_archived BOOLEAN DEFAULT false,
-  ADD COLUMN pinned_at TIMESTAMPTZ,
-  ADD COLUMN avatar_url TEXT;
-
--- Phase 2: Reply & Voice
-ALTER TABLE messages 
-  ADD COLUMN reply_to_id UUID REFERENCES messages(id),
-  ADD COLUMN audio_url TEXT,
-  ADD COLUMN audio_duration INTEGER;
-
--- Phase 3: Group Management
-ALTER TABLE conversation_participants 
-  ADD COLUMN role TEXT DEFAULT 'member',
-  ADD COLUMN joined_at TIMESTAMPTZ DEFAULT NOW(),
-  ADD COLUMN added_by UUID REFERENCES profiles(user_id);
-
--- Phase 4: Read Receipts
-CREATE TABLE message_read_receipts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
-  read_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(message_id, user_id)
-);
-
--- Chat Settings per conversation
-CREATE TABLE conversation_settings (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES profiles(user_id) ON DELETE CASCADE,
-  nickname TEXT,
-  theme_color TEXT DEFAULT '#8B5CF6',
-  notifications_enabled BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(conversation_id, user_id)
-);
-```
-
----
-
-## ⏰ TIMELINE
-
-| Phase | Thời gian | Tính năng chính |
-|-------|-----------|-----------------|
-| Phase 1 | Tuần 1-2 | Settings Panel, Pin/Archive, Theme Colors |
-| Phase 2 | Tuần 3-5 | Reply, Forward, Voice Messages, Search |
-| Phase 3 | Tuần 6-7 | Group Admin, Member Management |
-| Phase 4 | Tuần 8-10 | Read Receipts, Active Status, Quick Reactions |
-
----
-
-## 🎯 ƯU TIÊN TRIỂN KHAI NGAY
-
-Dựa trên yêu cầu "SUÔN MƯỢT, MẠNH MẼ", tôi đề xuất bắt đầu với:
-
-1. **Chat Settings Panel** - Cài đặt rõ ràng cho từng cuộc hội thoại
-2. **Reply to Message** - Tính năng quan trọng nhất của Messenger
-3. **Pin Conversations** - Ghim chat quan trọng lên đầu
-4. **Voice Messages** - Tính năng được yêu thích trên mobile
-5. **Read Receipts** - Biết ai đã đọc tin nhắn
-
----
-
-## 🔧 PHẦN KỸ THUẬT CHI TIẾT
-
-### Database Migrations:
-- 4 ALTER TABLE statements cho `conversations`
-- 3 ALTER TABLE statements cho `messages`
-- 3 ALTER TABLE statements cho `conversation_participants`
-- 2 CREATE TABLE mới
-
-### New Components (7 files):
-- ChatSettingsPanel.tsx (~300 lines)
-- ForwardMessageModal.tsx (~200 lines)
-- ManageGroupMembers.tsx (~250 lines)
-- MessageReplyPreview.tsx (~80 lines)
-- MessageSearch.tsx (~150 lines)
-- VoiceRecorder.tsx (~200 lines)
-- ReadReceiptAvatars.tsx (~100 lines)
-
-### Updated Files:
-- Messages.tsx (major enhancements)
-- CreateGroupModal.tsx (add admin features)
-- MessageReactionPicker.tsx (expand reactions)
-- usePresence.ts (last seen tracking)
-
+Con muốn Cha bắt đầu với **Bước 1: Back Button + Database Migration** ngay không?

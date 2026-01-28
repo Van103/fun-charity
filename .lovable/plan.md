@@ -1,167 +1,172 @@
 
-# BƯỚC 3: FORWARD MESSAGE (CHUYỂN TIẾP TIN NHẮN)
+
+# KẾ HOẠCH: REBRAND "MESSAGES" → "FUN CHAT" (MESSENGER-STYLE)
 
 ---
 
-## MỤC TIÊU
+## PHÂN TÍCH YÊU CẦU
 
-Cho phép người dùng chuyển tiếp tin nhắn (text, ảnh, video) sang cuộc hội thoại khác như Messenger.
+Con muốn:
+1. **Đổi tên** từ "Messages" → "Chat" (FUN CHAT) trong toàn bộ giao diện
+2. **Giao diện Messenger-like** cho cả điện thoại và web
+3. Cập nhật text hiển thị ở empty state: "Your messages" → "Your chats"
+
+### Hình ảnh tham khảo
+- Empty state hiện tại: "Your messages" + "Select a conversation to start chatting"
+- Menu Messenger: "Đoạn chat", "Tin", "Thông báo", "Menu"
 
 ---
 
 ## THAY ĐỔI CẦN THỰC HIỆN
 
-### 1. Tạo file mới: `ForwardMessageModal.tsx`
+### 1. Cập nhật Translations trong LanguageContext.tsx
 
-Component modal cho phép:
-- Hiển thị preview tin nhắn sẽ forward
-- Tìm kiếm và chọn nhiều cuộc hội thoại
-- Forward tin nhắn đến tất cả conversations đã chọn
-- Animation thành công khi forward xong
+| Key hiện tại | Key mới/cập nhật | Giá trị mới (EN) | Giá trị mới (VI) |
+|--------------|------------------|------------------|------------------|
+| `messages.title` | `messages.title` | "Chat" | "Chat" |
+| `messages.yourMessages` | `messages.yourChats` | "Your chats" | "Đoạn chat của bạn" |
+| `messages.selectConversation` | Giữ nguyên | "Select a conversation to start chatting" | "Chọn một cuộc trò chuyện để bắt đầu chat" |
+| `nav.messages` | `nav.chat` | "Chat" | "Chat" |
 
-**Tính năng chi tiết:**
-| Tính năng | Mô tả |
-|-----------|-------|
-| Message Preview | Hiển thị nội dung tin nhắn gốc (text/ảnh/video) |
-| Conversation List | Danh sách các cuộc hội thoại có thể forward |
-| Multi-select | Chọn nhiều conversations cùng lúc |
-| Search | Tìm kiếm theo tên người dùng/nhóm |
-| Send Button | Gửi tin nhắn đến tất cả selected conversations |
-| Success Animation | Toast notification khi forward thành công |
+### 2. Cập nhật Messages.tsx
 
----
+| Vị trí | Thay đổi |
+|--------|----------|
+| **Helmet title** | `Messenger \| FUN Charity` → `FUN Chat \| FUN Charity` |
+| **Empty state** | `t('messages.yourMessages')` → `t('messages.yourChats')` |
+| **Header (nếu có)** | Đổi "Messages" → "Chat" |
 
-### 2. Cập nhật `Messages.tsx`
+### 3. Cập nhật MobileBottomNav.tsx
 
-**Thêm:**
-- State `forwardMessage` để lưu tin nhắn cần forward
-- Import và render `ForwardMessageModal`
-- Nút "Forward" trong dropdown menu của tin nhắn
-- Nút "Forward" cho tin nhắn của người khác
+| Vị trí | Thay đổi |
+|--------|----------|
+| **Label key** | `nav.messages` → `menu.chat` (đã có sẵn = "FUN CHAT") |
+| **Icon label** | Hiển thị "Chat" thay vì "Messages" |
+
+### 4. Cập nhật Navigation Components
+
+**Files cần kiểm tra:**
+- `LeftSidebar.tsx` - Đã dùng `menu.chat` ✅
+- `MobileBottomNav.tsx` - Cần cập nhật label nếu đang dùng `nav.messages`
+- `Navbar.tsx` - Kiểm tra nếu có liên kết đến Messages
 
 ---
 
 ## CHI TIẾT TRIỂN KHAI
 
-### ForwardMessageModal.tsx (~200 lines)
+### File 1: `src/contexts/LanguageContext.tsx`
 
-```text
+**Thêm translation mới:**
+```typescript
+"messages.yourChats": {
+  en: "Your chats", vi: "Đoạn chat của bạn", zh: "您的聊天", 
+  ja: "あなたのチャット", ko: "내 채팅", th: "แชทของคุณ",
+  fr: "Vos discussions", de: "Ihre Chats", es: "Tus chats",
+  pt: "Seus chats", ru: "Ваши чаты", ar: "محادثاتك", hi: "आपकी चैट"
+},
+```
+
+**Cập nhật `nav.messages`:**
+```typescript
+"nav.messages": {
+  en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
+  th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
+  pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
+},
+```
+
+### File 2: `src/pages/Messages.tsx`
+
+**Line ~902 - Helmet:**
+```typescript
+<Helmet>
+  <title>FUN Chat | FUN Charity</title>
+</Helmet>
+```
+
+**Line ~1654 - Empty state:**
+```typescript
+<p className="font-bold text-xl text-foreground">{t('messages.yourChats')}</p>
+```
+
+### File 3: `src/components/layout/MobileBottomNav.tsx`
+
+**Line ~36 - mainNavItems:**
+```typescript
+{ icon: MessageCircle, labelKey: "nav.chat", href: "/messages" },
+```
+
+**Thêm translation `nav.chat`:**
+```typescript
+"nav.chat": {
+  en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
+  th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
+  pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
+},
+```
+
+---
+
+## UI PREVIEW SAU KHI THAY ĐỔI
+
+### Empty State (Desktop & Mobile)
+```
 ┌────────────────────────────────────────┐
-│        Chuyển tiếp tin nhắn            │  ← Header
-├────────────────────────────────────────┤
-│  ┌──────────────────────────────────┐  │
-│  │ "Nội dung tin nhắn..."           │  │  ← Message Preview
-│  │ [📷 Ảnh đính kèm]                │  │
-│  └──────────────────────────────────┘  │
-├────────────────────────────────────────┤
-│  [🔍 Tìm kiếm người dùng...]          │  ← Search Input
-├────────────────────────────────────────┤
-│  ☐ Avatar | Nguyễn Văn A              │  │
-│  ☑ Avatar | Nhóm FUN Chat             │  │  ← Conversation List
-│  ☐ Avatar | Trần Thị B                │  │     (multi-select)
-│  ...                                   │  │
-├────────────────────────────────────────┤
-│  [Hủy]                    [Gửi (2)]   │  ← Actions
+│                                        │
+│           ┌──────────────┐            │
+│           │     📤       │            │
+│           │  (icon)      │            │
+│           └──────────────┘            │
+│                                        │
+│          Your chats                    │  ← Đổi từ "Your messages"
+│   Select a conversation to start       │
+│            chatting                    │
+│                                        │
 └────────────────────────────────────────┘
 ```
 
-### UI Updates trong Messages.tsx
-
-**Tin nhắn của mình (isCurrentUser):**
-```text
-┌─────────────────────────┐
-│ [Reply] [React] [···]   │  ← Hover actions
-├─────────────────────────┤
-│ Menu:                   │
-│   🔄 Trả lời            │
-│   ➡️ Chuyển tiếp   ← NEW │
-│   🗑️ Thu hồi            │
-└─────────────────────────┘
+### Mobile Bottom Nav
+```
+┌────────────────────────────────────────┐
+│  🏠     📰      👥      💬      ☰    │
+│ Home  Campaigns Profiles Chat   Menu  │  ← "Chat" thay "Messages"
+└────────────────────────────────────────┘
 ```
 
-**Tin nhắn của người khác:**
-```text
-┌─────────────────────────┐
-│ [React] [Reply] [Forward] ← NEW button
-└─────────────────────────┘
+### Browser Tab Title
+```
+FUN Chat | FUN Charity
 ```
 
 ---
 
-## LUỒNG HOẠT ĐỘNG
+## FILES CẦN THAY ĐỔI
 
-```text
-1. User click "Chuyển tiếp" trên tin nhắn
-         │
-         ▼
-2. setForwardMessage(msg) → Mở ForwardMessageModal
-         │
-         ▼
-3. Modal load danh sách conversations
-         │
-         ▼
-4. User chọn 1+ conversations (checkbox)
-         │
-         ▼
-5. Click "Gửi"
-         │
-         ▼
-6. Loop: Insert message mới vào mỗi conversation
-         │
-         ▼
-7. Toast "Đã chuyển tiếp đến X cuộc hội thoại"
-         │
-         ▼
-8. Đóng modal, clear forwardMessage state
-```
+| File | Loại thay đổi | Chi tiết |
+|------|---------------|----------|
+| `src/contexts/LanguageContext.tsx` | Thêm/Sửa | Thêm `messages.yourChats`, `nav.chat`, cập nhật `nav.messages` |
+| `src/pages/Messages.tsx` | Sửa | Đổi Helmet title, cập nhật empty state text |
+| `src/components/layout/MobileBottomNav.tsx` | Sửa | Đổi labelKey thành `nav.chat` |
 
 ---
 
-## FILES SẼ THAY ĐỔI
+## TIMELINE DỰ KIẾN
 
-| File | Thay đổi |
-|------|----------|
-| `src/components/chat/ForwardMessageModal.tsx` | ✨ TẠO MỚI - Modal forward |
-| `src/pages/Messages.tsx` | Thêm state, import, nút Forward |
+| Bước | Thời gian | Mô tả |
+|------|-----------|-------|
+| 1 | 2 phút | Cập nhật LanguageContext với translations mới |
+| 2 | 1 phút | Cập nhật Messages.tsx (Helmet + empty state) |
+| 3 | 1 phút | Cập nhật MobileBottomNav.tsx |
+
+**Tổng: ~4 phút**
 
 ---
 
 ## KẾT QUẢ SAU KHI HOÀN THÀNH
 
-1. ✅ Nút "Chuyển tiếp" trong dropdown menu tin nhắn của mình
-2. ✅ Nút "Forward" hover action cho tin nhắn người khác
-3. ✅ Modal chọn nhiều cuộc hội thoại để forward
-4. ✅ Forward cả text và media (ảnh/video)
-5. ✅ Toast thông báo khi forward thành công
-6. ✅ Animation mượt mà với Framer Motion
-
----
-
-## PHẦN KỸ THUẬT
-
-### ForwardMessageModal Props Interface
-```typescript
-interface ForwardMessageModalProps {
-  message: {
-    id: string;
-    content: string;
-    image_url: string | null;
-    sender_id: string;
-    senderName?: string;
-  };
-  currentUserId: string;
-  onClose: () => void;
-}
-```
-
-### Database Operations
-- Không cần thêm cột mới (sử dụng bảng messages hiện có)
-- Insert message mới với content/image_url từ tin nhắn gốc
-- Update `last_message_at` của conversation được forward đến
-
-### Dependencies sử dụng
-- Framer Motion (đã có)
-- Supabase client (đã có)
-- Radix Dialog (đã có)
-- Lucide icons (đã có)
+1. ✅ Empty state hiển thị "Your chats" / "Đoạn chat của bạn"
+2. ✅ Browser tab hiển thị "FUN Chat | FUN Charity"
+3. ✅ Mobile bottom nav hiển thị "Chat"
+4. ✅ Sidebar vẫn giữ "FUN CHAT" (đã đúng từ trước)
+5. ✅ Giao diện nhất quán giữa Desktop và Mobile
 

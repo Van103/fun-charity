@@ -10,8 +10,12 @@ import {
   Loader2, Send, ArrowLeft, Search, Image as ImageIcon, X, 
   Phone, Video, Users, Plus, ThumbsUp, Circle, MoreVertical, Trash2,
   Info, Edit3, Bell, BellOff, Lock, ChevronDown, ChevronRight,
-  File, Image as ImageIconSmall, Shield, Settings, Reply, Forward
+  File, Image as ImageIconSmall, Shield, Settings, Reply, Forward, Edit2, Mic
 } from "lucide-react";
+import { VoiceRecorder } from "@/components/chat/VoiceRecorder";
+import { VoiceMessagePlayer } from "@/components/chat/VoiceMessagePlayer";
+import { EditMessageModal, canEditMessage } from "@/components/chat/EditMessageModal";
+import { CharityGlobalTab } from "@/components/chat/CharityGlobalTab";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,6 +90,8 @@ interface Message {
   reply_to_id?: string | null;
   audio_url?: string | null;
   audio_duration?: number | null;
+  is_edited?: boolean;
+  edited_at?: string | null;
   senderProfile?: {
     full_name: string | null;
     avatar_url: string | null;
@@ -167,6 +173,11 @@ export default function Messages() {
     image_url: string | null;
     sender_id: string;
     senderName?: string;
+  } | null>(null);
+  const [isVoiceRecording, setIsVoiceRecording] = useState(false);
+  const [editingMessage, setEditingMessage] = useState<{
+    id: string;
+    content: string;
   } | null>(null);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [autoAnswerCall, setAutoAnswerCall] = useState(false);
@@ -779,6 +790,41 @@ export default function Messages() {
     }
   };
 
+  const handleVoiceSend = async (audioUrl: string, duration: number) => {
+    if (!activeConversation || !currentUserId) return;
+
+    try {
+      const { error } = await supabase.from("messages").insert({
+        conversation_id: activeConversation.id,
+        sender_id: currentUserId,
+        content: "",
+        audio_url: audioUrl,
+        audio_duration: duration,
+        reply_to_id: replyTo?.id || null
+      });
+
+      if (error) throw error;
+
+      await supabase
+        .from("conversations")
+        .update({ last_message_at: new Date().toISOString() })
+        .eq("id", activeConversation.id);
+
+      setReplyTo(null);
+      
+      if (currentUserId) {
+        await loadConversations(currentUserId);
+      }
+    } catch (error) {
+      console.error("Error sending voice message:", error);
+      toast({
+        title: t('common.error'),
+        description: t('chat.voiceSendFailed'),
+        variant: "destructive"
+      });
+    }
+  };
+
   const startCall = async (type: "video" | "audio") => {
     // Allow calling even if the other user is offline; if they don't answer, we'll mark it as missed.
     setIsIncomingCall(false);
@@ -946,6 +992,7 @@ export default function Messages() {
             <div className="p-4 border-b border-border flex items-center justify-between">
               <h1 className="text-2xl font-bold">
                 {activeChatTab === "stories" && t('chat.stories')}
+                {activeChatTab === "charity" && t('chat.charity')}
                 {activeChatTab === "notifications" && t('chat.notifications')}
                 {activeChatTab === "menu" && t('chat.menu')}
               </h1>
@@ -958,6 +1005,7 @@ export default function Messages() {
             
             {/* Tab Content */}
             {activeChatTab === "stories" && <ChatStoriesTab />}
+            {activeChatTab === "charity" && <CharityGlobalTab />}
             {activeChatTab === "notifications" && (
               <ChatNotificationsTab 
                 currentUserId={currentUserId} 
@@ -983,9 +1031,10 @@ export default function Messages() {
           {/* Mobile: Full screen tab content */}
           <div className="flex-1 flex flex-col md:hidden">
             {/* Tab Header */}
-            <div className="p-4 border-b border-border flex items-center justify-between">
+          <div className="p-4 border-b border-border flex items-center justify-between">
               <h1 className="text-2xl font-bold">
                 {activeChatTab === "stories" && t('chat.stories')}
+                {activeChatTab === "charity" && t('chat.charity')}
                 {activeChatTab === "notifications" && t('chat.notifications')}
                 {activeChatTab === "menu" && t('chat.menu')}
               </h1>
@@ -998,6 +1047,7 @@ export default function Messages() {
             
             {/* Tab Content */}
             {activeChatTab === "stories" && <ChatStoriesTab />}
+            {activeChatTab === "charity" && <CharityGlobalTab />}
             {activeChatTab === "notifications" && (
               <ChatNotificationsTab 
                 currentUserId={currentUserId} 
@@ -1499,6 +1549,19 @@ export default function Messages() {
                                   <Reply className="w-4 h-4 mr-2" />
                                   {t('messages.reply') || "Trả lời"}
                                 </DropdownMenuItem>
+                                {/* Edit Message - only for text messages within 30 min */}
+                                {canEditMessage(msg.created_at, msg.sender_id, currentUserId) && msg.content && !msg.audio_url && (
+                                  <DropdownMenuItem 
+                                    onClick={() => setEditingMessage({
+                                      id: msg.id,
+                                      content: msg.content
+                                    })}
+                                    className="cursor-pointer"
+                                  >
+                                    <Edit2 className="w-4 h-4 mr-2" />
+                                    {t('chat.editMessage')}
+                                  </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem 
                                   onClick={() => setForwardMessage({
                                     id: msg.id,
@@ -1611,7 +1674,18 @@ export default function Messages() {
                                   />
                                 )}
                                 
-                                {msg.image_url && (
+                                {/* Voice Message Player */}
+                                {msg.audio_url && (
+                                  <div className="p-2">
+                                    <VoiceMessagePlayer 
+                                      audioUrl={msg.audio_url}
+                                      duration={msg.audio_duration || 0}
+                                      isOwnMessage={isCurrentUser}
+                                    />
+                                  </div>
+                                )}
+                                
+                                {msg.image_url && !msg.audio_url && (
                                   isVideoUrl(msg.image_url) ? (
                                     <video 
                                       src={msg.image_url} 
@@ -1631,6 +1705,12 @@ export default function Messages() {
                                 {msg.content && (
                                   <div className={`px-4 py-2 ${msg.content === '👍' ? 'text-4xl py-1' : ''}`}>
                                     <p className="text-[15px] whitespace-pre-wrap break-words">{msg.content}</p>
+                                    {/* Edited indicator */}
+                                    {msg.is_edited && (
+                                      <span className="text-[10px] text-muted-foreground/70 mt-0.5 block">
+                                        ({t('chat.edited')})
+                                      </span>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -1770,7 +1850,7 @@ export default function Messages() {
                   />
                 </div>
                 
-                {/* Send/Like button */}
+                {/* Send/Like/Voice button */}
                 {newMessage.trim() || imageFile ? (
                   <Button 
                     onClick={sendMessage}
@@ -1785,16 +1865,27 @@ export default function Messages() {
                     )}
                   </Button>
                 ) : (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-full hover:bg-muted text-primary flex-shrink-0"
-                    onClick={sendLike}
-                    title={t('messages.sendLike')}
-                  >
-                    <ThumbsUp className="w-6 h-6" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    {/* Voice Recorder */}
+                    <VoiceRecorder
+                      isRecording={isVoiceRecording}
+                      setIsRecording={setIsVoiceRecording}
+                      onSend={handleVoiceSend}
+                      onCancel={() => setIsVoiceRecording(false)}
+                    />
+                    {!isVoiceRecording && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-full hover:bg-muted text-primary flex-shrink-0"
+                        onClick={sendLike}
+                        title={t('messages.sendLike')}
+                      >
+                        <ThumbsUp className="w-6 h-6" />
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -1938,6 +2029,20 @@ export default function Messages() {
           message={forwardMessage}
           currentUserId={currentUserId}
           onClose={() => setForwardMessage(null)}
+        />
+      )}
+
+      {/* Edit Message Modal */}
+      {editingMessage && activeConversation && (
+        <EditMessageModal
+          isOpen={!!editingMessage}
+          onClose={() => setEditingMessage(null)}
+          messageId={editingMessage.id}
+          currentContent={editingMessage.content}
+          onSuccess={() => {
+            loadMessages(activeConversation.id);
+            setEditingMessage(null);
+          }}
         />
       )}
         </>

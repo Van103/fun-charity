@@ -937,45 +937,101 @@ export default function Messages() {
         <title>FUN Chat | FUN Charity</title>
       </Helmet>
 
-      {/* Mobile: Show tabs content when no active conversation */}
-      {isMobile && !activeConversation && activeChatTab !== "chats" ? (
-        <div className="flex-1 flex flex-col">
-          {/* Tab Header */}
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <h1 className="text-2xl font-bold">
-              {activeChatTab === "stories" && t('chat.stories')}
-              {activeChatTab === "notifications" && t('chat.notifications')}
-              {activeChatTab === "menu" && t('chat.menu')}
-            </h1>
-            {activeChatTab === "menu" && (
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Settings className="w-5 h-5" />
-              </Button>
+      {/* Show tabs content when not viewing chats (Mobile: no active conversation, Desktop: sidebar tabs) */}
+      {!activeConversation && activeChatTab !== "chats" ? (
+        <div className="flex-1 flex flex-col md:flex-row">
+          {/* Desktop: Show sidebar with tabs */}
+          <div className="hidden md:flex md:w-80 lg:w-96 border-r border-border flex-col bg-card">
+            {/* Tab Header */}
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <h1 className="text-2xl font-bold">
+                {activeChatTab === "stories" && t('chat.stories')}
+                {activeChatTab === "notifications" && t('chat.notifications')}
+                {activeChatTab === "menu" && t('chat.menu')}
+              </h1>
+              {activeChatTab === "menu" && (
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              )}
+            </div>
+            
+            {/* Tab Content */}
+            {activeChatTab === "stories" && <ChatStoriesTab />}
+            {activeChatTab === "notifications" && (
+              <ChatNotificationsTab 
+                currentUserId={currentUserId} 
+                onSelectConversation={handleSelectConversationFromNotif}
+              />
             )}
+            {activeChatTab === "menu" && (
+              <ChatMenuTab 
+                userProfile={userProfile}
+                pendingMessagesCount={0}
+                friendRequestsCount={0}
+              />
+            )}
+            
+            {/* Desktop: Chat Bottom Tabs */}
+            <ChatBottomTabs
+              activeTab={activeChatTab}
+              onTabChange={setActiveChatTab}
+              unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
+            />
           </div>
           
-          {/* Tab Content */}
-          {activeChatTab === "stories" && <ChatStoriesTab />}
-          {activeChatTab === "notifications" && (
-            <ChatNotificationsTab 
-              currentUserId={currentUserId} 
-              onSelectConversation={handleSelectConversationFromNotif}
+          {/* Mobile: Full screen tab content */}
+          <div className="flex-1 flex flex-col md:hidden">
+            {/* Tab Header */}
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <h1 className="text-2xl font-bold">
+                {activeChatTab === "stories" && t('chat.stories')}
+                {activeChatTab === "notifications" && t('chat.notifications')}
+                {activeChatTab === "menu" && t('chat.menu')}
+              </h1>
+              {activeChatTab === "menu" && (
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              )}
+            </div>
+            
+            {/* Tab Content */}
+            {activeChatTab === "stories" && <ChatStoriesTab />}
+            {activeChatTab === "notifications" && (
+              <ChatNotificationsTab 
+                currentUserId={currentUserId} 
+                onSelectConversation={handleSelectConversationFromNotif}
+              />
+            )}
+            {activeChatTab === "menu" && (
+              <ChatMenuTab 
+                userProfile={userProfile}
+                pendingMessagesCount={0}
+                friendRequestsCount={0}
+              />
+            )}
+            
+            {/* Mobile: Chat Bottom Tabs */}
+            <ChatBottomTabs
+              activeTab={activeChatTab}
+              onTabChange={setActiveChatTab}
+              unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
             />
-          )}
-          {activeChatTab === "menu" && (
-            <ChatMenuTab 
-              userProfile={userProfile}
-              pendingMessagesCount={0}
-              friendRequestsCount={0}
-            />
-          )}
+          </div>
           
-          {/* Chat Bottom Tabs */}
-          <ChatBottomTabs
-            activeTab={activeChatTab}
-            onTabChange={setActiveChatTab}
-            unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
-          />
+          {/* Desktop: Empty state when viewing non-chats tabs */}
+          <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-background">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-4"
+            >
+              <Send className="w-12 h-12 text-primary" />
+            </motion.div>
+            <p className="font-bold text-xl text-foreground">{t('messages.yourChats')}</p>
+            <p className="text-muted-foreground">{t('messages.selectConversation')}</p>
+          </div>
         </div>
       ) : (
         <>
@@ -1168,11 +1224,24 @@ export default function Messages() {
           </ScrollArea>
         )}
         
-        {/* Mobile: Chat Bottom Tabs (only show on chats tab when no conversation selected) */}
-        {isMobile && !activeConversation && activeChatTab === "chats" && (
+        {/* Chat Bottom Tabs - Show on both Mobile and Desktop when on chats tab */}
+        {!activeConversation && activeChatTab === "chats" && (
           <ChatBottomTabs
             activeTab={activeChatTab}
             onTabChange={setActiveChatTab}
+            unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
+          />
+        )}
+        {/* Desktop: Always show tabs even when conversation is active */}
+        {!isMobile && activeConversation && (
+          <ChatBottomTabs
+            activeTab={activeChatTab}
+            onTabChange={(tab) => {
+              if (tab !== "chats") {
+                setActiveConversation(null);
+              }
+              setActiveChatTab(tab);
+            }}
             unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
           />
         )}

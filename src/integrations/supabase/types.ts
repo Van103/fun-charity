@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_sessions: {
+        Row: {
+          admin_id: string
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          otp_code: string | null
+          otp_expires_at: string | null
+          session_expires_at: string | null
+          user_agent: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
+          session_expires_at?: string | null
+          user_agent?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
+          session_expires_at?: string | null
+          user_agent?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       angel_conversations: {
         Row: {
           created_at: string
@@ -838,21 +874,30 @@ export type Database = {
       }
       conversation_participants: {
         Row: {
+          added_by: string | null
           conversation_id: string
           id: string
           joined_at: string
+          nickname: string | null
+          role: string | null
           user_id: string
         }
         Insert: {
+          added_by?: string | null
           conversation_id: string
           id?: string
           joined_at?: string
+          nickname?: string | null
+          role?: string | null
           user_id: string
         }
         Update: {
+          added_by?: string | null
           conversation_id?: string
           id?: string
           joined_at?: string
+          nickname?: string | null
+          role?: string | null
           user_id?: string
         }
         Relationships: [
@@ -920,6 +965,7 @@ export type Database = {
           participant1_id: string
           participant2_id: string
           pinned_at: string | null
+          settings: Json | null
         }
         Insert: {
           avatar_url?: string | null
@@ -934,6 +980,7 @@ export type Database = {
           participant1_id: string
           participant2_id: string
           pinned_at?: string | null
+          settings?: Json | null
         }
         Update: {
           avatar_url?: string | null
@@ -948,6 +995,7 @@ export type Database = {
           participant1_id?: string
           participant2_id?: string
           pinned_at?: string | null
+          settings?: Json | null
         }
         Relationships: []
       }

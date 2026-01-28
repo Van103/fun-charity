@@ -1,155 +1,167 @@
 
-
-# KẾ HOẠCH: NÚT QUAY LẠI TRÊN CẢ WEB VÀ MOBILE
-
----
-
-## PHÂN TÍCH YÊU CẦU
-
-Con muốn:
-1. Nút Back hiển thị **trên cả Desktop** (không chỉ Mobile như hiện tại)
-2. Khi vào **bất kỳ thư mục/trang con** nào đều có nút quay lại
-3. Có thể quay về **trang chủ** (/social)
-
-### Hiện trạng
-- `MobileBackButton.tsx` chỉ hiển thị trên Mobile (`isMobile === true`)
-- Desktop không có nút Back vì dựa vào Navbar
+# BƯỚC 3: FORWARD MESSAGE (CHUYỂN TIẾP TIN NHẮN)
 
 ---
 
-## GIẢI PHÁP
+## MỤC TIÊU
 
-### Tạo component mới: `BackButton.tsx`
+Cho phép người dùng chuyển tiếp tin nhắn (text, ảnh, video) sang cuộc hội thoại khác như Messenger.
 
-Thay thế `MobileBackButton.tsx` bằng component mới hỗ trợ cả Desktop và Mobile
+---
 
-| Platform | Vị trí | Style |
-|----------|--------|-------|
-| **Desktop** | Fixed góc trái, dưới Navbar | Nút lớn hơn, có text "Quay lại" |
-| **Mobile/Tablet** | Fixed góc trái, dưới Navbar | Nút icon tròn (giữ nguyên) |
+## THAY ĐỔI CẦN THỰC HIỆN
 
-### Logic hiển thị
+### 1. Tạo file mới: `ForwardMessageModal.tsx`
+
+Component modal cho phép:
+- Hiển thị preview tin nhắn sẽ forward
+- Tìm kiếm và chọn nhiều cuộc hội thoại
+- Forward tin nhắn đến tất cả conversations đã chọn
+- Animation thành công khi forward xong
+
+**Tính năng chi tiết:**
+| Tính năng | Mô tả |
+|-----------|-------|
+| Message Preview | Hiển thị nội dung tin nhắn gốc (text/ảnh/video) |
+| Conversation List | Danh sách các cuộc hội thoại có thể forward |
+| Multi-select | Chọn nhiều conversations cùng lúc |
+| Search | Tìm kiếm theo tên người dùng/nhóm |
+| Send Button | Gửi tin nhắn đến tất cả selected conversations |
+| Success Animation | Toast notification khi forward thành công |
+
+---
+
+### 2. Cập nhật `Messages.tsx`
+
+**Thêm:**
+- State `forwardMessage` để lưu tin nhắn cần forward
+- Import và render `ForwardMessageModal`
+- Nút "Forward" trong dropdown menu của tin nhắn
+- Nút "Forward" cho tin nhắn của người khác
+
+---
+
+## CHI TIẾT TRIỂN KHAI
+
+### ForwardMessageModal.tsx (~200 lines)
 
 ```text
-Các trang KHÔNG hiển thị nút Back:
-├── "/" (Landing page)
-├── "/social" (Trang chủ chính)  
-└── "/auth" (Đăng nhập)
+┌────────────────────────────────────────┐
+│        Chuyển tiếp tin nhắn            │  ← Header
+├────────────────────────────────────────┤
+│  ┌──────────────────────────────────┐  │
+│  │ "Nội dung tin nhắn..."           │  │  ← Message Preview
+│  │ [📷 Ảnh đính kèm]                │  │
+│  └──────────────────────────────────┘  │
+├────────────────────────────────────────┤
+│  [🔍 Tìm kiếm người dùng...]          │  ← Search Input
+├────────────────────────────────────────┤
+│  ☐ Avatar | Nguyễn Văn A              │  │
+│  ☑ Avatar | Nhóm FUN Chat             │  │  ← Conversation List
+│  ☐ Avatar | Trần Thị B                │  │     (multi-select)
+│  ...                                   │  │
+├────────────────────────────────────────┤
+│  [Hủy]                    [Gửi (2)]   │  ← Actions
+└────────────────────────────────────────┘
+```
 
-Tất cả trang khác → HIỂN THỊ nút Back
+### UI Updates trong Messages.tsx
+
+**Tin nhắn của mình (isCurrentUser):**
+```text
+┌─────────────────────────┐
+│ [Reply] [React] [···]   │  ← Hover actions
+├─────────────────────────┤
+│ Menu:                   │
+│   🔄 Trả lời            │
+│   ➡️ Chuyển tiếp   ← NEW │
+│   🗑️ Thu hồi            │
+└─────────────────────────┘
+```
+
+**Tin nhắn của người khác:**
+```text
+┌─────────────────────────┐
+│ [React] [Reply] [Forward] ← NEW button
+└─────────────────────────┘
 ```
 
 ---
 
-## THAY ĐỔI CỤ THỂ
+## LUỒNG HOẠT ĐỘNG
 
-### File: `src/components/layout/MobileBackButton.tsx` → Rename thành `BackButton.tsx`
-
-**Cập nhật:**
-1. **Bỏ điều kiện `isMobile`** → Hiển thị trên mọi device
-2. **Responsive design:**
-   - Mobile: Nút tròn, icon ArrowLeft
-   - Desktop: Nút lớn hơn hoặc có text "Quay lại"
-3. **Vị trí tối ưu:**
-   - Mobile: `top-20 left-3` (dưới Navbar)
-   - Desktop: `top-20 left-4` với style khác biệt
-4. **Animation:** Giữ nguyên slide-in effect
-
-### Import trong App.tsx
-
-Đổi import từ `MobileBackButton` → `BackButton`
-
----
-
-## CHI TIẾT CODE
-
-### Component BackButton mới
-
-```jsx
-// Hiển thị trên TẤT CẢ devices (Desktop + Mobile + Tablet)
-// Ẩn chỉ trên: "/", "/social", "/auth"
-
-const BackButton = () => {
-  const rootPages = ['/', '/social', '/auth'];
-  const shouldShow = !rootPages.includes(location.pathname);
-  
-  // Responsive:
-  // - Mobile: w-10 h-10 rounded-full (icon only)
-  // - Desktop: px-4 py-2 rounded-lg với text "Quay lại"
-  
-  return shouldShow && (
-    <motion.button>
-      <ArrowLeft />
-      <span className="hidden md:inline ml-2">Quay lại</span>
-    </motion.button>
-  );
-};
+```text
+1. User click "Chuyển tiếp" trên tin nhắn
+         │
+         ▼
+2. setForwardMessage(msg) → Mở ForwardMessageModal
+         │
+         ▼
+3. Modal load danh sách conversations
+         │
+         ▼
+4. User chọn 1+ conversations (checkbox)
+         │
+         ▼
+5. Click "Gửi"
+         │
+         ▼
+6. Loop: Insert message mới vào mỗi conversation
+         │
+         ▼
+7. Toast "Đã chuyển tiếp đến X cuộc hội thoại"
+         │
+         ▼
+8. Đóng modal, clear forwardMessage state
 ```
 
-### Style theo device
-
-| Device | Width | Height | Text | Border Radius |
-|--------|-------|--------|------|---------------|
-| Mobile (< 768px) | 40px | 40px | Ẩn | Full circle |
-| Desktop (≥ 768px) | auto | 40px | "Quay lại" | 8px rounded |
-
 ---
 
-## FILES CẦN THAY ĐỔI
+## FILES SẼ THAY ĐỔI
 
 | File | Thay đổi |
 |------|----------|
-| `src/components/layout/MobileBackButton.tsx` | Rename + cập nhật logic để hiển thị trên Desktop |
-| `src/App.tsx` | Cập nhật import nếu rename file |
-
----
-
-## UI PREVIEW
-
-### Desktop (≥ 768px)
-```
-┌──────────────────────────────────────────────────┐
-│  [Logo] [Search]    [Home] [Platform] [Community]│  ← Navbar
-├──────────────────────────────────────────────────┤
-│                                                  │
-│  [← Quay lại]                                    │  ← Back Button
-│                                                  │
-│              Page Content...                     │
-│                                                  │
-└──────────────────────────────────────────────────┘
-```
-
-### Mobile (< 768px)
-```
-┌────────────────────────┐
-│  [Logo]      [☰ Menu]  │  ← Navbar
-├────────────────────────┤
-│                        │
-│  [←]                   │  ← Back Button (icon only)
-│                        │
-│    Page Content...     │
-│                        │
-└────────────────────────┘
-```
-
----
-
-## TIMELINE
-
-| Bước | Thời gian | Mô tả |
-|------|-----------|-------|
-| 1 | 2 phút | Cập nhật MobileBackButton.tsx → BackButton |
-| 2 | 1 phút | Cập nhật import trong App.tsx |
-
-**Tổng: ~3 phút**
+| `src/components/chat/ForwardMessageModal.tsx` | ✨ TẠO MỚI - Modal forward |
+| `src/pages/Messages.tsx` | Thêm state, import, nút Forward |
 
 ---
 
 ## KẾT QUẢ SAU KHI HOÀN THÀNH
 
-1. ✅ Nút Back hiển thị trên **cả Desktop và Mobile**
-2. ✅ Desktop: Nút có text "Quay lại" dễ nhận biết
-3. ✅ Mobile: Nút icon tròn gọn gàng
-4. ✅ Ẩn trên trang chủ (`/`, `/social`, `/auth`)
-5. ✅ Click → Quay về trang trước hoặc `/social` nếu không có history
+1. ✅ Nút "Chuyển tiếp" trong dropdown menu tin nhắn của mình
+2. ✅ Nút "Forward" hover action cho tin nhắn người khác
+3. ✅ Modal chọn nhiều cuộc hội thoại để forward
+4. ✅ Forward cả text và media (ảnh/video)
+5. ✅ Toast thông báo khi forward thành công
+6. ✅ Animation mượt mà với Framer Motion
+
+---
+
+## PHẦN KỸ THUẬT
+
+### ForwardMessageModal Props Interface
+```typescript
+interface ForwardMessageModalProps {
+  message: {
+    id: string;
+    content: string;
+    image_url: string | null;
+    sender_id: string;
+    senderName?: string;
+  };
+  currentUserId: string;
+  onClose: () => void;
+}
+```
+
+### Database Operations
+- Không cần thêm cột mới (sử dụng bảng messages hiện có)
+- Insert message mới với content/image_url từ tin nhắn gốc
+- Update `last_message_at` của conversation được forward đến
+
+### Dependencies sử dụng
+- Framer Motion (đã có)
+- Supabase client (đã có)
+- Radix Dialog (đã có)
+- Lucide icons (đã có)
 

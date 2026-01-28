@@ -1,152 +1,172 @@
 
-
-# KẾ HOẠCH: REBRAND "MESSAGES" → "FUN CHAT" (MESSENGER-STYLE)
-
----
-
-## PHÂN TÍCH YÊU CẦU
-
-Con muốn:
-1. **Đổi tên** từ "Messages" → "Chat" (FUN CHAT) trong toàn bộ giao diện
-2. **Giao diện Messenger-like** cho cả điện thoại và web
-3. Cập nhật text hiển thị ở empty state: "Your messages" → "Your chats"
-
-### Hình ảnh tham khảo
-- Empty state hiện tại: "Your messages" + "Select a conversation to start chatting"
-- Menu Messenger: "Đoạn chat", "Tin", "Thông báo", "Menu"
+# KẾ HOẠCH: GIAO DIỆN FUN CHAT GIỐNG MESSENGER
 
 ---
 
-## THAY ĐỔI CẦN THỰC HIỆN
+## PHÂN TÍCH YÊU CẦU TỪ HÌNH ẢNH
 
-### 1. Cập nhật Translations trong LanguageContext.tsx
+Giao diện Messenger có **4 tabs** ở dưới cùng:
+1. **Đoạn chat** - Danh sách cuộc hội thoại
+2. **Tin** - Stories/Status
+3. **Thông báo** - Notifications
+4. **Menu** - Cài đặt và các mục khác
 
-| Key hiện tại | Key mới/cập nhật | Giá trị mới (EN) | Giá trị mới (VI) |
-|--------------|------------------|------------------|------------------|
-| `messages.title` | `messages.title` | "Chat" | "Chat" |
-| `messages.yourMessages` | `messages.yourChats` | "Your chats" | "Đoạn chat của bạn" |
-| `messages.selectConversation` | Giữ nguyên | "Select a conversation to start chatting" | "Chọn một cuộc trò chuyện để bắt đầu chat" |
-| `nav.messages` | `nav.chat` | "Chat" | "Chat" |
+### Menu Page bao gồm:
+- User Profile với avatar và badge thông báo
+- Cài đặt (Settings)
+- Section 1: Marketplace, Cộng đồng, Tin nhắn đang chờ, Kho lưu trữ
+- Section 2: Lời mời kết bạn, Lời mời tham gia kênh, Chat với AI, Tạo AI
+- Section 3: FUN Ecosystem platforms (thay cho Meta)
 
-### 2. Cập nhật Messages.tsx
+---
 
-| Vị trí | Thay đổi |
-|--------|----------|
-| **Helmet title** | `Messenger \| FUN Charity` → `FUN Chat \| FUN Charity` |
-| **Empty state** | `t('messages.yourMessages')` → `t('messages.yourChats')` |
-| **Header (nếu có)** | Đổi "Messages" → "Chat" |
+## GIẢI PHÁP TRIỂN KHAI
 
-### 3. Cập nhật MobileBottomNav.tsx
+### Tổng quan
+Chuyển trang `/messages` thành giao diện Messenger-style với **tabs nội bộ** trong trang chat, không thay đổi bottom nav chính của app.
 
-| Vị trí | Thay đổi |
-|--------|----------|
-| **Label key** | `nav.messages` → `menu.chat` (đã có sẵn = "FUN CHAT") |
-| **Icon label** | Hiển thị "Chat" thay vì "Messages" |
+### Cấu trúc mới
 
-### 4. Cập nhật Navigation Components
+```text
+/messages (FUN Chat Page)
+├── Mobile View:
+│   ├── Chat Bottom Tabs: [Đoạn chat] [Tin] [Thông báo] [Menu]
+│   ├── Tab Content:
+│   │   ├── Đoạn chat → Conversations List
+│   │   ├── Tin → Stories (placeholder cho tương lai)
+│   │   ├── Thông báo → Chat Notifications
+│   │   └── Menu → ChatMenuTab component
+│   └── Active Conversation → Full screen chat
+│
+├── Desktop View:
+│   ├── Left Sidebar với tabs (giống hiện tại + thêm tabs)
+│   ├── Center: Messages Area
+│   └── Right: Settings Panel
+```
 
-**Files cần kiểm tra:**
-- `LeftSidebar.tsx` - Đã dùng `menu.chat` ✅
-- `MobileBottomNav.tsx` - Cần cập nhật label nếu đang dùng `nav.messages`
-- `Navbar.tsx` - Kiểm tra nếu có liên kết đến Messages
+---
+
+## FILES CẦN TẠO MỚI
+
+### 1. `src/components/chat/ChatBottomTabs.tsx`
+Bottom navigation tabs cho FUN Chat (chỉ hiển thị trên Mobile khi chưa chọn conversation)
+
+| Tab | Icon | Label (VI) | Label (EN) |
+|-----|------|------------|------------|
+| Đoạn chat | MessageCircle | Đoạn chat | Chats |
+| Tin | CirclePlus | Tin | Stories |
+| Thông báo | Bell | Thông báo | Notifications |
+| Menu | Menu | Menu | Menu |
+
+### 2. `src/components/chat/ChatMenuTab.tsx`
+Giao diện Menu giống Messenger với các sections:
+
+```text
+┌────────────────────────────────────────┐
+│ Menu                              [⚙️]  │
+├────────────────────────────────────────┤
+│  [Avatar] Tên người dùng        [🔴10] │
+│  Chuyển trang cá nhân · @username      │
+├────────────────────────────────────────┤
+│  ⚙️ Cài đặt                        >   │
+├────────────────────────────────────────┤
+│  💬 Tin nhắn đang chờ          [🔵] >  │
+│  📦 Kho lưu trữ                     >  │
+├────────────────────────────────────────┤
+│  👥 Lời mời kết bạn                 >  │
+│  🤖 Chat với AI                     >  │
+├────────────────────────────────────────┤
+│  FUN ECOSYSTEM PLATFORMS               │
+│  [logos grid - như MobileBottomNav]    │
+└────────────────────────────────────────┘
+```
+
+### 3. `src/components/chat/ChatStoriesTab.tsx`
+Placeholder cho tính năng Stories/Tin trong tương lai
+
+### 4. `src/components/chat/ChatNotificationsTab.tsx`
+Hiển thị thông báo chat (tin nhắn chưa đọc, cuộc gọi nhỡ)
+
+---
+
+## FILES CẦN CẬP NHẬT
+
+### `src/pages/Messages.tsx`
+- Thêm state `activeChatTab` để quản lý tabs nội bộ
+- Import và render các tab components mới
+- Hiển thị `ChatBottomTabs` khi không có active conversation (Mobile)
+- Desktop: Thêm tabs vào sidebar hoặc giữ nguyên layout
+
+### `src/contexts/LanguageContext.tsx`
+Thêm translations mới:
+- `chat.chats`: "Đoạn chat" / "Chats"
+- `chat.stories`: "Tin" / "Stories"
+- `chat.notifications`: "Thông báo" / "Notifications"
+- `chat.menu`: "Menu" / "Menu"
+- `chat.pendingMessages`: "Tin nhắn đang chờ" / "Pending messages"
+- `chat.archive`: "Kho lưu trữ" / "Archive"
+- `chat.friendRequests`: "Lời mời kết bạn" / "Friend requests"
+- `chat.chatWithAI`: "Chat với AI" / "Chat with AI"
+- `chat.settings`: "Cài đặt" / "Settings"
+- `chat.switchProfile`: "Chuyển trang cá nhân" / "Switch profile"
 
 ---
 
 ## CHI TIẾT TRIỂN KHAI
 
-### File 1: `src/contexts/LanguageContext.tsx`
+### ChatBottomTabs.tsx (~100 lines)
 
-**Thêm translation mới:**
-```typescript
-"messages.yourChats": {
-  en: "Your chats", vi: "Đoạn chat của bạn", zh: "您的聊天", 
-  ja: "あなたのチャット", ko: "내 채팅", th: "แชทของคุณ",
-  fr: "Vos discussions", de: "Ihre Chats", es: "Tus chats",
-  pt: "Seus chats", ru: "Ваши чаты", ar: "محادثاتك", hi: "आपकी चैट"
-},
+```text
+┌──────────────────────────────────────────────────┐
+│  💬           📷           🔔           ☰        │
+│ Đoạn chat    Tin      Thông báo      Menu       │
+│  ▬▬▬▬                                            │  ← Active indicator
+└──────────────────────────────────────────────────┘
 ```
 
-**Cập nhật `nav.messages`:**
-```typescript
-"nav.messages": {
-  en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
-  th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
-  pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
-},
-```
+**Props:**
+- `activeTab`: "chats" | "stories" | "notifications" | "menu"
+- `onTabChange`: (tab) => void
+- `unreadCounts`: { chats: number, notifications: number }
 
-### File 2: `src/pages/Messages.tsx`
+### ChatMenuTab.tsx (~250 lines)
 
-**Line ~902 - Helmet:**
-```typescript
-<Helmet>
-  <title>FUN Chat | FUN Charity</title>
-</Helmet>
-```
+**Sections:**
+1. **User Profile Card** - Avatar, tên, link profile, badge thông báo
+2. **Settings Row** - Link đến settings
+3. **Messages Section** - Tin nhắn đang chờ (với badge), Kho lưu trữ
+4. **Social Section** - Lời mời kết bạn, Chat với AI
+5. **FUN Ecosystem** - Grid logos các platform (tái sử dụng từ MobileBottomNav)
 
-**Line ~1654 - Empty state:**
-```typescript
-<p className="font-bold text-xl text-foreground">{t('messages.yourChats')}</p>
-```
+### Mobile Layout Flow
 
-### File 3: `src/components/layout/MobileBottomNav.tsx`
-
-**Line ~36 - mainNavItems:**
-```typescript
-{ icon: MessageCircle, labelKey: "nav.chat", href: "/messages" },
-```
-
-**Thêm translation `nav.chat`:**
-```typescript
-"nav.chat": {
-  en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
-  th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
-  pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
-},
-```
-
----
-
-## UI PREVIEW SAU KHI THAY ĐỔI
-
-### Empty State (Desktop & Mobile)
-```
+```text
 ┌────────────────────────────────────────┐
+│  FUN Chat                    [Settings]│  ← Header
+├────────────────────────────────────────┤
 │                                        │
-│           ┌──────────────┐            │
-│           │     📤       │            │
-│           │  (icon)      │            │
-│           └──────────────┘            │
+│        Tab Content Area                │
+│   (Chats / Stories / Notifs / Menu)    │
 │                                        │
-│          Your chats                    │  ← Đổi từ "Your messages"
-│   Select a conversation to start       │
-│            chatting                    │
-│                                        │
+├────────────────────────────────────────┤
+│  💬      📷      🔔      ☰             │  ← Chat Bottom Tabs
+│ Đoạn   Tin   Thông  Menu              │
+│  chat         báo                      │
 └────────────────────────────────────────┘
 ```
 
-### Mobile Bottom Nav
-```
-┌────────────────────────────────────────┐
-│  🏠     📰      👥      💬      ☰    │
-│ Home  Campaigns Profiles Chat   Menu  │  ← "Chat" thay "Messages"
-└────────────────────────────────────────┘
-```
+### Desktop Layout (giữ nguyên + cải tiến)
 
-### Browser Tab Title
+```text
+┌───────────────┬─────────────────────────┬─────────────┐
+│               │                         │             │
+│  Left Sidebar │    Messages Area        │ Right Panel │
+│               │                         │             │
+│  [Tabs]       │                         │  Settings   │
+│  [Chats List] │                         │  Media      │
+│               │                         │             │
+└───────────────┴─────────────────────────┴─────────────┘
 ```
-FUN Chat | FUN Charity
-```
-
----
-
-## FILES CẦN THAY ĐỔI
-
-| File | Loại thay đổi | Chi tiết |
-|------|---------------|----------|
-| `src/contexts/LanguageContext.tsx` | Thêm/Sửa | Thêm `messages.yourChats`, `nav.chat`, cập nhật `nav.messages` |
-| `src/pages/Messages.tsx` | Sửa | Đổi Helmet title, cập nhật empty state text |
-| `src/components/layout/MobileBottomNav.tsx` | Sửa | Đổi labelKey thành `nav.chat` |
 
 ---
 
@@ -154,19 +174,88 @@ FUN Chat | FUN Charity
 
 | Bước | Thời gian | Mô tả |
 |------|-----------|-------|
-| 1 | 2 phút | Cập nhật LanguageContext với translations mới |
-| 2 | 1 phút | Cập nhật Messages.tsx (Helmet + empty state) |
-| 3 | 1 phút | Cập nhật MobileBottomNav.tsx |
+| 1 | 3 phút | Tạo ChatBottomTabs.tsx |
+| 2 | 5 phút | Tạo ChatMenuTab.tsx |
+| 3 | 2 phút | Tạo ChatStoriesTab.tsx (placeholder) |
+| 4 | 2 phút | Tạo ChatNotificationsTab.tsx |
+| 5 | 5 phút | Cập nhật Messages.tsx với tabs logic |
+| 6 | 2 phút | Thêm translations vào LanguageContext |
 
-**Tổng: ~4 phút**
+**Tổng: ~19 phút**
 
 ---
 
 ## KẾT QUẢ SAU KHI HOÀN THÀNH
 
-1. ✅ Empty state hiển thị "Your chats" / "Đoạn chat của bạn"
-2. ✅ Browser tab hiển thị "FUN Chat | FUN Charity"
-3. ✅ Mobile bottom nav hiển thị "Chat"
-4. ✅ Sidebar vẫn giữ "FUN CHAT" (đã đúng từ trước)
-5. ✅ Giao diện nhất quán giữa Desktop và Mobile
+1. **Giao diện Mobile** có 4 tabs giống Messenger:
+   - Đoạn chat (danh sách conversations)
+   - Tin (Stories - placeholder)
+   - Thông báo (chat notifications)
+   - Menu (profile, settings, pending, archive, AI chat, ecosystem)
 
+2. **Desktop** giữ nguyên layout 3 cột, có thể thêm tabs nhỏ
+
+3. **Menu Tab** hiển thị:
+   - User profile với badge
+   - Settings link
+   - Tin nhắn đang chờ với badge nếu có
+   - Kho lưu trữ
+   - Lời mời kết bạn
+   - Chat với AI (mở AngelAI modal)
+   - FUN Ecosystem grid
+
+4. **Animations** mượt mà với Framer Motion
+
+5. **Responsive**: Tự động chuyển layout giữa Mobile/Desktop
+
+---
+
+## UI MOCKUP FINAL
+
+### Mobile - Chats Tab
+```
+┌────────────────────────────────────────┐
+│ Đoạn chat                    [⚙️][✏️] │
+├────────────────────────────────────────┤
+│ [🔍 Tìm kiếm trên FUN Chat...]        │
+│ [Tất cả] [Chưa đọc] [Nhóm] [📞 Cuộc gọi]
+├────────────────────────────────────────┤
+│ [Avatar] Nguyễn Văn A          · 5 ph  │
+│          Tin nhắn mới...         🔵    │
+├────────────────────────────────────────┤
+│ [Avatar] Nhóm FUN Chat         · 1 giờ │
+│          Ai đó: Xin chào!              │
+├────────────────────────────────────────┤
+│                                        │
+│  💬      📷      🔔      ☰             │
+│ Đoạn   Tin   Thông  Menu              │
+│ ━━━━   chat         báo               │
+└────────────────────────────────────────┘
+```
+
+### Mobile - Menu Tab
+```
+┌────────────────────────────────────────┐
+│ Menu                              [⚙️] │
+├────────────────────────────────────────┤
+│ [Avatar] Tên người dùng         [🔴10]│
+│          Chuyển trang cá nhân · @user  │
+├────────────────────────────────────────┤
+│ ⚙️ Cài đặt                          > │
+├────────────────────────────────────────┤
+│ 💬 Tin nhắn đang chờ         [🔵2] > │
+│ 📦 Kho lưu trữ                      > │
+├────────────────────────────────────────┤
+│ 👥 Lời mời kết bạn                  > │
+│ 🤖 Chat với AI                      > │
+├────────────────────────────────────────┤
+│     FUN ECOSYSTEM PLATFORMS            │
+│ ┌──────┬──────┬──────┬──────┐         │
+│ │PROFILE│ FARM │PLANET│ PLAY │         │
+│ └──────┴──────┴──────┴──────┘         │
+│                                        │
+│  💬      📷      🔔      ☰             │
+│ Đoạn   Tin   Thông  Menu              │
+│  chat         báo   ━━━━              │
+└────────────────────────────────────────┘
+```

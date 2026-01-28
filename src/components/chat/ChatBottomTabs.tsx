@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { MessageCircle, Camera, Bell, Menu } from "lucide-react";
+import { MessageCircle, Camera, Bell, Menu, Heart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 
-export type ChatTabType = "chats" | "stories" | "notifications" | "menu";
+export type ChatTabType = "chats" | "stories" | "charity" | "notifications" | "menu";
 
 interface ChatBottomTabsProps {
   activeTab: ChatTabType;
@@ -17,6 +17,7 @@ interface ChatBottomTabsProps {
 const tabs = [
   { id: "chats" as ChatTabType, icon: MessageCircle, labelKey: "chat.chats" },
   { id: "stories" as ChatTabType, icon: Camera, labelKey: "chat.stories" },
+  { id: "charity" as ChatTabType, icon: Heart, labelKey: "chat.charity" },
   { id: "notifications" as ChatTabType, icon: Bell, labelKey: "chat.notifications" },
   { id: "menu" as ChatTabType, icon: Menu, labelKey: "chat.menu" },
 ];

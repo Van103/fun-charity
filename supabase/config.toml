@@ -38,3 +38,6 @@ verify_jwt = true
 
 [functions.kyc-document-access]
 verify_jwt = false
+
+[functions.admin-2fa-verify]
+verify_jwt = false

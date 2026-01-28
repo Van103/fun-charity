@@ -1096,7 +1096,13 @@ export default function Messages() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                if (window.history.length > 2) {
+                  navigate(-1);
+                } else {
+                  navigate('/social');
+                }
+              }}
               className="rounded-full h-10 w-10 flex-shrink-0 hover:bg-muted"
             >
               <ArrowLeft className="w-5 h-5 text-[#9333EA]" />

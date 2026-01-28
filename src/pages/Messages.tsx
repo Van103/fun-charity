@@ -46,6 +46,11 @@ import { CallsTab } from "@/components/chat/CallsTab";
 import { CallMessageBubble, isCallMessage } from "@/components/chat/CallMessageBubble";
 import { MessageReplyPreview, ReplyQuote } from "@/components/chat/MessageReplyPreview";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ChatBottomTabs, ChatTabType } from "@/components/chat/ChatBottomTabs";
+import { ChatMenuTab } from "@/components/chat/ChatMenuTab";
+import { ChatStoriesTab } from "@/components/chat/ChatStoriesTab";
+import { ChatNotificationsTab } from "@/components/chat/ChatNotificationsTab";
 
 interface Conversation {
   id: string;
@@ -146,6 +151,14 @@ export default function Messages() {
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMessageSearch, setShowMessageSearch] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "groups" | "calls">("all");
+  const [activeChatTab, setActiveChatTab] = useState<ChatTabType>("chats");
+  const [userProfile, setUserProfile] = useState<{
+    user_id: string;
+    full_name: string | null;
+    avatar_url: string | null;
+    username?: string | null;
+  } | null>(null);
+  const isMobile = useIsMobile();
   const [replyTo, setReplyTo] = useState<ReplyToState | null>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [forwardMessage, setForwardMessage] = useState<{
@@ -254,6 +267,17 @@ export default function Messages() {
       
       setCurrentUserId(user.id);
       await loadConversations(user.id);
+      
+      // Load user profile for menu tab
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, avatar_url")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (profile) {
+        setUserProfile({ ...profile, username: null });
+      }
       
       if (targetUserId) {
         await openConversationWithUser(user.id, targetUserId);
@@ -896,14 +920,67 @@ export default function Messages() {
   // Get media from messages
   const messageMedia = messages.filter(m => m.image_url);
 
+  // Calculate unread counts for tabs
+  const unreadChatCount = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+
+  // Handle selecting conversation from notifications tab
+  const handleSelectConversationFromNotif = async (userId: string) => {
+    if (currentUserId) {
+      await openConversationWithUser(currentUserId, userId);
+      setActiveChatTab("chats");
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-background flex">
+    <div className="fixed inset-0 bg-background flex flex-col md:flex-row">
       <Helmet>
         <title>FUN Chat | FUN Charity</title>
       </Helmet>
 
-      {/* Left Sidebar - Conversations List */}
-      <div className={`w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-card ${activeConversation ? 'hidden md:flex' : ''}`}>
+      {/* Mobile: Show tabs content when no active conversation */}
+      {isMobile && !activeConversation && activeChatTab !== "chats" ? (
+        <div className="flex-1 flex flex-col">
+          {/* Tab Header */}
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <h1 className="text-2xl font-bold">
+              {activeChatTab === "stories" && t('chat.stories')}
+              {activeChatTab === "notifications" && t('chat.notifications')}
+              {activeChatTab === "menu" && t('chat.menu')}
+            </h1>
+            {activeChatTab === "menu" && (
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Settings className="w-5 h-5" />
+              </Button>
+            )}
+          </div>
+          
+          {/* Tab Content */}
+          {activeChatTab === "stories" && <ChatStoriesTab />}
+          {activeChatTab === "notifications" && (
+            <ChatNotificationsTab 
+              currentUserId={currentUserId} 
+              onSelectConversation={handleSelectConversationFromNotif}
+            />
+          )}
+          {activeChatTab === "menu" && (
+            <ChatMenuTab 
+              userProfile={userProfile}
+              pendingMessagesCount={0}
+              friendRequestsCount={0}
+            />
+          )}
+          
+          {/* Chat Bottom Tabs */}
+          <ChatBottomTabs
+            activeTab={activeChatTab}
+            onTabChange={setActiveChatTab}
+            unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
+          />
+        </div>
+      ) : (
+        <>
+          {/* Left Sidebar - Conversations List */}
+          <div className={`w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-card ${activeConversation ? 'hidden md:flex' : ''}`}>
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
@@ -1090,8 +1167,16 @@ export default function Messages() {
             )}
           </ScrollArea>
         )}
+        
+        {/* Mobile: Chat Bottom Tabs (only show on chats tab when no conversation selected) */}
+        {isMobile && !activeConversation && activeChatTab === "chats" && (
+          <ChatBottomTabs
+            activeTab={activeChatTab}
+            onTabChange={setActiveChatTab}
+            unreadCounts={{ chats: unreadChatCount, notifications: 0 }}
+          />
+        )}
       </div>
-
       {/* Center - Messages Area */}
       <div className={`flex-1 flex flex-col bg-background ${!activeConversation ? 'hidden md:flex' : ''}`}>
         {activeConversation ? (
@@ -1785,6 +1870,8 @@ export default function Messages() {
           currentUserId={currentUserId}
           onClose={() => setForwardMessage(null)}
         />
+      )}
+        </>
       )}
     </div>
   );

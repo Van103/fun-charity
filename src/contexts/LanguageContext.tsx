@@ -268,6 +268,93 @@ export const translations: Translations = {
     pt: "GREEN EARTH", ru: "GREEN EARTH", ar: "GREEN EARTH", hi: "GREEN EARTH"
   },
 
+  // Chat Tab Translations
+  "chat.chats": {
+    en: "Chats", vi: "Đoạn chat", zh: "聊天", ja: "チャット", ko: "채팅",
+    th: "แชท", fr: "Discussions", de: "Chats", es: "Chats",
+    pt: "Conversas", ru: "Чаты", ar: "المحادثات", hi: "चैट"
+  },
+  "chat.stories": {
+    en: "Stories", vi: "Tin", zh: "动态", ja: "ストーリー", ko: "스토리",
+    th: "สตอรี่", fr: "Stories", de: "Stories", es: "Historias",
+    pt: "Stories", ru: "Истории", ar: "القصص", hi: "स्टोरीज़"
+  },
+  "chat.notifications": {
+    en: "Notifications", vi: "Thông báo", zh: "通知", ja: "通知", ko: "알림",
+    th: "การแจ้งเตือน", fr: "Notifications", de: "Benachrichtigungen", es: "Notificaciones",
+    pt: "Notificações", ru: "Уведомления", ar: "الإشعارات", hi: "सूचनाएं"
+  },
+  "chat.menu": {
+    en: "Menu", vi: "Menu", zh: "菜单", ja: "メニュー", ko: "메뉴",
+    th: "เมนู", fr: "Menu", de: "Menü", es: "Menú",
+    pt: "Menu", ru: "Меню", ar: "القائمة", hi: "मेन्यू"
+  },
+  "chat.settings": {
+    en: "Settings", vi: "Cài đặt", zh: "设置", ja: "設定", ko: "설정",
+    th: "การตั้งค่า", fr: "Paramètres", de: "Einstellungen", es: "Configuración",
+    pt: "Configurações", ru: "Настройки", ar: "الإعدادات", hi: "सेटिंग्स"
+  },
+  "chat.pendingMessages": {
+    en: "Pending messages", vi: "Tin nhắn đang chờ", zh: "待处理消息", ja: "保留中のメッセージ", ko: "대기 중인 메시지",
+    th: "ข้อความที่รอดำเนินการ", fr: "Messages en attente", de: "Ausstehende Nachrichten", es: "Mensajes pendientes",
+    pt: "Mensagens pendentes", ru: "Ожидающие сообщения", ar: "الرسائل المعلقة", hi: "लंबित संदेश"
+  },
+  "chat.archive": {
+    en: "Archive", vi: "Kho lưu trữ", zh: "归档", ja: "アーカイブ", ko: "보관함",
+    th: "คลังเก็บ", fr: "Archives", de: "Archiv", es: "Archivo",
+    pt: "Arquivo", ru: "Архив", ar: "الأرشيف", hi: "संग्रह"
+  },
+  "chat.friendRequests": {
+    en: "Friend requests", vi: "Lời mời kết bạn", zh: "好友请求", ja: "友達リクエスト", ko: "친구 요청",
+    th: "คำขอเป็นเพื่อน", fr: "Demandes d'amis", de: "Freundschaftsanfragen", es: "Solicitudes de amistad",
+    pt: "Solicitações de amizade", ru: "Заявки в друзья", ar: "طلبات الصداقة", hi: "मित्र अनुरोध"
+  },
+  "chat.chatWithAI": {
+    en: "Chat with AI", vi: "Chat với AI", zh: "与AI聊天", ja: "AIとチャット", ko: "AI와 채팅",
+    th: "แชทกับ AI", fr: "Discuter avec l'IA", de: "Mit KI chatten", es: "Chatear con IA",
+    pt: "Conversar com IA", ru: "Чат с ИИ", ar: "الدردشة مع الذكاء الاصطناعي", hi: "AI से चैट करें"
+  },
+  "chat.switchProfile": {
+    en: "Switch profile", vi: "Chuyển trang cá nhân", zh: "切换资料", ja: "プロフィール切替", ko: "프로필 전환",
+    th: "สลับโปรไฟล์", fr: "Changer de profil", de: "Profil wechseln", es: "Cambiar perfil",
+    pt: "Trocar perfil", ru: "Сменить профиль", ar: "تبديل الملف الشخصي", hi: "प्रोफ़ाइल बदलें"
+  },
+  "chat.storiesTitle": {
+    en: "Stories", vi: "Tin của bạn", zh: "动态", ja: "ストーリー", ko: "스토리",
+    th: "สตอรี่", fr: "Stories", de: "Stories", es: "Historias",
+    pt: "Stories", ru: "Истории", ar: "القصص", hi: "स्टोरीज़"
+  },
+  "chat.storiesDescription": {
+    en: "Share moments that disappear after 24 hours", vi: "Chia sẻ khoảnh khắc sẽ biến mất sau 24 giờ", zh: "分享24小时后消失的瞬间", ja: "24時間後に消える瞬間を共有", ko: "24시간 후 사라지는 순간 공유",
+    th: "แชร์ช่วงเวลาที่หายไปหลัง 24 ชั่วโมง", fr: "Partagez des moments qui disparaissent après 24 heures", de: "Teile Momente, die nach 24 Stunden verschwinden", es: "Comparte momentos que desaparecen después de 24 horas",
+    pt: "Compartilhe momentos que desaparecem após 24 horas", ru: "Делитесь моментами, которые исчезают через 24 часа", ar: "شارك اللحظات التي تختفي بعد 24 ساعة", hi: "24 घंटे बाद गायब होने वाले पलों को साझा करें"
+  },
+  "chat.createStory": {
+    en: "Create story", vi: "Tạo tin", zh: "创建动态", ja: "ストーリーを作成", ko: "스토리 만들기",
+    th: "สร้างสตอรี่", fr: "Créer une story", de: "Story erstellen", es: "Crear historia",
+    pt: "Criar story", ru: "Создать историю", ar: "إنشاء قصة", hi: "स्टोरी बनाएं"
+  },
+  "chat.noNotifications": {
+    en: "No notifications", vi: "Không có thông báo", zh: "没有通知", ja: "通知なし", ko: "알림 없음",
+    th: "ไม่มีการแจ้งเตือน", fr: "Pas de notifications", de: "Keine Benachrichtigungen", es: "Sin notificaciones",
+    pt: "Sem notificações", ru: "Нет уведомлений", ar: "لا توجد إشعارات", hi: "कोई सूचनाएं नहीं"
+  },
+  "chat.noNotificationsDescription": {
+    en: "You're all caught up! Check back later for new activity.", vi: "Bạn đã xem hết! Quay lại sau để xem hoạt động mới.", zh: "您已看完所有内容！稍后查看新活动。", ja: "すべて確認済みです！後で新しいアクティビティをチェックしてください。", ko: "모두 확인했습니다! 나중에 새 활동을 확인하세요.",
+    th: "คุณเช็คหมดแล้ว! กลับมาดูกิจกรรมใหม่ภายหลัง", fr: "Vous êtes à jour ! Revenez plus tard pour de nouvelles activités.", de: "Sie sind auf dem neuesten Stand! Schauen Sie später nach neuen Aktivitäten.", es: "¡Estás al día! Vuelve más tarde para ver nuevas actividades.",
+    pt: "Você está por dentro! Volte mais tarde para novas atividades.", ru: "Вы в курсе всего! Проверьте позже новые действия.", ar: "أنت على اطلاع! تحقق لاحقًا من النشاط الجديد.", hi: "आप अपडेट हैं! बाद में नई गतिविधि देखें।"
+  },
+  "chat.missedVideoCall": {
+    en: "Missed video call", vi: "Cuộc gọi video nhỡ", zh: "未接视频通话", ja: "不在着信（ビデオ）", ko: "부재중 영상통화",
+    th: "สายวิดีโอที่ไม่ได้รับ", fr: "Appel vidéo manqué", de: "Verpasster Videoanruf", es: "Videollamada perdida",
+    pt: "Chamada de vídeo perdida", ru: "Пропущенный видеозвонок", ar: "مكالمة فيديو فائتة", hi: "छूटी हुई वीडियो कॉल"
+  },
+  "chat.missedAudioCall": {
+    en: "Missed audio call", vi: "Cuộc gọi thoại nhỡ", zh: "未接语音通话", ja: "不在着信（音声）", ko: "부재중 음성통화",
+    th: "สายเสียงที่ไม่ได้รับ", fr: "Appel audio manqué", de: "Verpasster Audioanruf", es: "Llamada de audio perdida",
+    pt: "Chamada de áudio perdida", ru: "Пропущенный аудиозвонок", ar: "مكالمة صوتية فائتة", hi: "छूटी हुई ऑडियो कॉल"
+  },
+
   // Right Sidebar - Honor Board
   "honor.title": {
     en: "HONOR BOARD", vi: "BẢNG VINH DANH", zh: "荣誉榜", ja: "栄誉の殿堂", ko: "명예의 전당",

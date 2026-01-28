@@ -487,6 +487,118 @@ export type Database = {
         }
         Relationships: []
       }
+      charity_channel_members: {
+        Row: {
+          channel_id: string | null
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          channel_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          channel_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charity_channel_members_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "charity_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      charity_channel_messages: {
+        Row: {
+          channel_id: string | null
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_pinned: boolean | null
+          sender_id: string | null
+        }
+        Insert: {
+          channel_id?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_pinned?: boolean | null
+          sender_id?: string | null
+        }
+        Update: {
+          channel_id?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_pinned?: boolean | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charity_channel_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "charity_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      charity_channels: {
+        Row: {
+          category: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_official: boolean | null
+          member_count: number | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_official?: boolean | null
+          member_count?: number | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_official?: boolean | null
+          member_count?: number | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       charity_recipients: {
         Row: {
           avatar_url: string | null
@@ -546,6 +658,112 @@ export type Database = {
           wallet_address?: string | null
         }
         Relationships: []
+      }
+      chat_stories: {
+        Row: {
+          background_color: string | null
+          caption: string | null
+          created_at: string | null
+          duration: number | null
+          expires_at: string
+          id: string
+          media_type: string | null
+          media_url: string
+          text_overlay: string | null
+          text_position: Json | null
+          user_id: string | null
+          view_count: number | null
+        }
+        Insert: {
+          background_color?: string | null
+          caption?: string | null
+          created_at?: string | null
+          duration?: number | null
+          expires_at: string
+          id?: string
+          media_type?: string | null
+          media_url: string
+          text_overlay?: string | null
+          text_position?: Json | null
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          background_color?: string | null
+          caption?: string | null
+          created_at?: string | null
+          duration?: number | null
+          expires_at?: string
+          id?: string
+          media_type?: string | null
+          media_url?: string
+          text_overlay?: string | null
+          text_position?: Json | null
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
+      chat_story_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          reaction_type: string | null
+          story_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string | null
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string | null
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_story_reactions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "chat_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_story_views: {
+        Row: {
+          id: string
+          story_id: string | null
+          viewed_at: string | null
+          viewer_id: string | null
+        }
+        Insert: {
+          id?: string
+          story_id?: string | null
+          viewed_at?: string | null
+          viewer_id?: string | null
+        }
+        Update: {
+          id?: string
+          story_id?: string | null
+          viewed_at?: string | null
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "chat_stories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coin_purchases: {
         Row: {
@@ -730,6 +948,118 @@ export type Database = {
           participant1_id?: string
           participant2_id?: string
           pinned_at?: string | null
+        }
+        Relationships: []
+      }
+      deed_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          deed_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          deed_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          deed_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deed_comments_deed_id_fkey"
+            columns: ["deed_id"]
+            isOneToOne: false
+            referencedRelation: "deeds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deed_reactions: {
+        Row: {
+          created_at: string | null
+          deed_id: string | null
+          id: string
+          reaction_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deed_id?: string | null
+          id?: string
+          reaction_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deed_id?: string | null
+          id?: string
+          reaction_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deed_reactions_deed_id_fkey"
+            columns: ["deed_id"]
+            isOneToOne: false
+            referencedRelation: "deeds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deeds: {
+        Row: {
+          category: string | null
+          content: string | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_verified: boolean | null
+          light_points: number | null
+          location: string | null
+          title: string
+          user_id: string | null
+          verified_by: string | null
+          video_url: string | null
+          visibility: string | null
+        }
+        Insert: {
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_verified?: boolean | null
+          light_points?: number | null
+          location?: string | null
+          title: string
+          user_id?: string | null
+          verified_by?: string | null
+          video_url?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_verified?: boolean | null
+          light_points?: number | null
+          location?: string | null
+          title?: string
+          user_id?: string | null
+          verified_by?: string | null
+          video_url?: string | null
+          visibility?: string | null
         }
         Relationships: []
       }
@@ -1411,9 +1741,12 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          edited_at: string | null
           id: string
           image_url: string | null
+          is_edited: boolean | null
           is_read: boolean | null
+          original_content: string | null
           reply_to_id: string | null
           sender_id: string
         }
@@ -1423,9 +1756,12 @@ export type Database = {
           content: string
           conversation_id: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           image_url?: string | null
+          is_edited?: boolean | null
           is_read?: boolean | null
+          original_content?: string | null
           reply_to_id?: string | null
           sender_id: string
         }
@@ -1435,9 +1771,12 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           image_url?: string | null
+          is_edited?: boolean | null
           is_read?: boolean | null
+          original_content?: string | null
           reply_to_id?: string | null
           sender_id?: string
         }
@@ -2363,6 +2702,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_light_points: {
+        Row: {
+          deeds_count: number | null
+          monthly_points: number | null
+          rank: string | null
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+          weekly_points: number | null
+        }
+        Insert: {
+          deeds_count?: number | null
+          monthly_points?: number | null
+          rank?: string | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+          weekly_points?: number | null
+        }
+        Update: {
+          deeds_count?: number | null
+          monthly_points?: number | null
+          rank?: string | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+          weekly_points?: number | null
+        }
+        Relationships: []
+      }
       user_presence: {
         Row: {
           is_online: boolean | null
@@ -2756,6 +3125,7 @@ export type Database = {
         }[]
       }
       claim_rewards: { Args: { p_user_id: string }; Returns: Json }
+      cleanup_expired_stories: { Args: never; Returns: undefined }
       generate_referral_code: { Args: never; Returns: string }
       generate_unique_referral_code: {
         Args: { base_name: string; exclude_id?: string }

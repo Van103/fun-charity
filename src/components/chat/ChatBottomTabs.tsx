@@ -53,13 +53,13 @@ export function ChatBottomTabs({ activeTab, onTabChange, unreadCounts }: ChatBot
               whileTap={{ scale: 0.9 }}
               className="relative p-1.5"
             >
-              <Icon
-                className={`w-6 h-6 transition-colors ${
-                  isActive ? "text-[#9333EA]" : "text-muted-foreground"
-                }`}
-                fill={isActive ? "#9333EA" : "none"}
-                strokeWidth={isActive ? 0 : 2}
-              />
+            <Icon
+              className={`w-6 h-6 transition-colors ${
+                isActive ? "text-[#9333EA]" : "text-[#9333EA]/70"
+              }`}
+              fill={isActive ? "#9333EA" : "none"}
+              strokeWidth={isActive ? 0 : 2}
+            />
 
               {/* Unread badge */}
               {unreadCount && unreadCount > 0 && (
@@ -75,7 +75,7 @@ export function ChatBottomTabs({ activeTab, onTabChange, unreadCounts }: ChatBot
 
             <span
               className={`text-[12px] mt-0.5 font-semibold transition-colors ${
-                isActive ? "text-[#9333EA]" : "text-muted-foreground"
+                isActive ? "text-[#9333EA]" : "text-[#9333EA]/70"
               }`}
             >
               {t(tab.labelKey)}

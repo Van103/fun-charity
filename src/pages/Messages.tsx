@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -127,6 +127,7 @@ const localeMap: Record<string, Locale> = {
 
 export default function Messages() {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const dateLocale = localeMap[language] || vi;
   const [searchParams, setSearchParams] = useSearchParams();
   const targetUserId = searchParams.get("user");
@@ -1089,7 +1090,33 @@ export default function Messages() {
           <div className={`w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-card ${activeConversation ? 'hidden md:flex' : ''}`}>
         {/* Header */}
         <div className="p-4 border-b border-border">
-          <div className="flex items-center justify-between mb-4">
+          {/* Search bar with back button */}
+          <div className="flex items-center gap-2 mb-4">
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="rounded-full h-10 w-10 flex-shrink-0 hover:bg-muted"
+            >
+              <ArrowLeft className="w-5 h-5 text-[#9333EA]" />
+            </Button>
+            
+            {/* Search Input */}
+            <div className="relative flex-1" ref={searchInputRef}>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder={t('messages.searchMessenger')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.trim().length >= 2 && setShowSearchDropdown(true)}
+                className="pl-10 rounded-full bg-muted/50 border-0 focus-visible:ring-1 h-10"
+              />
+            </div>
+          </div>
+          
+          {/* Title row */}
+          <div className="flex items-center justify-between mb-3">
             <h1 className="text-2xl font-bold">{t('messages.chats')}</h1>
             <div className="flex items-center gap-1">
               <Button
@@ -1112,18 +1139,8 @@ export default function Messages() {
             </div>
           </div>
           
-          {/* Search */}
+          {/* Search Results Dropdown */}
           <div className="relative" ref={searchInputRef}>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder={t('messages.searchMessenger')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchQuery.trim().length >= 2 && setShowSearchDropdown(true)}
-              className="pl-10 rounded-full bg-muted/50 border-0 focus-visible:ring-1 h-10"
-            />
-            
-            {/* Search Results Dropdown */}
             <AnimatePresence>
               {showSearchDropdown && (
                 <motion.div

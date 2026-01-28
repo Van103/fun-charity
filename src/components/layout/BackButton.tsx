@@ -7,7 +7,7 @@ const BackButton = () => {
   const location = useLocation();
   
   // Root pages that don't need a back button (main entry points)
-  const rootPages = ['/', '/social', '/auth'];
+  const rootPages = ['/', '/social', '/auth', '/messages'];
   
   // Check if current path is a root page
   const isRootPage = rootPages.some(page => location.pathname === page);

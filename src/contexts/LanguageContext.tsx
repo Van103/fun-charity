@@ -94,9 +94,14 @@ export const translations: Translations = {
     pt: "Perfis da comunidade", ru: "Профили сообщества", ar: "ملفات المجتمع", hi: "समुदाय प्रोफाइल"
   },
   "nav.messages": {
-    en: "Messages", vi: "Tin nhắn", zh: "消息", ja: "メッセージ", ko: "메시지",
-    th: "ข้อความ", fr: "Messages", de: "Nachrichten", es: "Mensajes",
-    pt: "Mensagens", ru: "Сообщения", ar: "الرسائل", hi: "संदेश"
+    en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
+    th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
+    pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
+  },
+  "nav.chat": {
+    en: "Chat", vi: "Chat", zh: "聊天", ja: "チャット", ko: "채팅",
+    th: "แชท", fr: "Chat", de: "Chat", es: "Chat",
+    pt: "Chat", ru: "Чат", ar: "الدردشة", hi: "चैट"
   },
   "nav.search": {
     en: "Search on FUN Charity", vi: "Tìm kiếm trên FUN Charity", zh: "在FUN慈善上搜索", ja: "FUN Charityで検索", ko: "FUN Charity에서 검색",
@@ -1596,6 +1601,11 @@ export const translations: Translations = {
     en: "Your messages", vi: "Tin nhắn của bạn", zh: "您的消息", ja: "あなたのメッセージ", ko: "내 메시지",
     th: "ข้อความของคุณ", fr: "Vos messages", de: "Ihre Nachrichten", es: "Tus mensajes",
     pt: "Suas mensagens", ru: "Ваши сообщения", ar: "رسائلك", hi: "आपके संदेश"
+  },
+  "messages.yourChats": {
+    en: "Your chats", vi: "Đoạn chat của bạn", zh: "您的聊天", ja: "あなたのチャット", ko: "내 채팅",
+    th: "แชทของคุณ", fr: "Vos discussions", de: "Ihre Chats", es: "Tus chats",
+    pt: "Seus chats", ru: "Ваши чаты", ar: "محادثاتك", hi: "आपकी चैट"
   },
   "messages.profile": {
     en: "Profile", vi: "Trang cá nhân", zh: "个人资料", ja: "プロフィール", ko: "프로필",

@@ -33,6 +33,7 @@ import { ChatStickerPicker } from "@/components/chat/ChatStickerPicker";
 import { ChatGifPicker } from "@/components/chat/ChatGifPicker";
 import { ChatSettingsPanel } from "@/components/chat/ChatSettingsPanel";
 import { MessageSearch } from "@/components/chat/MessageSearch";
+import { ForwardMessageModal } from "@/components/chat/ForwardMessageModal";
 
 import { AgoraVideoCallModal } from "@/components/chat/AgoraVideoCallModal";
 import { AgoraGroupCallModal } from "@/components/chat/AgoraGroupCallModal";
@@ -147,6 +148,13 @@ export default function Messages() {
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "groups" | "calls">("all");
   const [replyTo, setReplyTo] = useState<ReplyToState | null>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+  const [forwardMessage, setForwardMessage] = useState<{
+    id: string;
+    content: string;
+    image_url: string | null;
+    sender_id: string;
+    senderName?: string;
+  } | null>(null);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [autoAnswerCall, setAutoAnswerCall] = useState(false);
   const [incomingCallSessionId, setIncomingCallSessionId] = useState<string | null>(null);
@@ -1338,6 +1346,19 @@ export default function Messages() {
                                   {t('messages.reply') || "Trả lời"}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
+                                  onClick={() => setForwardMessage({
+                                    id: msg.id,
+                                    content: msg.content,
+                                    image_url: msg.image_url,
+                                    sender_id: msg.sender_id,
+                                    senderName: msg.senderProfile?.full_name || undefined
+                                  })}
+                                  className="cursor-pointer"
+                                >
+                                  <Forward className="w-4 h-4 mr-2" />
+                                  {t('messages.forward') || "Chuyển tiếp"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
                                   onClick={() => recallMessage(msg.id)}
                                   className="text-destructive focus:text-destructive cursor-pointer"
                                 >
@@ -1349,7 +1370,7 @@ export default function Messages() {
                           </div>
                         )}
 
-                        {/* Reaction picker + Reply for other user's messages */}
+                        {/* Reaction picker + Reply + Forward for other user's messages */}
                         {!isCurrentUser && (
                           <div className="flex items-center gap-1">
                             <MessageReactionPicker
@@ -1370,6 +1391,21 @@ export default function Messages() {
                               title={t('messages.reply') || "Trả lời"}
                             >
                               <Reply className="w-4 h-4 text-muted-foreground" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                              onClick={() => setForwardMessage({
+                                id: msg.id,
+                                content: msg.content,
+                                image_url: msg.image_url,
+                                sender_id: msg.sender_id,
+                                senderName: msg.senderProfile?.full_name || undefined
+                              })}
+                              title={t('messages.forward') || "Chuyển tiếp"}
+                            >
+                              <Forward className="w-4 h-4 text-muted-foreground" />
                             </Button>
                           </div>
                         )}
@@ -1739,6 +1775,15 @@ export default function Messages() {
               await loadMessages(conversationId);
             }
           }}
+        />
+      )}
+
+      {/* Forward Message Modal */}
+      {forwardMessage && currentUserId && (
+        <ForwardMessageModal
+          message={forwardMessage}
+          currentUserId={currentUserId}
+          onClose={() => setForwardMessage(null)}
         />
       )}
     </div>

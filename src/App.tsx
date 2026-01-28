@@ -23,7 +23,7 @@ import PageLoader from "@/components/ui/PageLoader";
 import { RewardNotification } from "@/components/rewards/RewardNotification";
 import { MilestoneAnimation } from "@/components/rewards/MilestoneAnimation";
 import { AngelAIButton } from "@/components/angel/AngelAIButton";
-import MobileBackButton from "@/components/layout/MobileBackButton";
+import BackButton from "@/components/layout/BackButton";
 import GuestAuthPromptModal from "@/components/auth/GuestAuthPromptModal";
 
 // Lazy load all pages for better performance
@@ -181,7 +181,7 @@ const App = () => (
                   <RewardNotification />
                   <MilestoneAnimation />
                   <AngelAIButton />
-                  <MobileBackButton />
+                  <BackButton />
                   <GuestAuthPromptModal />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>

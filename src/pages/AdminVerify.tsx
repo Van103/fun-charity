@@ -32,6 +32,7 @@ import { format } from 'date-fns';
 import { vi, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Helmet } from 'react-helmet-async';
+import { AdminSecurityGate } from "@/components/admin/AdminSecurityGate";
 
 interface Campaign {
   id: string;
@@ -317,7 +318,7 @@ const AdminVerify = () => {
   }
 
   return (
-    <>
+    <AdminSecurityGate>
       <Helmet>
         <title>{language === 'vi' ? 'Quản trị - Duyệt chiến dịch' : 'Admin - Campaign Verification'}</title>
         <meta name="description" content={language === 'vi' ? 'Trang quản trị viên duyệt chiến dịch' : 'Admin panel for campaign verification'} />
@@ -767,7 +768,7 @@ const AdminVerify = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </AdminSecurityGate>
   );
 };
 

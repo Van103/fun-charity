@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminSecurityGate } from "@/components/admin/AdminSecurityGate";
 
 interface KnowledgeEntry {
   id: string;
@@ -364,6 +365,7 @@ export default function AdminAngelKnowledge() {
   if (!isAdmin) return null;
 
   return (
+    <AdminSecurityGate>
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -878,5 +880,6 @@ export default function AdminAngelKnowledge() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </AdminSecurityGate>
   );
 }

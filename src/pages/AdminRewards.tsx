@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
+import { AdminSecurityGate } from "@/components/admin/AdminSecurityGate";
 
 export default function AdminRewards() {
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ export default function AdminRewards() {
   }
 
   return (
-    <>
+    <AdminSecurityGate>
       <Helmet>
         <title>Quản lý phần thưởng | Admin</title>
       </Helmet>
@@ -682,6 +683,6 @@ export default function AdminRewards() {
 
         <MobileBottomNav />
       </div>
-    </>
+    </AdminSecurityGate>
   );
 }

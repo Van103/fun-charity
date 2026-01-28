@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Wallet, History, ArrowUpRight, Copy, Check, Coins, TrendingUp, Gift, Trophy, Link2, Share2, Send, ExternalLink, PartyPopper } from 'lucide-react';
+import { Wallet, History, ArrowUpRight, Copy, Check, Coins, TrendingUp, Gift, Trophy, Link2, Share2, Send, ExternalLink, PartyPopper, Shield } from 'lucide-react';
+import { WalletSecuritySettings } from '@/components/wallet/WalletSecuritySettings';
 import { useUserBalances, useRewardTransactions, useReferralCode, formatCurrency, getCurrencyIcon, getActionName } from '@/hooks/useRewards';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -278,24 +279,28 @@ export function MyWallet() {
         </CardContent>
       </Card>
 
-      {/* Tabs: History & Withdraw */}
+      {/* Tabs: History, Gift, Transfer, Withdraw, Security */}
       <Tabs defaultValue="history" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="history">
-            <History className="w-4 h-4 mr-2" />
-            Lịch sử
+            <History className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Lịch sử</span>
           </TabsTrigger>
           <TabsTrigger value="gift">
-            <Gift className="w-4 h-4 mr-2" />
-            Tặng
+            <Gift className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Tặng</span>
           </TabsTrigger>
           <TabsTrigger value="transfer">
-            <Send className="w-4 h-4 mr-2" />
-            Chuyển
+            <Send className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Chuyển</span>
           </TabsTrigger>
           <TabsTrigger value="withdraw">
-            <ArrowUpRight className="w-4 h-4 mr-2" />
-            Rút
+            <ArrowUpRight className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Rút</span>
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <Shield className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Bảo mật</span>
           </TabsTrigger>
         </TabsList>
 
@@ -470,6 +475,10 @@ export function MyWallet() {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="security" className="mt-4">
+          <WalletSecuritySettings />
         </TabsContent>
       </Tabs>
 

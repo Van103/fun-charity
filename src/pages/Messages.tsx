@@ -38,6 +38,8 @@ import { ChatGifPicker } from "@/components/chat/ChatGifPicker";
 import { ChatSettingsPanel } from "@/components/chat/ChatSettingsPanel";
 import { MessageSearch } from "@/components/chat/MessageSearch";
 import { ForwardMessageModal } from "@/components/chat/ForwardMessageModal";
+import { GroupSettingsPanel } from "@/components/chat/GroupSettingsPanel";
+import { ManageGroupMembers } from "@/components/chat/ManageGroupMembers";
 
 import { AgoraVideoCallModal } from "@/components/chat/AgoraVideoCallModal";
 import { AgoraGroupCallModal } from "@/components/chat/AgoraGroupCallModal";
@@ -180,6 +182,8 @@ export default function Messages() {
     id: string;
     content: string;
   } | null>(null);
+  const [showGroupSettings, setShowGroupSettings] = useState(false);
+  const [showAddMembers, setShowAddMembers] = useState(false);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [autoAnswerCall, setAutoAnswerCall] = useState(false);
   const [incomingCallSessionId, setIncomingCallSessionId] = useState<string | null>(null);
@@ -1437,6 +1441,20 @@ export default function Messages() {
                     </Button>
                   </>
                 )}
+                
+                {/* Group Settings button */}
+                {activeConversation.is_group && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowGroupSettings(true)}
+                    title="Cài đặt nhóm"
+                    className="rounded-full hover:bg-muted h-10 w-10"
+                  >
+                    <Settings className="w-5 h-5" />
+                  </Button>
+                )}
+                
                 <Button
                   variant="ghost"
                   size="icon"
@@ -2068,6 +2086,24 @@ export default function Messages() {
           }}
         />
       )}
+
+      {/* Group Settings Panel */}
+      <GroupSettingsPanel
+        open={showGroupSettings}
+        onOpenChange={setShowGroupSettings}
+        conversationId={activeConversation?.id || null}
+        onAddMemberClick={() => {
+          setShowGroupSettings(false);
+          setShowAddMembers(true);
+        }}
+      />
+
+      {/* Add Members Modal */}
+      <ManageGroupMembers
+        open={showAddMembers}
+        onOpenChange={setShowAddMembers}
+        conversationId={activeConversation?.id || null}
+      />
         </>
       )}
     </div>

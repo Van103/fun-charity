@@ -10,7 +10,7 @@ import {
   Loader2, Send, ArrowLeft, Search, Image as ImageIcon, X, 
   Phone, Video, Users, Plus, ThumbsUp, Circle, MoreVertical, Trash2,
   Info, Edit3, Bell, BellOff, Lock, ChevronDown, ChevronRight,
-  File, Image as ImageIconSmall, Shield, Settings
+  File, Image as ImageIconSmall, Shield, Settings, Reply, Forward
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -43,6 +43,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // useIncomingCallListener import removed - now handled globally in App.tsx
 import { CallsTab } from "@/components/chat/CallsTab";
 import { CallMessageBubble, isCallMessage } from "@/components/chat/CallMessageBubble";
+import { MessageReplyPreview, ReplyQuote } from "@/components/chat/MessageReplyPreview";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Conversation {
@@ -76,10 +77,22 @@ interface Message {
   image_url: string | null;
   is_read: boolean;
   created_at: string;
+  reply_to_id?: string | null;
+  audio_url?: string | null;
+  audio_duration?: number | null;
   senderProfile?: {
     full_name: string | null;
     avatar_url: string | null;
   };
+  replyToMessage?: Message | null;
+}
+
+interface ReplyToState {
+  id: string;
+  content: string;
+  sender_id: string;
+  senderName?: string;
+  image_url?: string | null;
 }
 
 interface SearchUser {
@@ -132,6 +145,7 @@ export default function Messages() {
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMessageSearch, setShowMessageSearch] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "groups" | "calls">("all");
+  const [replyTo, setReplyTo] = useState<ReplyToState | null>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [autoAnswerCall, setAutoAnswerCall] = useState(false);
@@ -532,11 +546,21 @@ export default function Messages() {
       .in("user_id", senderIds);
 
     const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+    
+    // Create a map for quick message lookup (for reply_to)
+    const messageMap = new Map(data.map(m => [m.id, m]));
 
-    const enrichedMessages = data.map(msg => ({
-      ...msg,
-      senderProfile: profileMap.get(msg.sender_id)
-    }));
+    const enrichedMessages = data.map(msg => {
+      const replyToMsg = msg.reply_to_id ? messageMap.get(msg.reply_to_id) : null;
+      return {
+        ...msg,
+        senderProfile: profileMap.get(msg.sender_id),
+        replyToMessage: replyToMsg ? {
+          ...replyToMsg,
+          senderProfile: profileMap.get(replyToMsg.sender_id)
+        } : null
+      };
+    });
 
     // Double check we're still on the same conversation
     if (activeConversationRef.current === conversationId) {
@@ -553,8 +577,9 @@ export default function Messages() {
   }, [currentUserId]);
 
   const selectConversation = async (convo: Conversation) => {
-    // Clear messages immediately to prevent showing old chat
+    // Clear messages and reply state immediately
     setMessages([]);
+    setReplyTo(null);
     // Update ref BEFORE loading messages so the check passes
     activeConversationRef.current = convo.id;
     setActiveConversation(convo);
@@ -634,7 +659,8 @@ export default function Messages() {
           conversation_id: activeConversation.id,
           sender_id: currentUserId,
           content: newMessage.trim() || (imageUrl ? "" : ""),
-          image_url: imageUrl
+          image_url: imageUrl,
+          reply_to_id: replyTo?.id || null
         });
 
       if (error) throw error;
@@ -642,6 +668,7 @@ export default function Messages() {
       setNewMessage("");
       setImageFile(null);
       setImagePreview(null);
+      setReplyTo(null); // Clear reply after sending
       
       await supabase
         .from("conversations")
@@ -1264,9 +1291,24 @@ export default function Messages() {
                           </div>
                         )}
                         
-                        {/* Reaction picker + Recall button for own messages */}
+                        {/* Reaction picker + Reply + Recall button for own messages */}
                         {isCurrentUser && (
                           <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                              onClick={() => setReplyTo({
+                                id: msg.id,
+                                content: msg.content,
+                                sender_id: msg.sender_id,
+                                senderName: msg.senderProfile?.full_name || undefined,
+                                image_url: msg.image_url
+                              })}
+                              title={t('messages.reply') || "Trả lời"}
+                            >
+                              <Reply className="w-4 h-4 text-muted-foreground" />
+                            </Button>
                             <MessageReactionPicker
                               onSelect={(emoji) => toggleReaction(msg.id, emoji)}
                               currentReaction={getUserReaction(msg.id)}
@@ -1283,6 +1325,19 @@ export default function Messages() {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="bg-card border-border">
                                 <DropdownMenuItem 
+                                  onClick={() => setReplyTo({
+                                    id: msg.id,
+                                    content: msg.content,
+                                    sender_id: msg.sender_id,
+                                    senderName: msg.senderProfile?.full_name || undefined,
+                                    image_url: msg.image_url
+                                  })}
+                                  className="cursor-pointer"
+                                >
+                                  <Reply className="w-4 h-4 mr-2" />
+                                  {t('messages.reply') || "Trả lời"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
                                   onClick={() => recallMessage(msg.id)}
                                   className="text-destructive focus:text-destructive cursor-pointer"
                                 >
@@ -1294,12 +1349,29 @@ export default function Messages() {
                           </div>
                         )}
 
-                        {/* Reaction picker for other user's messages */}
+                        {/* Reaction picker + Reply for other user's messages */}
                         {!isCurrentUser && (
-                          <MessageReactionPicker
-                            onSelect={(emoji) => toggleReaction(msg.id, emoji)}
-                            currentReaction={getUserReaction(msg.id)}
-                          />
+                          <div className="flex items-center gap-1">
+                            <MessageReactionPicker
+                              onSelect={(emoji) => toggleReaction(msg.id, emoji)}
+                              currentReaction={getUserReaction(msg.id)}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                              onClick={() => setReplyTo({
+                                id: msg.id,
+                                content: msg.content,
+                                sender_id: msg.sender_id,
+                                senderName: msg.senderProfile?.full_name || undefined,
+                                image_url: msg.image_url
+                              })}
+                              title={t('messages.reply') || "Trả lời"}
+                            >
+                              <Reply className="w-4 h-4 text-muted-foreground" />
+                            </Button>
+                          </div>
                         )}
                         
                         <div className={`flex flex-col max-w-[70%] ${isCurrentUser ? 'items-end' : 'items-start'}`}>
@@ -1326,6 +1398,29 @@ export default function Messages() {
                                     : 'bg-muted'
                                 }`}
                               >
+                                {/* Reply Quote - show quoted message */}
+                                {msg.replyToMessage && currentUserId && (
+                                  <ReplyQuote
+                                    replyTo={{
+                                      id: msg.replyToMessage.id,
+                                      content: msg.replyToMessage.content,
+                                      sender_id: msg.replyToMessage.sender_id,
+                                      senderName: msg.replyToMessage.senderProfile?.full_name || undefined,
+                                      image_url: msg.replyToMessage.image_url
+                                    }}
+                                    currentUserId={currentUserId}
+                                    onClick={() => {
+                                      // Scroll to original message
+                                      const messageEl = document.getElementById(`message-${msg.replyToMessage!.id}`);
+                                      if (messageEl) {
+                                        messageEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        setHighlightedMessageId(msg.replyToMessage!.id);
+                                        setTimeout(() => setHighlightedMessageId(null), 2000);
+                                      }
+                                    }}
+                                  />
+                                )}
+                                
                                 {msg.image_url && (
                                   isVideoUrl(msg.image_url) ? (
                                     <video 
@@ -1392,6 +1487,17 @@ export default function Messages() {
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
+
+            {/* Reply Preview */}
+            <AnimatePresence>
+              {replyTo && currentUserId && (
+                <MessageReplyPreview
+                  replyTo={replyTo}
+                  currentUserId={currentUserId}
+                  onCancel={() => setReplyTo(null)}
+                />
+              )}
+            </AnimatePresence>
 
             {/* Image Preview */}
             <AnimatePresence>

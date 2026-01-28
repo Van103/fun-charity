@@ -294,6 +294,36 @@ export const translations: Translations = {
     th: "การตั้งค่า", fr: "Paramètres", de: "Einstellungen", es: "Configuración",
     pt: "Configurações", ru: "Настройки", ar: "الإعدادات", hi: "सेटिंग्स"
   },
+  "chat.settingsFeatures": {
+    en: "Features", vi: "Tính năng", zh: "功能", ja: "機能", ko: "기능",
+    th: "ฟีเจอร์", fr: "Fonctionnalités", de: "Funktionen", es: "Funciones",
+    pt: "Funcionalidades", ru: "Функции", ar: "الميزات", hi: "विशेषताएं"
+  },
+  "chat.settingsActivityStatus": {
+    en: "Activity status", vi: "Trạng thái hoạt động", zh: "活动状态", ja: "アクティビティ状態", ko: "활동 상태",
+    th: "สถานะกิจกรรม", fr: "Statut d'activité", de: "Aktivitätsstatus", es: "Estado de actividad",
+    pt: "Status de atividade", ru: "Статус активности", ar: "حالة النشاط", hi: "गतिविधि स्थिति"
+  },
+  "chat.settingsPrivacy": {
+    en: "Privacy and safety", vi: "Quyền riêng tư và an toàn", zh: "隐私和安全", ja: "プライバシーと安全", ko: "개인정보 및 보안",
+    th: "ความเป็นส่วนตัวและความปลอดภัย", fr: "Confidentialité et sécurité", de: "Datenschutz und Sicherheit", es: "Privacidad y seguridad",
+    pt: "Privacidade e segurança", ru: "Конфиденциальность и безопасность", ar: "الخصوصية والأمان", hi: "गोपनीयता और सुरक्षा"
+  },
+  "chat.settingsPersonalInfo": {
+    en: "Personal info", vi: "Thông tin cá nhân", zh: "个人信息", ja: "個人情報", ko: "개인 정보",
+    th: "ข้อมูลส่วนตัว", fr: "Informations personnelles", de: "Persönliche Daten", es: "Información personal",
+    pt: "Informações pessoais", ru: "Личная информация", ar: "المعلومات الشخصية", hi: "व्यक्तिगत जानकारी"
+  },
+  "chat.settingsPassword": {
+    en: "Password and security", vi: "Mật khẩu và bảo mật", zh: "密码和安全", ja: "パスワードとセキュリティ", ko: "비밀번호 및 보안",
+    th: "รหัสผ่านและความปลอดภัย", fr: "Mot de passe et sécurité", de: "Passwort und Sicherheit", es: "Contraseña y seguridad",
+    pt: "Senha e segurança", ru: "Пароль и безопасность", ar: "كلمة المرور والأمان", hi: "पासवर्ड और सुरक्षा"
+  },
+  "chat.settingsAdminModeration": {
+    en: "Admin moderation", vi: "Kiểm duyệt Admin", zh: "管理员审核", ja: "管理者モデレーション", ko: "관리자 검토",
+    th: "การตรวจสอบแอดมิน", fr: "Modération admin", de: "Admin-Moderation", es: "Moderación de admin",
+    pt: "Moderação de admin", ru: "Модерация админа", ar: "إشراف المشرف", hi: "एडमिन मॉडरेशन"
+  },
   "chat.pendingMessages": {
     en: "Pending messages", vi: "Tin nhắn đang chờ", zh: "待处理消息", ja: "保留中のメッセージ", ko: "대기 중인 메시지",
     th: "ข้อความที่รอดำเนินการ", fr: "Messages en attente", de: "Ausstehende Nachrichten", es: "Mensajes pendientes",

@@ -43,7 +43,7 @@ export function ChatBottomTabs({ activeTab, onTabChange, unreadCounts }: ChatBot
             {isActive && (
               <motion.div
                 layoutId="chatTabIndicator"
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-primary"
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-[#9333EA]"
                 initial={false}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
@@ -55,9 +55,9 @@ export function ChatBottomTabs({ activeTab, onTabChange, unreadCounts }: ChatBot
             >
               <Icon
                 className={`w-6 h-6 transition-colors ${
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  isActive ? "text-[#9333EA]" : "text-muted-foreground"
                 }`}
-                fill={isActive ? "hsl(var(--primary))" : "none"}
+                fill={isActive ? "#9333EA" : "none"}
                 strokeWidth={isActive ? 0 : 2}
               />
 
@@ -74,8 +74,8 @@ export function ChatBottomTabs({ activeTab, onTabChange, unreadCounts }: ChatBot
             </motion.div>
 
             <span
-              className={`text-[10px] mt-0.5 font-medium transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground"
+              className={`text-[12px] mt-0.5 font-semibold transition-colors ${
+                isActive ? "text-[#9333EA]" : "text-muted-foreground"
               }`}
             >
               {t(tab.labelKey)}

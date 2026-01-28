@@ -36,21 +36,17 @@ const BackButton = () => {
           whileHover={{ scale: 1.02 }}
           onClick={handleBack}
           className="fixed top-20 left-3 md:left-4 z-[45]
-            flex items-center justify-center gap-2
+            flex items-center justify-center
             bg-background/95 
             backdrop-blur-md shadow-lg 
             border border-border/50
             hover:bg-primary/10 hover:border-primary/30
             active:bg-primary/20
             transition-colors duration-200
-            w-10 h-10 rounded-full
-            md:w-auto md:h-10 md:px-4 md:py-2 md:rounded-lg"
+            w-10 h-10 rounded-full"
           aria-label="Quay lại"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
-          <span className="hidden md:inline text-sm font-medium text-foreground">
-            Quay lại
-          </span>
         </motion.button>
       )}
     </AnimatePresence>

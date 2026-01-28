@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Settings, MessageCircle, Archive, Users, Bot, ChevronRight, 
-  ExternalLink 
+  ExternalLink, ChevronDown, Sparkles, Activity, Shield, User, Lock, ShieldCheck
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAngelAI } from "@/hooks/useAngelAI";
 import { AngelAIChatModal } from "@/components/angel/AngelAIChatModal";
 import { useState } from "react";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 
 // Import FUN Ecosystem logos
 import funProfileLogo from "@/assets/fun-profile-logo.webp";
@@ -46,6 +47,14 @@ const ecosystemPlatforms = [
   { image: funGreenEarthLogo, label: "GREEN EARTH", href: "https://greenearth-fun.lovable.app/", external: true },
 ];
 
+const settingsSubItems = [
+  { icon: Sparkles, labelKey: "chat.settingsFeatures", href: "#features" },
+  { icon: Activity, labelKey: "chat.settingsActivityStatus", href: "#activity-status" },
+  { icon: Shield, labelKey: "chat.settingsPrivacy", href: "#privacy" },
+  { icon: User, labelKey: "chat.settingsPersonalInfo", href: "#personal-info" },
+  { icon: Lock, labelKey: "chat.settingsPassword", href: "#password" },
+];
+
 export function ChatMenuTab({ 
   userProfile, 
   pendingMessagesCount = 0, 
@@ -54,19 +63,11 @@ export function ChatMenuTab({
 }: ChatMenuTabProps) {
   const { t } = useLanguage();
   const [showAngelAI, setShowAngelAI] = useState(false);
+  const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
   const angelAI = useAngelAI();
+  const { data: isAdmin } = useAdminCheck();
 
   const menuSections = [
-    {
-      items: [
-        { 
-          icon: Settings, 
-          labelKey: "chat.settings", 
-          href: "#settings",
-          badge: null 
-        },
-      ]
-    },
     {
       items: [
         { 
@@ -134,13 +135,79 @@ export function ChatMenuTab({
           <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
         </motion.div>
 
+        {/* Settings Section with Collapsible Submenu */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.02 }}
+          className="bg-muted/30 rounded-xl overflow-hidden"
+        >
+          <button
+            onClick={() => setShowSettingsSubmenu(!showSettingsSubmenu)}
+            className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors"
+          >
+            <div className="p-2 rounded-full bg-muted">
+              <Settings className="w-5 h-5 text-foreground" />
+            </div>
+            <span className="flex-1 font-medium text-left">{t('chat.settings')}</span>
+            <motion.div
+              animate={{ rotate: showSettingsSubmenu ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
+            </motion.div>
+          </button>
+
+          <AnimatePresence>
+            {showSettingsSubmenu && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="pl-4 pb-2 space-y-1">
+                  {settingsSubItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.labelKey}
+                        onClick={() => onNavigate?.(item.href)}
+                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <Icon className="w-4 h-4 text-muted-foreground" />
+                        <span className="flex-1 text-sm text-left">{t(item.labelKey)}</span>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    );
+                  })}
+                  
+                  {/* Admin Moderation - Only show for admins */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/moderation"
+                      className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-amber-500" />
+                      <span className="flex-1 text-sm text-left">{t('chat.settingsAdminModeration')}</span>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">Admin</Badge>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </Link>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
         {/* Menu Sections */}
         {menuSections.map((section, sectionIndex) => (
           <motion.div
             key={sectionIndex}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: sectionIndex * 0.05 }}
+            transition={{ delay: (sectionIndex + 1) * 0.05 }}
             className="bg-muted/30 rounded-xl overflow-hidden"
           >
             {section.items.map((item, itemIndex) => {

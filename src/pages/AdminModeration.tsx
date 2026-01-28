@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +32,7 @@ import { vi } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { AdminSecurityGate } from "@/components/admin/AdminSecurityGate";
 
 export default function AdminModeration() {
   const navigate = useNavigate();
@@ -98,6 +98,7 @@ export default function AdminModeration() {
   }
 
   return (
+    <AdminSecurityGate>
     <div className="min-h-screen bg-background">
       <Navbar />
 
@@ -361,5 +362,6 @@ export default function AdminModeration() {
         </DialogContent>
       </Dialog>
     </div>
+    </AdminSecurityGate>
   );
 }

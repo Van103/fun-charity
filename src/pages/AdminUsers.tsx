@@ -63,6 +63,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { AdminSecurityGate } from "@/components/admin/AdminSecurityGate";
 
 interface UserProfile {
   id: string;
@@ -317,6 +318,7 @@ export default function AdminUsers() {
   }
 
   return (
+    <AdminSecurityGate>
     <div className="min-h-screen bg-background">
       <Navbar />
 
@@ -988,5 +990,6 @@ export default function AdminUsers() {
         </DialogContent>
       </Dialog>
     </div>
+    </AdminSecurityGate>
   );
 }

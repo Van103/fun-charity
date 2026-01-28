@@ -33,7 +33,7 @@ const mainNavItems = [
   { icon: Home, labelKey: "nav.home", href: "/social" },
   { icon: Newspaper, labelKey: "nav.campaigns", href: "/campaigns" },
   { icon: Users, labelKey: "nav.communityProfiles", href: "/profiles" },
-  { icon: MessageCircle, labelKey: "menu.chat", href: "/messages" },
+  { icon: MessageCircle, labelKey: "nav.chat", href: "/messages" },
 ];
 
 interface MenuItem {

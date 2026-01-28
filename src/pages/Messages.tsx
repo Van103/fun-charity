@@ -899,7 +899,7 @@ export default function Messages() {
   return (
     <div className="fixed inset-0 bg-background flex">
       <Helmet>
-        <title>Messenger | FUN Charity</title>
+        <title>FUN Chat | FUN Charity</title>
       </Helmet>
 
       {/* Left Sidebar - Conversations List */}
@@ -1651,7 +1651,7 @@ export default function Messages() {
               <Send className="w-12 h-12 text-primary" />
             </div>
             <div className="text-center">
-              <p className="font-bold text-xl text-foreground">{t('messages.yourMessages')}</p>
+              <p className="font-bold text-xl text-foreground">{t('messages.yourChats')}</p>
               <p className="text-sm mt-1">{t('messages.selectConversation')}</p>
             </div>
           </div>

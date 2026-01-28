@@ -4,108 +4,125 @@
 
 ---
 
-## PHẦN 1: BACK BUTTON - BỎ CHỮ "QUAY LẠI"
-
-### File: `src/components/layout/BackButton.tsx`
-
-**Thay đổi:**
-- Xóa phần `<span>` hiển thị chữ "Quay lại" trên desktop
-- Đổi class của button thành hình tròn cố định cho cả mobile và desktop
-- Giữ nguyên size w-10 h-10 rounded-full cho mọi thiết bị
-
-**Trước:**
-```typescript
-w-10 h-10 rounded-full
-md:w-auto md:h-10 md:px-4 md:py-2 md:rounded-lg
-// + <span className="hidden md:inline">Quay lại</span>
-```
-
-**Sau:**
-```typescript
-w-10 h-10 rounded-full
-// Xóa md:w-auto md:h-10 md:px-4 md:py-2 md:rounded-lg
-// Xóa luôn <span> chứa "Quay lại"
-```
-
----
-
-## PHẦN 2: SETTINGS MENU - MỞ RỘNG CHI TIẾT
-
-### File: `src/components/chat/ChatMenuTab.tsx`
-
-**Thay đổi menu "Cài đặt":**
-
-Khi bấm vào "Cài đặt", mở Collapsible hoặc navigate đến section với các mục:
-
-| Mục | Icon | Mô tả |
-|-----|------|-------|
-| Tính năng | Sparkles | Bật/tắt các tính năng chat |
-| Trạng thái hoạt động | Activity | Online/Offline/Ẩn |
-| Quyền riêng tư và an toàn | Shield | Ai có thể liên hệ, chặn, etc. |
-| Thông tin cá nhân | User | Email, SĐT, ngày sinh |
-| Mật khẩu và bảo mật | Lock | Đổi mật khẩu, 2FA |
-| Kiểm duyệt Admin | ShieldCheck | Chỉ hiển thị cho Admin |
-
-**Cách triển khai:**
-- Thêm state `showSettingsSubmenu`
-- Khi click "Cài đặt" -> toggle submenu
-- Hiển thị các mục con với animation slide-down
-- Mỗi mục navigate đến trang/modal tương ứng
-
----
-
-## PHẦN 3: BOTTOM TABS - CHỮ TO HƠN, MÀU TÍM HỒNG THUẦN
+## PHẦN 1: BOTTOM TABS - TẤT CẢ CHỮ HIỂN THỊ MÀU TÍM
 
 ### File: `src/components/chat/ChatBottomTabs.tsx`
 
-**Thay đổi chữ labels:**
+**Thay đổi:**
+Thay đổi màu chữ labels từ `text-muted-foreground` (xám) sang `text-[#9333EA]` (tím) cho TẤT CẢ các tab (kể cả không active)
 
-**Trước (line 76-82):**
-```typescript
-<span className={`text-[10px] mt-0.5 font-medium transition-colors ${
-  isActive ? "text-primary" : "text-muted-foreground"
-}`}>
-```
-
-**Sau:**
+**Trước (line 76-79):**
 ```typescript
 <span className={`text-[12px] mt-0.5 font-semibold transition-colors ${
   isActive ? "text-[#9333EA]" : "text-muted-foreground"
 }`}>
 ```
 
-**Thay đổi màu icon khi active:**
-
-**Trước (line 56-62):**
+**Sau:**
 ```typescript
-<Icon
-  className={`w-6 h-6 transition-colors ${
-    isActive ? "text-primary" : "text-muted-foreground"
-  }`}
-  fill={isActive ? "hsl(var(--primary))" : "none"}
-/>
+<span className={`text-[12px] mt-0.5 font-semibold transition-colors ${
+  isActive ? "text-[#9333EA]" : "text-[#9333EA]/70"
+}`}>
 ```
 
-**Sau:**
+**Thay đổi màu icon (line 56-62):**
+
+**Trước:**
 ```typescript
 <Icon
   className={`w-6 h-6 transition-colors ${
     isActive ? "text-[#9333EA]" : "text-muted-foreground"
   }`}
-  fill={isActive ? "#9333EA" : "none"}
 />
-```
-
-**Thay đổi active indicator (line 46):**
-
-**Trước:**
-```typescript
-className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-primary"
 ```
 
 **Sau:**
 ```typescript
-className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-[#9333EA]"
+<Icon
+  className={`w-6 h-6 transition-colors ${
+    isActive ? "text-[#9333EA]" : "text-[#9333EA]/70"
+  }`}
+/>
+```
+
+---
+
+## PHẦN 2: NÚT TRỞ VỀ - DI CHUYỂN LÊN THANH TÌM KIẾM
+
+### Cách tiếp cận:
+- Xóa BackButton khỏi trang /messages (ẩn global BackButton)
+- Tích hợp nút quay lại vào header của FUN Chat, nằm cùng hàng với thanh tìm kiếm
+- Nút quay lại chỉ hiển thị bên trái thanh tìm kiếm
+
+### File 1: `src/components/layout/BackButton.tsx`
+
+**Thay đổi:**
+Thêm `/messages` vào danh sách `rootPages` để ẩn nút global trên trang Messages
+
+**Trước:**
+```typescript
+const rootPages = ['/', '/social', '/auth'];
+```
+
+**Sau:**
+```typescript
+const rootPages = ['/', '/social', '/auth', '/messages'];
+```
+
+### File 2: `src/pages/Messages.tsx`
+
+**Thay đổi Header (lines 1091-1113):**
+
+Thêm nút quay lại vào hàng chứa thanh tìm kiếm, thay đổi layout:
+
+**Trước:**
+```typescript
+<div className="p-4 border-b border-border">
+  <div className="flex items-center justify-between mb-4">
+    <h1 className="text-2xl font-bold">{t('messages.chats')}</h1>
+    <div className="flex items-center gap-1">
+      <Button ... />
+      <Button ... />
+    </div>
+  </div>
+  
+  {/* Search */}
+  <div className="relative" ref={searchInputRef}>
+    <Search className="absolute left-3 ..." />
+    <Input ... />
+  </div>
+```
+
+**Sau:**
+```typescript
+<div className="p-4 border-b border-border">
+  {/* Search bar with back button */}
+  <div className="flex items-center gap-2 mb-4">
+    {/* Back Button */}
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => navigate(-1)}
+      className="rounded-full h-10 w-10 flex-shrink-0 hover:bg-muted"
+    >
+      <ArrowLeft className="w-5 h-5 text-[#9333EA]" />
+    </Button>
+    
+    {/* Search Input */}
+    <div className="relative flex-1" ref={searchInputRef}>
+      <Search className="absolute left-3 ..." />
+      <Input ... />
+    </div>
+  </div>
+  
+  {/* Title row */}
+  <div className="flex items-center justify-between mb-3">
+    <h1 className="text-2xl font-bold">{t('messages.chats')}</h1>
+    <div className="flex items-center gap-1">
+      <Button ... />
+      <Button ... />
+    </div>
+  </div>
 ```
 
 ---
@@ -114,44 +131,32 @@ className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full bg-[
 
 | File | Thay đổi |
 |------|----------|
-| `BackButton.tsx` | Xóa text "Quay lại", giữ icon tròn cố định |
-| `ChatMenuTab.tsx` | Thêm submenu mở rộng cho Cài đặt với 6 mục |
-| `ChatBottomTabs.tsx` | Font size: 10px → 12px, font-medium → font-semibold, màu: primary → #9333EA thuần |
+| `ChatBottomTabs.tsx` | Tất cả chữ & icon hiển thị màu tím (active: đậm, inactive: nhạt hơn) |
+| `BackButton.tsx` | Ẩn global back button trên trang /messages |
+| `Messages.tsx` | Thêm nút quay lại nằm cùng hàng với thanh tìm kiếm, di chuyển tiêu đề xuống dưới |
 
 ---
 
 ## PREVIEW SAU KHI HOÀN THÀNH
 
-### Back Button (Trước vs Sau)
+### Header Layout (Messenger Style)
 ```
-TRƯỚC:              SAU:
-┌───────────────┐   ┌─────┐
-│ ← Quay lại   │   │  ←  │
-└───────────────┘   └─────┘
-```
-
-### Settings Submenu (Mới)
-```
-┌─────────────────────────────────────┐
-│ ⚙️ Cài đặt                      ▼   │
-├─────────────────────────────────────┤
-│   ✨ Tính năng                  >   │
-│   🟢 Trạng thái hoạt động       >   │
-│   🛡️ Quyền riêng tư và an toàn  >   │
-│   👤 Thông tin cá nhân          >   │
-│   🔒 Mật khẩu và bảo mật        >   │
-│   🛡️ Kiểm duyệt Admin (Admin)   >   │
-└─────────────────────────────────────┘
+┌────────────────────────────────────────────────────┐
+│  [←]  │ 🔍 Tìm kiếm trên Messenger        │        │
+├────────────────────────────────────────────────────┤
+│  Đoạn chat                    [⚙️] [✏️]            │
+├────────────────────────────────────────────────────┤
+│  [Tất cả] [Chưa đọc] [Nhóm] [📞 Cuộc gọi]          │
+└────────────────────────────────────────────────────┘
 ```
 
-### Bottom Tabs (Chữ to hơn, tím thuần)
+### Bottom Tabs (Tất cả màu tím)
 ```
 ┌────────────────────────────────────────────────────┐
 │   💬        📷        ❤️        🔔        ☰      │
-│   0         0         0         0       Menu      │
-│ Đoạn chat  Tin    Từ thiện  Thông báo            │
-│                   ━━━━━━                          │
-│           (Tím thuần #9333EA, 12px, semibold)     │
+│    0         0         0         0       Menu      │
+│ Đoạn chat   Tin    Từ thiện  Thông báo            │
+│ (tím đậm) (tím nhạt)(tím nhạt)(tím nhạt)(tím nhạt)│
 └────────────────────────────────────────────────────┘
 ```
 

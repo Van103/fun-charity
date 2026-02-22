@@ -14,9 +14,7 @@
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
-    <!-- Preload critical assets -->
-    <link rel="preload" href="/images/hero-poster.jpg" as="image" type="image/jpeg" fetchpriority="high" />
-    <link rel="preload" href="/cursors/fairy-angel.png" as="image" type="image/png" />
+    <!-- Removed preloads for hero-poster.jpg and fairy-angel.png - only needed on specific pages -->
     
     <!-- Favicon - Complete set for all browsers and platforms (PNG prioritized, with cache-busting) -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20260120-2" />
@@ -53,7 +51,8 @@
     <meta name="twitter:image" content="https://charity.fun.rich/pwa-512x512.png" />
 
     <link rel="canonical" href="https://charity.fun.rich" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" /></noscript>
   </head>
 
   <body>

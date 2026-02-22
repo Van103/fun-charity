@@ -58,20 +58,22 @@ export function EnergyBokeh() {
   const particlesRef = useRef<BokehParticle[]>([]);
   const animationRef = useRef<number>();
   
-  // Check if mobile
-  const isMobile = useMemo(() => {
+  // Check if mobile or weak device
+  const isWeakDevice = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return window.innerWidth < 768;
+    const isMobile = window.innerWidth < 768;
+    const lowCores = (navigator.hardwareConcurrency || 4) <= 4;
+    return isMobile || lowCores;
   }, []);
 
   const initParticles = useCallback((width: number, height: number, count: number) => {
-    // Reduce particles by 60% on mobile
-    const actualCount = isMobile ? Math.round(count * 0.4) : count;
+    // Reduce particles by 70% on weak devices (was 60% mobile-only)
+    const actualCount = isWeakDevice ? Math.round(count * 0.3) : count;
     
     particlesRef.current = Array.from({ length: actualCount }, () => 
       createParticle(width, height, false)
     );
-  }, [isMobile]);
+  }, [isWeakDevice]);
 
   const animate = useCallback(() => {
     const canvas = canvasRef.current;
@@ -143,8 +145,8 @@ export function EnergyBokeh() {
     if (!canvas || reduceMotion || !bokehEnabled || performanceMode) return;
     
     const currentCount = particlesRef.current.length;
-    // Reduce by 60% on mobile
-    const targetCount = isMobile ? Math.round(bokehParticleCount * 0.4) : bokehParticleCount;
+    // Reduce by 70% on weak devices
+    const targetCount = isWeakDevice ? Math.round(bokehParticleCount * 0.3) : bokehParticleCount;
     
     if (targetCount > currentCount) {
       // Add more particles
@@ -155,7 +157,7 @@ export function EnergyBokeh() {
       // Remove particles
       particlesRef.current = particlesRef.current.slice(0, targetCount);
     }
-  }, [bokehParticleCount, reduceMotion, bokehEnabled, isMobile, performanceMode]);
+  }, [bokehParticleCount, reduceMotion, bokehEnabled, isWeakDevice, performanceMode]);
 
   if (reduceMotion || !bokehEnabled || performanceMode) return null;
 

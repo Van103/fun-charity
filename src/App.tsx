@@ -10,8 +10,6 @@ import { GuestModeProvider } from "@/contexts/GuestModeContext";
 import { AngelThemeProvider } from "@/components/angel/AngelThemeContext";
 import { AnimatedBackground } from "@/components/background/AnimatedBackground";
 import { EnergyBokeh } from "@/components/background/EnergyBokeh";
-import CustomCursor from "@/components/cursor/CustomCursor";
-import FlyingAngel from "@/components/cursor/FlyingAngel";
 import { useIncomingCallListener } from "@/hooks/useIncomingCallListener";
 import { IncomingCallNotification } from "@/components/chat/IncomingCallNotification";
 import { GlobalEmailVerificationBanner } from "@/components/layout/GlobalEmailVerificationBanner";
@@ -19,6 +17,8 @@ import { InstallAppBanner } from "@/components/pwa/InstallAppBanner";
 import { usePushNotification } from "@/hooks/usePushNotification";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState, useCallback, lazy, Suspense } from "react";
+const CustomCursor = lazy(() => import("@/components/cursor/CustomCursor"));
+const FlyingAngel = lazy(() => import("@/components/cursor/FlyingAngel"));
 import PageLoader from "@/components/ui/PageLoader";
 import { RewardNotification } from "@/components/rewards/RewardNotification";
 import { MilestoneAnimation } from "@/components/rewards/MilestoneAnimation";
@@ -170,8 +170,8 @@ const App = () => (
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <CustomCursor />
-                <FlyingAngel />
+                <Suspense fallback={null}><CustomCursor /></Suspense>
+                <Suspense fallback={null}><FlyingAngel /></Suspense>
                 <BrowserRouter>
                   <BackgroundWithVariant />
                   <DeferredEnergyBokeh />

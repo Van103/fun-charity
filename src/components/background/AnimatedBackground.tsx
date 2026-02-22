@@ -107,12 +107,13 @@ export const AnimatedBackground = memo(({
   // Generate random positions for elements - OPTIMIZED for performance
   const elements = useMemo(() => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const isWeakDevice = isMobile || (typeof navigator !== 'undefined' && (navigator.hardwareConcurrency || 4) <= 4);
     
-    // Further reduced counts for better performance - 50% reduction on mobile
+    // Further reduced counts for weak devices - 70% reduction
     const counts = {
-      low: { diamonds: isMobile ? 2 : 4, crowns: isMobile ? 1 : 2, angels: isMobile ? 0 : 1, hearts: isMobile ? 1 : 3 },
-      medium: { diamonds: isMobile ? 3 : 8, crowns: isMobile ? 1 : 4, angels: isMobile ? 0 : 2, hearts: isMobile ? 2 : 5 },
-      high: { diamonds: isMobile ? 5 : 12, crowns: isMobile ? 2 : 6, angels: isMobile ? 1 : 3, hearts: isMobile ? 3 : 8 },
+      low: { diamonds: isWeakDevice ? 1 : 4, crowns: isWeakDevice ? 1 : 2, angels: 0, hearts: isWeakDevice ? 1 : 3 },
+      medium: { diamonds: isWeakDevice ? 2 : 8, crowns: isWeakDevice ? 1 : 4, angels: isWeakDevice ? 0 : 2, hearts: isWeakDevice ? 1 : 5 },
+      high: { diamonds: isWeakDevice ? 3 : 12, crowns: isWeakDevice ? 1 : 6, angels: isWeakDevice ? 0 : 3, hearts: isWeakDevice ? 2 : 8 },
     };
 
     const count = counts[intensity];
@@ -181,8 +182,8 @@ export const AnimatedBackground = memo(({
     return items;
   }, [intensity]);
 
-  // Check if mobile for simplified rendering
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  // Check if weak device for simplified rendering
+  const isWeakDevice = typeof window !== 'undefined' && (window.innerWidth < 768 || (navigator.hardwareConcurrency || 4) <= 4);
 
   if (!backgroundEnabled || performanceMode) {
     return (
@@ -200,8 +201,8 @@ export const AnimatedBackground = memo(({
       {/* Base gradient layer */}
       <div className="bg-gradient-layer" />
       
-      {/* Parallax layers - only render 1 layer on mobile for performance */}
-      {(isMobile ? [1] : [0, 1, 2]).map((layer) => (
+      {/* Parallax layers - only render 1 layer on weak devices for performance */}
+      {(isWeakDevice ? [1] : [0, 1, 2]).map((layer) => (
         <div 
           key={layer} 
           className={`parallax-layer layer-${layer}`}
@@ -210,7 +211,7 @@ export const AnimatedBackground = memo(({
           } as React.CSSProperties}
         >
           {elements
-            .filter((el) => isMobile ? true : el.layer === layer)
+            .filter((el) => isWeakDevice ? true : el.layer === layer)
             .map((el, index) => {
               const Component = {
                 diamond: Diamond,
@@ -236,8 +237,8 @@ export const AnimatedBackground = memo(({
         </div>
       ))}
 
-      {/* Shimmer overlay - disable on mobile for performance */}
-      {!isMobile && <div className="shimmer-overlay" />}
+      {/* Shimmer overlay - disable on weak devices for performance */}
+      {!isWeakDevice && <div className="shimmer-overlay" />}
     </div>
   );
 });

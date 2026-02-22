@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { AngelAIChatModal } from './AngelAIChatModal';
 import { supabase } from '@/integrations/supabase/client';
-import angelAvatar from '@/assets/angel-avatar.png';
+// Lazy load avatar - use URL string instead of ES6 import to avoid bundling 450KB
+const angelAvatarUrl = new URL('@/assets/angel-avatar.png', import.meta.url).href;
 
 export function AngelAIButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,8 +68,10 @@ export function AngelAIButton() {
         {/* Button */}
         <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 shadow-lg shadow-amber-500/40 flex items-center justify-center overflow-hidden hover:scale-110 transition-transform duration-200 border-2 border-white/30">
           <motion.img
-            src={angelAvatar}
+            src={angelAvatarUrl}
             alt="Angel AI"
+            loading="lazy"
+            decoding="async"
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
             className="w-full h-full object-cover"

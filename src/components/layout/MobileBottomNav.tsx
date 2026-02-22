@@ -21,15 +21,16 @@ import {
   Download,
 } from "lucide-react";
 import { useInstallPWA } from "@/hooks/useInstallPWA";
-import funProfileLogo from "@/assets/fun-profile-logo.webp";
-import funPlayLogo from "@/assets/fun-play-logo-new.png";
-import funPlanetLogo from "@/assets/fun-planet-logo.png";
-import funFarmLogo from "@/assets/fun-farm-logo-new.png";
-import funWalletLogo from "@/assets/fun-wallet-logo.png";
-import funAcademyLogo from "@/assets/fun-academy-logo.png";
-import funTreasuryLogo from "@/assets/fun-treasury-logo.png";
-import funGreenEarthLogo from "@/assets/fun-greenearth-logo.png";
-import funEcosystemLogo from "@/assets/fun-ecosystem-logo.png";
+// Use new URL pattern for lazy loading - avoids eagerly bundling ~200KB of logos
+const funProfileLogo = new URL("@/assets/fun-profile-logo.webp", import.meta.url).href;
+const funPlayLogo = new URL("@/assets/fun-play-logo-new.png", import.meta.url).href;
+const funPlanetLogo = new URL("@/assets/fun-planet-logo.png", import.meta.url).href;
+const funFarmLogo = new URL("@/assets/fun-farm-logo-new.png", import.meta.url).href;
+const funWalletLogo = new URL("@/assets/fun-wallet-logo.png", import.meta.url).href;
+const funAcademyLogo = new URL("@/assets/fun-academy-logo.png", import.meta.url).href;
+const funTreasuryLogo = new URL("@/assets/fun-treasury-logo.png", import.meta.url).href;
+const funGreenEarthLogo = new URL("@/assets/fun-greenearth-logo.png", import.meta.url).href;
+const funEcosystemLogo = new URL("@/assets/fun-ecosystem-logo.png", import.meta.url).href;
 
 const mainNavItems = [
   { icon: Home, labelKey: "nav.home", href: "/social" },

@@ -7,9 +7,11 @@ import {
   Users,
   MessageCircle,
   Menu,
+  Bell,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useUnifiedNotifications } from "@/hooks/useUnifiedNotifications";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -67,13 +69,16 @@ export function MobileBottomNav() {
   const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
   const { showInstallOption, isIOS, promptInstall } = useInstallPWA();
+  const { unreadCount: notifUnreadCount } = useUnifiedNotifications(userId);
 
-  // Fetch unread message count
+  // Get user ID and fetch unread message count
   useEffect(() => {
-    const fetchUnreadCount = async () => {
+    const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      setUserId(user.id);
 
       const { count } = await supabase
         .from('messages')
@@ -84,15 +89,14 @@ export function MobileBottomNav() {
       setUnreadCount(count || 0);
     };
 
-    fetchUnreadCount();
+    fetchData();
 
-    // Subscribe to new messages
     const channel = supabase
       .channel('unread-messages-mobile')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'messages' },
-        () => fetchUnreadCount()
+        () => fetchData()
       )
       .subscribe();
 
@@ -107,8 +111,8 @@ export function MobileBottomNav() {
         {mainNavItems.map((item) => {
           const isActive = location.pathname === item.href;
           const Icon = item.icon;
-          const isChat = item.labelKey === "menu.chat";
-          
+          const isChat = item.labelKey === "nav.chat";
+          const isHome = item.labelKey === "nav.home";
           return (
             <Link
               key={item.href}
@@ -148,6 +152,17 @@ export function MobileBottomNav() {
                     className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center px-1 z-20"
                   >
                     {unreadCount > 99 ? "99+" : unreadCount}
+                  </motion.span>
+                )}
+                
+                {/* Notification badge for Home icon */}
+                {isHome && notifUnreadCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center px-1 z-20"
+                  >
+                    {notifUnreadCount > 99 ? "99+" : notifUnreadCount}
                   </motion.span>
                 )}
               </motion.div>

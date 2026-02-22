@@ -31,39 +31,38 @@ export function useWalletBalance(walletAddress: string | null) {
     loading: false,
     error: null,
   });
+  const [lastFetch, setLastFetch] = useState(0);
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  const fetchBalances = useCallback(async () => {
+  const fetchBalances = useCallback(async (force = false) => {
     if (!walletAddress || !walletAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+      return;
+    }
+
+    // Skip if cached and not forced
+    if (!force && Date.now() - lastFetch < CACHE_DURATION) {
       return;
     }
 
     setBalance(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      // Create providers for different networks
       const ethProvider = new ethers.JsonRpcProvider(RPC_ENDPOINTS.ethereum);
-      const polygonProvider = new ethers.JsonRpcProvider(RPC_ENDPOINTS.polygon);
-
-      // Fetch balances in parallel
-      const [ethBalance, maticBalance] = await Promise.all([
-        ethProvider.getBalance(walletAddress).catch(() => BigInt(0)),
-        polygonProvider.getBalance(walletAddress).catch(() => BigInt(0)),
-      ]);
+      // Only fetch ETH, skip Polygon (API key disabled)
+      const ethBalance = await ethProvider.getBalance(walletAddress).catch(() => BigInt(0));
 
       const ethValue = parseFloat(ethers.formatEther(ethBalance));
-      const maticValue = parseFloat(ethers.formatEther(maticBalance));
-
       const ethUsd = (ethValue * APPROX_PRICES.ETH).toFixed(2);
-      const maticUsd = (maticValue * APPROX_PRICES.MATIC).toFixed(2);
 
       setBalance({
         eth: ethValue.toFixed(6),
-        matic: maticValue.toFixed(4),
+        matic: '0',
         ethUsd,
-        maticUsd,
+        maticUsd: '0',
         loading: false,
         error: null,
       });
+      setLastFetch(Date.now());
     } catch (error) {
       console.error('Error fetching balances:', error);
       setBalance(prev => ({
@@ -72,16 +71,12 @@ export function useWalletBalance(walletAddress: string | null) {
         error: 'Không thể tải số dư',
       }));
     }
-  }, [walletAddress]);
+  }, [walletAddress, lastFetch]);
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchBalances();
-    }
-  }, [walletAddress, fetchBalances]);
-
+  // Do NOT auto-fetch on mount - only fetch on demand via refetch
+  
   return {
     ...balance,
-    refetch: fetchBalances,
+    refetch: () => fetchBalances(true),
   };
 }

@@ -35,7 +35,7 @@ export function usePushNotification() {
   const checkExistingSubscription = async () => {
     try {
       const registration = await navigator.serviceWorker.ready;
-      const existingSub = await registration.pushManager.getSubscription();
+      const existingSub = await (registration as any).pushManager?.getSubscription();
       
       if (existingSub) {
         setSubscription(existingSub);
@@ -74,7 +74,7 @@ export function usePushNotification() {
       const registration = await navigator.serviceWorker.ready;
 
       // Subscribe to push
-      const sub = await registration.pushManager.subscribe({
+      const sub = await (registration as any).pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });

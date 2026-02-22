@@ -21,9 +21,7 @@ import { LanguagePopoverContent } from "./LanguagePopoverContent";
 import CursorSettings from "@/components/cursor/CursorSettings";
 import { CursorPopoverContent } from "@/components/cursor/CursorPopoverContent";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useFriendRequestNotifications } from "@/hooks/useFriendNotifications";
-import { usePostNotifications } from "@/hooks/usePostNotifications";
-import { useDonationNotifications } from "@/hooks/useDonationNotifications";
+import { useUnifiedNotifications } from "@/hooks/useUnifiedNotifications";
 import {
   Menu,
   X,
@@ -93,10 +91,8 @@ export function Navbar() {
   // Check if guest mode
   const isGuestMode = !user && localStorage.getItem('guest_mode') === 'true';
 
-  // Enable realtime notifications
-  useFriendRequestNotifications(user?.id || null);
-  usePostNotifications(user?.id || null);
-  useDonationNotifications(user?.id || null);
+  // Unified realtime notifications (replaces 3 separate hooks)
+  const { unreadCount: notifUnreadCount } = useUnifiedNotifications(user?.id || null);
 
   // Fetch unread message count
   useEffect(() => {

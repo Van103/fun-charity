@@ -56,17 +56,14 @@ export function WalletBalances({ walletAddress }: WalletBalancesProps) {
   const fetchBalances = useCallback(async () => {
     if (!walletAddress) return;
 
+    // Guard: Don't fetch if MetaMask is not available
+    if (!window.ethereum) {
+      setTokens(DEFAULT_TOKENS.map(t => ({ ...t, balance: '0.000000' })));
+      return;
+    }
+
     setLoading(true);
     try {
-      // Check if MetaMask is available
-      if (!window.ethereum) {
-        toast({
-          title: "Lỗi",
-          description: "Vui lòng cài đặt MetaMask để xem số dư",
-          variant: "destructive",
-        });
-        return;
-      }
 
       const provider = new ethers.BrowserProvider(window.ethereum);
       const updatedTokens: TokenConfig[] = [];
@@ -121,11 +118,8 @@ export function WalletBalances({ walletAddress }: WalletBalancesProps) {
     }
   }, [walletAddress, toast]);
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchBalances();
-    }
-  }, [walletAddress, fetchBalances]);
+  // Do NOT auto-fetch on mount to avoid RPC spam
+  // User clicks "Làm mới" to fetch balances
 
   const addCustomToken = async () => {
     if (!newTokenAddress || !walletAddress) return;

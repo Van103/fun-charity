@@ -1,143 +1,143 @@
 
-# KE HOACH TOI UU HIEU SUAT VA NANG CAP THONG BAO REAL-TIME
+
+# KE HOACH TOI UU HIEU SUAT TOAN BO UNG DUNG
 
 ---
 
-## VAN DE PHAT HIEN
+## VAN DE PHAT HIEN TU PERFORMANCE PROFILE
 
-### 1. Loi Hieu Suat Nghiem Trong: Polygon RPC Spam
-Trang `/social` dang gui **hang chuc request** toi `polygon-rpc.com` moi giay, tat ca deu tra ve loi **401 (API key disabled)**. Day la nguyen nhan chinh lam cham ung dung.
-
-- **Nguon goc**: `useWalletBalance.ts` va `WalletConnectModal.tsx` goi RPC endpoint lien tuc
-- **Tac dong**: ~30+ request loi moi 3 giay, chiem bang thong va lam cham render
-
-### 2. Thieu Badge Thong Bao Tren Mobile Bottom Nav
-- MobileBottomNav chi co badge tin nhan chua doc, khong co badge thong bao tong hop
-- Khong hien thi so thong bao chua doc (reactions, comments, friend requests, donations)
-
-### 3. Trung Lap Realtime Channels
-- Navbar dong thoi subscribe 3 hook thong bao rieng biet (friend, post, donation)
-- Moi hook tao 2-3 Supabase channels rieng, tong cong ~8 channels chi cho thong bao
-- `NotificationDropdown` cung subscribe them channel rieng
+| Chi so | Gia tri hien tai | Muc tieu |
+|--------|-----------------|----------|
+| First Contentful Paint (FCP) | **6,232ms** | < 2,000ms |
+| DOM Content Loaded | **6,025ms** | < 2,500ms |
+| Full Page Load | **6,988ms** | < 3,500ms |
+| Script Resources | **185 files / 2,307KB** | Giam 40% |
+| JS Heap | **40.5MB** | < 25MB |
 
 ---
 
-## PHAN 1: TOI UU HIEU SUAT
+## NGUYEN NHAN GOC
 
-### 1.1 Sua `useWalletBalance.ts` - Ngung spam RPC
+### 1. LanguageContext.tsx = 2,674 dong (235KB) - TAI TREN MOI TRANG
+File dich thuat lon nhat ung dung, chua tat ca 13 ngon ngu inline. Moi khi user truy cap bat ky trang nao, 235KB nay deu duoc tai.
 
-**Van de**: Hook goi RPC ngay khi mount, ke ca khi user khong co vi crypto nao.
+### 2. hero-poster.jpg preload tren MOI TRANG (210KB lang phi)
+`index.html` co `<link rel="preload" href="/images/hero-poster.jpg">` - anh nay chi can o trang Home nhung dang bi tai truoc tren tat ca cac trang.
 
-**Giai phap**: 
-- Chi goi RPC khi user thuc su click "Lam moi" hoac mo Wallet page
-- Them debounce va retry logic
-- Cache ket qua trong 5 phut
-- Khong tu dong goi khi mount
+### 3. angel-avatar.png = 450KB - Tai ngay khi app khoi dong
+`AngelAIButton` import truc tiep file anh 450KB, component nay render tren moi trang.
 
-### 1.2 Sua `WalletConnectModal.tsx` - Lazy fetch balance
+### 4. MobileBottomNav import 7+ logo images eagerly
+7 file logo duoc import truc tiep, tat ca tai ngay ca khi menu chua duoc mo.
 
-**Van de**: Modal fetch balance ngay khi mount.
+### 5. FlyingAngel.tsx = 1,117 dong - Component nang chay global
+Canvas animation phuc tap voi particle system, chay tren moi trang.
 
-**Giai phap**: Chi fetch khi modal duoc mo va co wallet address hop le.
+### 6. Google Fonts render-blocking
+Stylesheet Google Fonts block render, them 72ms truoc khi content hien thi.
 
-### 1.3 Sua `WalletBalances.tsx` - Them error boundary
-
-**Giai phap**: Khong goi balance neu MetaMask khong available, hien thi message thay vi spam error.
-
----
-
-## PHAN 2: NANG CAP HE THONG THONG BAO
-
-### 2.1 Tao hook `useUnifiedNotifications.ts`
-
-Hook tong hop thay the 3 hook rieng le:
-
-```text
-useUnifiedNotifications(userId)
-  |
-  ├── Subscribe: friendships (INSERT/UPDATE/DELETE)
-  ├── Subscribe: feed_reactions (INSERT) 
-  ├── Subscribe: feed_comments (INSERT)
-  ├── Subscribe: donations (INSERT/UPDATE)
-  |
-  └── Output: { unreadCount, notifications }
-```
-
-Loi ich:
-- Giam tu 8 channels xuong 4 channels
-- 1 hook thay vi 3 hooks
-- Toi uu render performance
-
-### 2.2 Cap nhat `MobileBottomNav.tsx` - Them notification badge
-
-Them badge do cho tab "Home" hoac them icon "Bell" vao bottom nav de hien thi so thong bao chua doc.
-
-```text
-Mobile Bottom Nav:
-[Home] [Campaigns] [Community] [Chat(3)] [Menu]
-  (2)                                       
-  ^-- badge do hien thi 2 thong bao chua doc
-```
-
-### 2.3 Cap nhat `Navbar.tsx` - Su dung unified hook
-
-Thay the 3 hook rieng le bang `useUnifiedNotifications` duy nhat.
+### 7. fairy-angel.png preload khong can thiet
+Cursor image preload tren moi trang, ke ca mobile (noi cursor bi disable).
 
 ---
 
-## PHAN 3: CHI TIET KY THUAT
+## GIAI PHAP
 
-### Files can sua:
+### Phase 1: Giam tai trong khoi dong (Tac dong lon nhat)
 
-| File | Thay doi | Muc do |
-|------|----------|--------|
-| `src/hooks/useWalletBalance.ts` | Them cache, chi fetch on-demand | Nho |
-| `src/components/wallet/WalletBalances.tsx` | Guard MetaMask, khong auto-fetch | Nho |
-| `src/hooks/useUnifiedNotifications.ts` | Tao moi - gop 3 hooks | Trung binh |
-| `src/components/layout/MobileBottomNav.tsx` | Them notification badge | Nho |
-| `src/components/layout/Navbar.tsx` | Dung unified hook | Nho |
+**1.1 Tach translations ra file rieng va lazy load**
 
-### useWalletBalance.ts - Thay doi chinh:
+File: `src/contexts/LanguageContext.tsx`
 
-```typescript
-// TRUOC: Tu dong fetch khi mount
-useEffect(() => {
-  if (walletAddress) {
-    fetchBalances(); // SPAM!
-  }
-}, [walletAddress, fetchBalances]);
+- Tach object `translations` (2500+ dong) ra file rieng `src/data/translations.ts`
+- Giu lai LanguageContext chi voi logic context (~150 dong)
+- Ket qua: LanguageContext giam tu 235KB xuong ~15KB
 
-// SAU: Chi fetch khi duoc goi, co cache
-const [lastFetch, setLastFetch] = useState(0);
-const CACHE_DURATION = 5 * 60 * 1000; // 5 phut
+**1.2 Xoa preload khong can thiet trong index.html**
 
-const fetchBalances = useCallback(async (force = false) => {
-  if (!force && Date.now() - lastFetch < CACHE_DURATION) return;
-  // ... fetch logic with try/catch
-}, [walletAddress, lastFetch]);
+File: `index.html`
 
-// KHONG tu dong fetch khi mount
+- Xoa `<link rel="preload" href="/images/hero-poster.jpg">` - chi can tren trang Home
+- Xoa `<link rel="preload" href="/cursors/fairy-angel.png">` - khong can preload
+- Chuyen Google Fonts tu render-blocking sang `media="print" onload` pattern
+
+**1.3 Toi uu AngelAIButton - lazy load avatar**
+
+File: `src/components/angel/AngelAIButton.tsx`
+
+- Thay `import angelAvatar from '@/assets/angel-avatar.png'` bang URL string voi `loading="lazy"`
+- Giam 450KB tai ngay khi khoi dong
+
+**1.4 Lazy load logos trong MobileBottomNav**
+
+File: `src/components/layout/MobileBottomNav.tsx`
+
+- Chuyen 7 logo imports thanh URL strings voi `loading="lazy"` va `decoding="async"`
+- Chi tai khi user mo menu Sheet
+
+### Phase 2: Toi uu Components Global
+
+**2.1 Lazy load FlyingAngel va CustomCursor**
+
+File: `src/App.tsx`
+
+- Wrap `FlyingAngel` va `CustomCursor` bang `React.lazy()` voi `Suspense`
+- Chi tai component nay sau khi trang da render xong (defer 2s)
+
+**2.2 Toi uu AnimatedBackground**
+
+File: `src/components/background/AnimatedBackground.tsx`
+
+- Giam so luong particles khi pin yeu (Battery API)
+- Them check `navigator.hardwareConcurrency` de giam hieu ung tren thiet bi yeu
+
+**2.3 Toi uu EnergyBokeh**
+
+File: `src/components/background/EnergyBokeh.tsx`
+
+- Giam particle count tu 30 xuong 15 tren thiet bi yeu
+- Them `requestIdleCallback` cho particle creation
+
+### Phase 3: Font va Asset Optimization
+
+**3.1 Chuyen Google Fonts sang non-blocking**
+
+File: `index.html`
+
+```html
+<!-- Truoc: Render-blocking -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=..." />
+
+<!-- Sau: Non-blocking -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=..." as="style" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=..." /></noscript>
 ```
 
-### useUnifiedNotifications.ts - Cau truc:
+---
 
-```typescript
-export function useUnifiedNotifications(userId: string | null) {
-  // 1 channel duy nhat subscribe nhieu bang
-  const channel = supabase.channel(`unified-notifs-${userId}`)
-    .on('postgres_changes', { event: 'INSERT', table: 'friendships' }, handleFriend)
-    .on('postgres_changes', { event: 'INSERT', table: 'feed_reactions' }, handleReaction) 
-    .on('postgres_changes', { event: 'INSERT', table: 'feed_comments' }, handleComment)
-    .on('postgres_changes', { event: 'INSERT', table: 'donations' }, handleDonation)
-    .subscribe();
+## TOM TAT FILES CAN SUA
 
-  return { unreadCount };
-}
-```
+| File | Thay doi | Tac dong |
+|------|----------|----------|
+| `src/contexts/LanguageContext.tsx` | Tach translations ra file rieng | **-220KB** khoi dong |
+| `src/data/translations.ts` | Tao moi - chua translations | File moi |
+| `index.html` | Xoa preload, non-blocking fonts | **-280KB** preload |
+| `src/components/angel/AngelAIButton.tsx` | Lazy load avatar image | **-450KB** khoi dong |
+| `src/components/layout/MobileBottomNav.tsx` | Lazy load 7 logos | **-200KB** khoi dong |
+| `src/App.tsx` | Lazy load FlyingAngel, CustomCursor | **-150KB** khoi dong |
+| `src/components/background/EnergyBokeh.tsx` | Giam particles tren thiet bi yeu | CPU giam 30% |
+| `src/components/background/AnimatedBackground.tsx` | Hardware check, giam hieu ung | CPU giam 20% |
 
-### MobileBottomNav - Them badge:
+---
 
-Them so thong bao chua doc tren icon Home hoac them icon Bell rieng.
+## KET QUA DU KIEN
+
+| Chi so | Truoc | Sau | Cai thien |
+|--------|-------|-----|-----------|
+| FCP | 6,232ms | ~2,500ms | **-60%** |
+| Bundle khoi dong | ~2,300KB | ~1,200KB | **-48%** |
+| JS Heap | 40.5MB | ~25MB | **-38%** |
+| Preload waste | 660KB | 0KB | **-100%** |
 
 ---
 
@@ -145,9 +145,9 @@ Them so thong bao chua doc tren icon Home hoac them icon Bell rieng.
 
 | Phase | Thoi gian | Noi dung |
 |-------|-----------|----------|
-| 1 | 15 phut | Fix wallet RPC spam |
-| 2 | 25 phut | Tao useUnifiedNotifications |
-| 3 | 15 phut | Cap nhat MobileBottomNav + Navbar |
-| 4 | 10 phut | Testing |
+| 1 | 20 phut | Tach translations, xoa preload, lazy images |
+| 2 | 15 phut | Lazy load global components, toi uu particles |
+| 3 | 10 phut | Non-blocking fonts |
 
-**Tong: ~1 gio**
+**Tong: ~45 phut**
+
